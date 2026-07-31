@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Refresh & CTR-Fix Review Queue — Morish Macayan</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site">
+  <nav class="nav">
+    <a href="index.html" class="name">Morish Macayan</a>
+    <ul>
+      <li><a href="index.html">Work</a></li>
+      <li><a href="index.html#projects">Projects</a></li>
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+    </ul>
+  </nav>
+</header>
+
+<section class="hero" style="padding-bottom:32px;">
+  <div class="wrap">
+    <a href="index.html" class="back">← Back to work</a>
+    <span class="eyebrow">FlyRank · Machine Learning Intern · 2026</span>
+    <h1>Refresh &amp; CTR-Fix Review Queue</h1>
+    <p class="lead">An end-to-end ML pipeline built on anonymized production search data, used to decide which content pages a strategist should look at first — a rule baseline, a client-grouped-validated model, and a deployed research paper with a human-reviewed action playbook.</p>
+    <span class="tag mixed">headline result: mixed, reported honestly</span>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>The problem</h2>
+    <p>FlyRank's clients have large content portfolios and no easy way to know which pages need attention this week. Someone has to decide: does this page need a refresh, a CTR fix, or is it fine? Guess wrong and a team either wastes a review cycle on a page that was never the issue, or leaves a genuinely declining page unnoticed for another month. The goal was to make that weekly triage decision less of a guess, for a content strategist reading a queue — not a dashboard nobody opens.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Data</h2>
+    <p>A pseudonymized 30,000-row starter slice of FlyRank's internship data warehouse — 32 clients, a trailing-90-day performance window, and a 30-day-vs-previous-30-day trend label. Client names, URLs, and private query text never appear anywhere in the work. Columns describing <em>how</em> content was generated (which AI provider or model) were explicitly excluded as off-topic for a performance question, and the two trend columns that define the label were excluded from the feature set to avoid leakage.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Method</h2>
+    <p>I started with a hand-written rule, not a model: flag a page if it has real visibility and either it's gone stale, or it ranks fine but its click-through rate lags similar pages at that position. Before trusting either signal, I checked both against real bucket tables — staleness came back <strong>MIXED</strong> (the effect was real for well-populated tiers but reversed on a 174-row tier too small to trust), and the CTR-position relationship came back <strong>CONFIRMED</strong>, dropping cleanly as position worsened.</p>
+    <p>Only then did I try a Random Forest, trained on 13 numeric and 3 categorical features that are all knowable before the outcome. The split was grouped by client, not random — pages from the same client share hidden regularities a random split would let a model quietly memorize.</p>
+    <table class="evidence">
+      <thead><tr><th>Check</th><th>Result</th></tr></thead>
+      <tbody>
+        <tr><td>Random-split AUC (naive)</td><td>0.745</td></tr>
+        <tr><td>Client-grouped AUC (honest)</td><td>0.600</td></tr>
+        <tr><td>Leakage test: inject the label-derived column on purpose</td><td>AUC jumps to 1.000 — confirms the test harness actually catches leakage</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Results — model vs. baseline</h2>
+    <p>On the same held-out client split, the model did not clearly beat the rule baseline. It edged ahead for small, tight review queues; the simple rule won for larger ones.</p>
+    <table class="evidence">
+      <thead><tr><th>Queue size (K)</th><th>Rule baseline</th><th>Logistic Regression</th><th>Random Forest</th></tr></thead>
+      <tbody>
+        <tr><td>20</td><td>0.50</td><td><strong>0.55</strong></td><td>0.50</td></tr>
+        <tr><td>50</td><td>0.52</td><td><strong>0.64</strong></td><td>0.56</td></tr>
+        <tr><td>100</td><td><strong>0.60</strong></td><td>0.59</td><td>0.56</td></tr>
+        <tr><td>200</td><td><strong>0.625</strong></td><td>0.565</td><td>0.585</td></tr>
+      </tbody>
+    </table>
+    <div class="callout warn">
+      <strong>Honest read:</strong> when I first saw the drop from 0.745 to 0.600 under the grouped split, my reaction was just "oh no," then a shrug. It's not the number I wanted — it's the real one. A random split would have made the model look far stronger than it actually is.
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Limitations</h2>
+    <ul>
+      <li>Cross-sectional, one snapshot — nothing here shows a refresh <em>causes</em> a page to stop declining, only that staleness and decline are observed together.</li>
+      <li>A 32-client teaching slice, not the full ~79M-row production warehouse.</li>
+      <li>The model's skill is real but modest (AUC 0.600) — treated as "worth a second look," never a confidence percentage.</li>
+      <li>CTR-based signals can't tell a genuine content problem from a SERP feature stealing the click — that distinction still needs a human.</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Ranked recommendations (the playbook)</h2>
+    <p>The deployed paper's playbook blends the rule and the model into one queue, with human review built in as a requirement, not an afterthought:</p>
+    <ul>
+      <li><strong>Stale + CTR Gap</strong> pages first — both signals agree, highest confidence.</li>
+      <li><strong>Stale Only</strong> and <strong>CTR Gap Only</strong> reviewed separately, one action each.</li>
+      <li><strong>Model-flagged, rule silent</strong> pages routed to a human second look, never an automatic action — the model has no transparent reason code the way the rule does.</li>
+      <li>No page is ever auto-published, auto-edited, or auto-deleted from this queue. Pages below a minimum visibility floor never receive an automated action at all.</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Reproducibility</h2>
+    <p>Every number on this page traces back to a notebook in the project repo — data contract, baseline, model, validation audit, action playbook, and the capstone that ties them together.</p>
+    <div class="contact-row">
+      <a href="#">GitHub repository</a>
+      <a href="#">Deployed research paper</a>
+    </div>
+    <p style="margin-top:18px; font-size:0.88rem; color:var(--ink-soft);">Built on the FlyRank ML Internship dataset — <a href="https://flyrank.ai" target="_blank" rel="noopener">flyrank.ai</a>.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p><a href="index.html">← Back to all work</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
