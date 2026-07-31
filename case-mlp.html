@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Multilayer Perceptron from Scratch — Morish Macayan</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site">
+  <nav class="nav">
+    <a href="index.html" class="name">Morish Macayan</a>
+    <ul>
+      <li><a href="index.html">Work</a></li>
+      <li><a href="index.html#projects">Projects</a></li>
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+    </ul>
+  </nav>
+</header>
+
+<section class="hero" style="padding-bottom:32px;">
+  <div class="wrap">
+    <a href="index.html" class="back">← Back to work</a>
+    <span class="eyebrow">Academic Project · Mapúa University</span>
+    <h1>Multilayer Perceptron, built from scratch</h1>
+    <p class="lead">A two-layer neural network implemented in NumPy only — no scikit-learn, no PyTorch, no TensorFlow doing the actual learning. The point wasn't to get a good accuracy number; it was to prove I understood what a framework normally hides.</p>
+    <span class="tag confirmed">no framework, forward + backward pass written by hand</span>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>The problem</h2>
+    <p>It's easy to call <code>model.fit()</code> and never actually understand backpropagation. This project removed that option: build a working MLP where every matrix multiplication, activation, and gradient update is code I wrote and can explain line by line.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>What I did</h2>
+    <ul>
+      <li>Implemented a two-layer MLP from scratch in NumPy — weights, biases, and the training loop, with no high-level ML framework handling the learning itself.</li>
+      <li>Wrote forward propagation and backpropagation by hand, with configurable activation functions.</li>
+      <li>Trained with mini-batch gradient descent, and evaluated using separate training and validation metrics rather than trusting a single training-accuracy number.</li>
+      <li>Experimented with different hyperparameters and network configurations to see how each one actually changed training behavior, not just the final score.</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>What came of it</h2>
+    <p>A working, reproducible Jupyter Notebook that trains end to end and that I can walk someone through without hand-waving over the math — the honest test for a from-scratch project like this isn't the accuracy number, it's whether I can explain every line when someone asks "wait, why that gradient?"</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p><a href="index.html">← Back to all work</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
