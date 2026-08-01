@@ -134,10 +134,56 @@
     <div class="contact-row">
       <a href="mailto:morishalfonsomacayan@gmail.com">morishalfonsomacayan@gmail.com</a>
       <a href="tel:+639684589839">0968 458 9839</a>
-      <a href="https://www.linkedin.com/in/morish-macayan/?skipRedirect=true">LinkedIn — Morish Macayan</a>
-      <a href="https://github.com/moriyamao">GitHub</a>
+      <a href="#">LinkedIn — Morish Macayan</a>
+      <a href="#">GitHub</a>
       <a href="https://calendly.com/morisleepy/30min" target="_blank" rel="noopener">Book a call</a>
     </div>
+
+    <form name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" id="contactForm" class="contact-form" style="margin-top:32px; max-width:480px;">
+      <input type="hidden" name="form-name" value="contact">
+      <p style="display:none;">
+        <label>Don't fill this out if you're human: <input name="bot-field"></label>
+      </p>
+      <div style="display:flex; flex-direction:column; gap:14px;">
+        <label style="font-size:0.85rem; color:var(--ink-soft);">
+          Your name
+          <input type="text" name="name" required style="width:100%; padding:10px 12px; margin-top:4px; border:1px solid var(--line); border-radius:6px; background:var(--paper-2); color:var(--ink); font-family:inherit; font-size:0.95rem;">
+        </label>
+        <label style="font-size:0.85rem; color:var(--ink-soft);">
+          Your email
+          <input type="email" name="email" required style="width:100%; padding:10px 12px; margin-top:4px; border:1px solid var(--line); border-radius:6px; background:var(--paper-2); color:var(--ink); font-family:inherit; font-size:0.95rem;">
+        </label>
+        <label style="font-size:0.85rem; color:var(--ink-soft);">
+          Message
+          <textarea name="message" rows="4" required style="width:100%; padding:10px 12px; margin-top:4px; border:1px solid var(--line); border-radius:6px; background:var(--paper-2); color:var(--ink); font-family:inherit; font-size:0.95rem; resize:vertical;"></textarea>
+        </label>
+        <button type="submit" style="align-self:flex-start; padding:11px 24px; background:var(--ink); color:var(--paper); border:none; border-radius:6px; font-size:0.92rem; font-weight:600; cursor:pointer;">Send message</button>
+        <p id="formStatus" style="font-size:0.88rem; margin:0;"></p>
+      </div>
+    </form>
+
+    <script>
+      document.getElementById('contactForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const form = e.target;
+        const status = document.getElementById('formStatus');
+        const data = new FormData(form);
+        fetch('/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams(data).toString()
+        })
+        .then(() => {
+          status.textContent = "Sent — thanks, I'll get back to you soon.";
+          status.style.color = 'var(--teal)';
+          form.reset();
+        })
+        .catch(() => {
+          status.textContent = "Something went wrong — try again, or just email me directly.";
+          status.style.color = '#B04A3F';
+        });
+      });
+    </script>
   </div>
 </section>
 
