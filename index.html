@@ -5,6 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Morish Macayan — ML &amp; Full-Stack Portfolio</title>
 <meta name="description" content="BS Computer Science (AI Track) student. Machine learning and full-stack projects, with honest reporting on what worked and what didn't.">
+<link rel="canonical" href="https://moriyamao.netlify.app/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Morish Macayan — ML & Full-Stack Portfolio">
+<meta property="og:description" content="BS Computer Science (AI Track) student. Machine learning and full-stack projects, with honest reporting on what worked and what didn't.">
+<meta property="og:url" content="https://moriyamao.netlify.app/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Morish Macayan — ML & Full-Stack Portfolio">
+<meta name="twitter:description" content="BS Computer Science (AI Track) student. Machine learning and full-stack projects, with honest reporting on what worked and what didn't.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>M</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -135,7 +147,7 @@
       <a href="mailto:morishalfonsomacayan@gmail.com">morishalfonsomacayan@gmail.com</a>
       <a href="tel:+639684589839">0968 458 9839</a>
       <a href="https://www.linkedin.com/in/morish-macayan/">LinkedIn — Morish Macayan</a>
-      <a href="https://www.linkedin.com/in/morish-macayan/">GitHub</a>
+      <a href="https://github.com/moriyamao">GitHub</a>
       <a href="https://calendly.com/morisleepy/30min" target="_blank" rel="noopener">Book a call</a>
     </div>
 
@@ -166,6 +178,11 @@
       document.getElementById('contactForm').addEventListener('submit', function(e) {
         e.preventDefault();
         const form = e.target;
+        const button = form.querySelector('button[type="submit"]');
+        if (button.disabled) return; // guards against double-fast-submit
+        button.disabled = true;
+        const originalLabel = button.textContent;
+        button.textContent = 'Sending…';
         const status = document.getElementById('formStatus');
         const data = new FormData(form);
         fetch('/', {
@@ -181,6 +198,10 @@
         .catch(() => {
           status.textContent = "Something went wrong — try again, or just email me directly.";
           status.style.color = '#B04A3F';
+        })
+        .finally(() => {
+          button.disabled = false;
+          button.textContent = originalLabel;
         });
       });
     </script>
