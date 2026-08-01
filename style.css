@@ -131,6 +131,9 @@ blockquote{
 footer{padding:36px 0 60px; text-align:center;}
 footer p{color:var(--ink-soft); font-size:0.88rem;}
 footer a{color:var(--teal); text-decoration:none;}
+footer .badge{display:inline-block; margin-top:16px; opacity:0.9; transition:opacity .15s ease;}
+footer .badge:hover{opacity:1;}
+footer .badge img{display:block; height:40px; width:auto;}
 
 /* Back link on case pages */
 .back{
