@@ -1,0 +1,322 @@
+{
+  "challenge": {
+    "ast_rules": {
+      "accuracy": 0.8333333333333334,
+      "average_precision": 0.8333333333333333,
+      "f1": 0.8,
+      "precision": 1.0,
+      "recall": 0.6666666666666666,
+      "roc_auc": 0.8333333333333333
+    },
+    "cases": [
+      {
+        "code": "import pandas as p\nfrom io import StringIO\norders = p.read_csv(StringIO('price\\n10\\n20'))\nresult = orders.append(orders)\n",
+        "error_type": "AttributeError",
+        "id": "csv_then_append",
+        "label": 1,
+        "risk_score": 0.6328569471238035,
+        "rules_score": 1.0
+      },
+      {
+        "code": "from pandas import DataFrame\nbasket = DataFrame({'qty': [1]})\nresult = basket.append(basket)\n",
+        "error_type": "AttributeError",
+        "id": "direct_import_append",
+        "label": 1,
+        "risk_score": 0.7026994737302579,
+        "rules_score": 0.0
+      },
+      {
+        "code": "import pandas as p\nresult = p.DataFrame({'stock': [9]}).append(p.DataFrame({'stock': [8]}))\n",
+        "error_type": "AttributeError",
+        "id": "chained_append",
+        "label": 1,
+        "risk_score": 0.6985646292759262,
+        "rules_score": 0.0
+      },
+      {
+        "code": "import pandas as p\ndef summarize(table):\n    return list(table.iteritems())\nresult = summarize(p.DataFrame({'stock': [3]}))\n",
+        "error_type": "AttributeError",
+        "id": "parameter_iteritems",
+        "label": 1,
+        "risk_score": 0.8534075381352692,
+        "rules_score": 0.0
+      },
+      {
+        "code": "from io import StringIO\nimport pandas as tables\nresult = tables.read_csv(StringIO('visitors\\n42'), squeeze=True)\n",
+        "error_type": "TypeError",
+        "id": "csv_removed_argument",
+        "label": 1,
+        "risk_score": 0.7853311874361663,
+        "rules_score": 1.0
+      },
+      {
+        "code": "import pandas as library\nresult = library.Int64Index(range(4))\n",
+        "error_type": "AttributeError",
+        "id": "index_removed",
+        "label": 1,
+        "risk_score": 0.7849632877458502,
+        "rules_score": 1.0
+      },
+      {
+        "code": "import pandas\nresult = pandas.np.zeros(3)\n",
+        "error_type": "AttributeError",
+        "id": "np_removed",
+        "label": 1,
+        "risk_score": 0.4661052664904634,
+        "rules_score": 1.0
+      },
+      {
+        "code": "import pandas as dataframes\nresult = dataframes.datetime(2025, 7, 18)\n",
+        "error_type": "AttributeError",
+        "id": "date_removed",
+        "label": 1,
+        "risk_score": 0.4761461821564429,
+        "rules_score": 1.0
+      },
+      {
+        "code": "import pandas as p\nrows = p.DataFrame(columns=['x'])\nresult = rows.append({'x': 2}, ignore_index=True)\n",
+        "error_type": "AttributeError",
+        "id": "empty_append",
+        "label": 1,
+        "risk_score": 0.5836403532722676,
+        "rules_score": 1.0
+      },
+      {
+        "code": "import pandas as p\nvisitors = p.Series({'Monday': 12})\nresult = list(visitors.iteritems())\n",
+        "error_type": "AttributeError",
+        "id": "series_from_dict",
+        "label": 1,
+        "risk_score": 0.8761911511892588,
+        "rules_score": 1.0
+      },
+      {
+        "code": "import pandas as p\nbefore = p.Series([8])\nafter = p.Series([9])\nresult = before.append(after)\n",
+        "error_type": "AttributeError",
+        "id": "series_append_different_names",
+        "label": 1,
+        "risk_score": 0.716588088748413,
+        "rules_score": 1.0
+      },
+      {
+        "code": "import pandas as p\nfrom io import StringIO\nresult = p.read_csv(StringIO('x\\n1'), warn_bad_lines=False)\n",
+        "error_type": "TypeError",
+        "id": "warn_bad_lines_removed",
+        "label": 1,
+        "risk_score": 0.7128352091461604,
+        "rules_score": 0.0
+      },
+      {
+        "code": "import pandas as p\nframe = p.DataFrame({'price': [2, 4]})\nprices = []\nfor item in frame['price']:\n    prices.append(item)\nassert prices == [2, 4]\n",
+        "error_type": null,
+        "id": "list_aggregation",
+        "label": 0,
+        "risk_score": 0.6952340437713886,
+        "rules_score": 0.0
+      },
+      {
+        "code": "import pandas as p\nfirst = p.Index([10])\nresult = first.append(p.Index([20]))\nassert len(result) == 2\n",
+        "error_type": null,
+        "id": "index_append_is_valid",
+        "label": 0,
+        "risk_score": 0.09473901256261881,
+        "rules_score": 0.0
+      },
+      {
+        "code": "import pandas as pd\nnotice = 'Do not use pd.Int64Index or DataFrame.append anymore'\nresult = pd.DataFrame({'note': [notice]})\nassert len(result) == 1\n",
+        "error_type": null,
+        "id": "string_mentions_obsolete_api",
+        "label": 0,
+        "risk_score": 0.850370385336243,
+        "rules_score": 0.0
+      },
+      {
+        "code": "import pandas as pd\n# Old examples use pd.np and series.iteritems; this one uses current APIs.\nresult = pd.Series([1, 2]).sum()\nassert result == 3\n",
+        "error_type": null,
+        "id": "comment_mentions_obsolete_api",
+        "label": 0,
+        "risk_score": 0.8984888556002175,
+        "rules_score": 0.0
+      },
+      {
+        "code": "from io import StringIO\nimport pandas as p\nresult = p.read_csv(StringIO('views\\n81')).squeeze('columns')\nassert result.iloc[0] == 81\n",
+        "error_type": null,
+        "id": "modern_csv",
+        "label": 0,
+        "risk_score": 0.07064353614851712,
+        "rules_score": 0.0
+      },
+      {
+        "code": "from pandas import DataFrame, concat\nresult = concat([DataFrame({'cost': [8]}), DataFrame({'cost': [9]})])\nassert len(result) == 2\n",
+        "error_type": null,
+        "id": "modern_concat",
+        "label": 0,
+        "risk_score": 0.0720417713782421,
+        "rules_score": 0.0
+      },
+      {
+        "code": "import pandas as p\ncounts = {'a': 2}\nresult = p.DataFrame(list(counts.items()))\nassert len(result) == 1\n",
+        "error_type": null,
+        "id": "dictionary_items",
+        "label": 0,
+        "risk_score": 0.07722306660300358,
+        "rules_score": 0.0
+      },
+      {
+        "code": "import pandas as p\nresult = p.Timestamp('2025-07-18')\nassert result.year == 2025\n",
+        "error_type": null,
+        "id": "modern_timestamp",
+        "label": 0,
+        "risk_score": 0.4776389294493603,
+        "rules_score": 0.0
+      },
+      {
+        "code": "import numpy as np\nimport pandas as p\nresult = p.DataFrame(np.zeros((2, 2)))\nassert result.shape == (2, 2)\n",
+        "error_type": null,
+        "id": "modern_numpy",
+        "label": 0,
+        "risk_score": 0.5061978326373892,
+        "rules_score": 0.0
+      },
+      {
+        "code": "import pandas as p\nclass Basket:\n    def append(self, item):\n        return item\nresult = Basket().append(p.Series([4]))\nassert result.iloc[0] == 4\n",
+        "error_type": null,
+        "id": "custom_append",
+        "label": 0,
+        "risk_score": 0.7482268157077813,
+        "rules_score": 0.0
+      },
+      {
+        "code": "import pandas as p\nresult = {key: values.sum() for key, values in p.DataFrame({'views': [2, 5]}).items()}\nassert result['views'] == 7\n",
+        "error_type": null,
+        "id": "modern_items",
+        "label": 0,
+        "risk_score": 0.06009163033193874,
+        "rules_score": 0.0
+      },
+      {
+        "code": "import pandas as p\nresult = p.DataFrame({'team': ['A', 'A'], 'views': [1, 4]}).groupby('team')['views'].sum()\nassert result.iloc[0] == 5\n",
+        "error_type": null,
+        "id": "grouped_aggregation",
+        "label": 0,
+        "risk_score": 0.48275205759754397,
+        "rules_score": 0.0
+      }
+    ],
+    "count": 24,
+    "learned": {
+      "accuracy": 0.7083333333333334,
+      "average_precision": 0.6501296826954721,
+      "f1": 0.7407407407407407,
+      "precision": 0.6666666666666666,
+      "recall": 0.8333333333333334,
+      "roc_auc": 0.7222222222222222
+    }
+  },
+  "counts": {
+    "test": 69,
+    "train": 276,
+    "validation": 69
+  },
+  "dataset_sha256": "7b2e242558f248b76c9f42bd5f14d43fbcf2c0499bb013d22367529521cecf0c",
+  "errors": [],
+  "family_holdout": [
+    {
+      "f1": 1.0,
+      "family": "frame_append"
+    },
+    {
+      "f1": 1.0,
+      "family": "series_append"
+    },
+    {
+      "f1": 1.0,
+      "family": "frame_iteritems"
+    },
+    {
+      "f1": 1.0,
+      "family": "series_iteritems"
+    },
+    {
+      "f1": 0.6666666666666666,
+      "family": "csv_squeeze"
+    },
+    {
+      "f1": 0.6666666666666666,
+      "family": "csv_bad_lines"
+    },
+    {
+      "f1": 1.0,
+      "family": "int64index"
+    },
+    {
+      "f1": 1.0,
+      "family": "float64index"
+    },
+    {
+      "f1": 1.0,
+      "family": "uint64index"
+    },
+    {
+      "f1": 0.6666666666666666,
+      "family": "pd_datetime"
+    },
+    {
+      "f1": 0.6666666666666666,
+      "family": "pd_np"
+    }
+  ],
+  "family_holdout_mean_f1": 0.8787878787878786,
+  "groups": {
+    "test": 12,
+    "train": 48,
+    "validation": 12
+  },
+  "limitations": [
+    "Small generated benchmark, not measured real-world generalization.",
+    "Recipes share API families and some expressions; family holdout is the tougher check.",
+    "No pandas 1.x runtime used; legacy history comes from official docs.",
+    "No semantic equivalence claim for arbitrary code or replacements.",
+    "Risk score is an uncalibrated classifier output, not a probability of correctness.",
+    "Only pandas 2.2.3 is execution-validated."
+  ],
+  "repairs_executed_and_asserted": 198,
+  "source": "Original generated fixtures; execution labels, not external real-world tutorials",
+  "sources": [
+    "https://pandas.pydata.org/pandas-docs/version/2.2.3/whatsnew/v2.0.0.html"
+  ],
+  "target": "2.2.3",
+  "test": {
+    "always_working": {
+      "accuracy": 0.5217391304347826,
+      "average_precision": 0.4782608695652174,
+      "f1": 0.0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "roc_auc": 0.5
+    },
+    "ast_rules": {
+      "accuracy": 1.0,
+      "average_precision": 1.0,
+      "f1": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "roc_auc": 1.0
+    },
+    "learned": {
+      "accuracy": 1.0,
+      "average_precision": 0.9999999999999999,
+      "f1": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "roc_auc": 1.0
+    }
+  },
+  "threshold": 0.5,
+  "threshold_selected_on": "validation only",
+  "versions": {
+    "numpy": "2.3.5",
+    "pandas": "2.2.3",
+    "python": "3.12.14",
+    "scikit_learn": "1.8.0"
+  }
+}

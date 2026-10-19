@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="TutorialCheck reviews old pandas examples with a trained local classifier and migration references.">
+  <title>TutorialCheck — Will this tutorial still run?</title>
+  <link rel="stylesheet" href="app.css">
+  <script defer src="inference.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <header class="masthead"><a href="../../../index.html">Morish Macayan <span>/ experimental tools</span></a><a href="https://github.com/moriyamao/morish-portfolio/tree/main/projects/tutorialcheck">Source ↗</a></header>
+  <main>
+    <div class="intro"><p class="eyebrow">01 / DEVELOPER TOOLS · MACHINE LEARNING</p><h1>The tutorial was right.<br><em>Your environment changed.</em></h1><p class="lead">Review an old pandas snippet before you spend an afternoon debugging it. A small trained model spots familiar compatibility patterns; migration references explain what to check.</p></div>
+    <div class="status-strip"><span><i></i> Browser inference · no uploads</span><span>Validated target <strong>pandas 2.2.3</strong></span><span>Open, reproducible benchmark</span></div>
+    <section class="workspace" aria-label="Compatibility reviewer">
+      <div class="editor-panel"><div class="panel-heading"><h2>Your snippet</h2><span>Python / pandas</span></div><label for="example" class="sr-only">Load an example</label><select id="example"><option value="append">Old tutorial: append rows</option><option value="csv">Old tutorial: read one column</option><option value="modern">Current API: concatenate</option><option value="list">Control: a Python list</option><option value="unknown">Outside the model’s scope</option></select><label for="code" class="sr-only">Python snippet to review</label><textarea id="code" spellcheck="false" maxlength="50000" aria-describedby="editor-note"></textarea><div class="editor-actions"><p id="editor-note">Static review. Your snippet is never executed.</p><button id="analyze" disabled>Loading model…</button></div></div>
+      <div class="results-panel" aria-live="polite" aria-busy="true" id="results"><div class="panel-heading"><h2>Compatibility review</h2><span>Target-specific</span></div><p class="eyebrow" id="verdict">Preparing the reviewer</p><div class="score-row"><span id="score">—</span><span>learned risk score<br><small>not a calibrated probability</small></span></div><div class="meter" aria-hidden="true"><div id="meter-fill"></div></div><p id="score-note" class="muted">Model artifacts load once. Inference happens on your device.</p><div id="findings"></div><details><summary>Why did the model score it this way?</summary><p class="muted">Largest token contributions to the decision. Positive weights increase the risk score; negative weights decrease it.</p><ul id="contributors"></ul></details></div>
+    </section>
+    <section class="evidence"><div><p class="eyebrow">MEASURED, WITH LIMITS</p><h2>A model you can inspect.</h2><p>Training labels come from running original examples against pandas 2.2.3. Each repaired fixture also has an assertion checking its intended result. The benchmark includes valid Python list calls, so “append” alone is not the answer.</p><p>The Python CLI adds AST checks for known pandas symbols and import aliases. This browser demo supplies lexical migration hints. Neither establishes that arbitrary code is correct.</p><a href="../artifacts/evaluation.json">Read every result ↗</a></div><div class="metrics"><div><strong id="repair-count">—</strong><span>repaired fixtures executed and asserted</span></div><div><strong id="challenge-score">—</strong><span>ML F1 · 24 independent challenge snippets</span></div><div><strong id="rules-score">—</strong><span>AST baseline F1 · same challenge</span></div><div><strong id="family-score">—</strong><span>mean F1 · unseen API family stress test</span></div></div></section>
+    <section class="limits"><h2>The small print is part of the result.</h2><p>This is a focused research prototype with 414 generated fixtures and 24 separately authored challenge snippets. Generated recipe holdout is easier than unfamiliar real tutorials; it is not a real-world accuracy estimate. The model is not calibrated, the rules cover a limited set of removed APIs, and replacement examples do not prove equivalence for your code. Unknown inputs can make the model abstain. Other pandas versions are outside the evaluated scope.</p><p>Migration history is grounded in <a href="https://pandas.pydata.org/pandas-docs/version/2.2.3/whatsnew/v2.0.0.html">official pandas release notes</a>. No runtime comparison against pandas 1.x was performed.</p></section>
+  </main><footer><span>TutorialCheck / a reproducible first release</span><a href="https://github.com/moriyamao/morish-portfolio/tree/main/projects/tutorialcheck#readme">Setup, method &amp; model card ↗</a></footer>
+</body>
+</html>

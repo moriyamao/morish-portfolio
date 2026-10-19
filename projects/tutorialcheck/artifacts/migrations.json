@@ -1,0 +1,50 @@
+{
+  "target": "2.2.3",
+  "source": "https://pandas.pydata.org/pandas-docs/version/2.2.3/whatsnew/v2.0.0.html",
+  "families": {
+    "frame_append": {
+      "symbol": "DataFrame.append",
+      "suggestion": "Use pd.concat([frame, other], ignore_index=True). Dicts/Series need conversion to a DataFrame first."
+    },
+    "series_append": {
+      "symbol": "Series.append",
+      "suggestion": "Use pd.concat([series, other], ignore_index=True)."
+    },
+    "frame_iteritems": {
+      "symbol": "DataFrame.iteritems",
+      "suggestion": "Use frame.items() to iterate over columns."
+    },
+    "series_iteritems": {
+      "symbol": "Series.iteritems",
+      "suggestion": "Use series.items() to iterate over index/value pairs."
+    },
+    "csv_squeeze": {
+      "symbol": "read_csv(squeeze=...)",
+      "suggestion": "Remove squeeze and call .squeeze('columns') on the returned DataFrame."
+    },
+    "csv_bad_lines": {
+      "symbol": "read_csv(error_bad_lines=...)",
+      "suggestion": "Replace error_bad_lines=False with on_bad_lines='skip'; True corresponds to 'error'."
+    },
+    "int64index": {
+      "symbol": "pd.Int64Index",
+      "suggestion": "Use pd.Index(values, dtype='int64')."
+    },
+    "float64index": {
+      "symbol": "pd.Float64Index",
+      "suggestion": "Use pd.Index(values, dtype='float64')."
+    },
+    "uint64index": {
+      "symbol": "pd.UInt64Index",
+      "suggestion": "Use pd.Index(values, dtype='uint64')."
+    },
+    "pd_datetime": {
+      "symbol": "pd.datetime",
+      "suggestion": "Import datetime from Python's datetime module, or use pd.Timestamp for a pandas timestamp."
+    },
+    "pd_np": {
+      "symbol": "pd.np",
+      "suggestion": "Import numpy directly: import numpy as np."
+    }
+  }
+}
