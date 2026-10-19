@@ -2,6 +2,17 @@
 
 Static portfolio with machine learning case studies and reproducible project source.
 
+## LeakageLens
+
+[Project and setup](projects/leakagelens/README.md) · [Browser CSV auditor](projects/leakagelens/web/index.html) · [Model card](projects/leakagelens/MODEL_CARD.md)
+
+LeakageLens checks binary tabular train/test datasets for selected-feature row overlap, shared entities, timestamp interleaving and suspicious target proxies. The browser tool processes CSV files locally; the CLI also searches a bounded numeric sample for near duplicates. A trained random forest and published baseline comparisons expose both the model's strengths on generated examples and its failures on a public-data injection challenge.
+
+```bash
+cd projects/leakagelens
+python -m leakagelens --train samples/train.csv --test samples/test.csv --target target --group customer_id --time observed_at --unavailable final_outcome
+```
+
 ## TutorialCheck
 
 [Project source and setup](projects/tutorialcheck/README.md) · [Browser demo](projects/tutorialcheck/web/index.html) · [Evaluation artifacts](projects/tutorialcheck/artifacts/evaluation.json)

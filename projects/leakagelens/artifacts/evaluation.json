@@ -1,0 +1,472 @@
+{
+  "counts": {
+    "test": 190,
+    "train": 456,
+    "validation": 114
+  },
+  "dataset_sha256": "601a94fbba037dc9733aefdd22cbeff53d8be3d856d08a8deaba7ab1afdce59d",
+  "limitations": [
+    "Synthetic injection detection does not establish real-world leakage detection.",
+    "Statistical association cannot establish when a feature became available.",
+    "A target and a valid perfect predictor can be observationally indistinguishable.",
+    "The Wine challenge uses artificial injections into a public dataset, not naturally occurring labelled leakage.",
+    "CSV auditing cannot detect all preprocessing or target-encoding leakage."
+  ],
+  "mechanism_holdouts": [
+    {
+      "metrics": {
+        "accuracy": 1.0,
+        "average_precision": 1.0,
+        "f1": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      },
+      "n": 120,
+      "withheld_mechanism": "codebook"
+    },
+    {
+      "metrics": {
+        "accuracy": 0.9166666666666666,
+        "average_precision": 0.08333333333333333,
+        "f1": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "roc_auc": 0.4
+      },
+      "n": 120,
+      "withheld_mechanism": "missingness"
+    },
+    {
+      "metrics": {
+        "accuracy": 1.0,
+        "average_precision": 1.0,
+        "f1": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      },
+      "n": 120,
+      "withheld_mechanism": "noisy"
+    }
+  ],
+  "seed": 41,
+  "source": "Original generated datasets with provenance-labelled column injections",
+  "source_datasets": {
+    "test": 10,
+    "train": 24,
+    "validation": 6
+  },
+  "sources": [
+    "https://scikit-learn.org/stable/common_pitfalls.html",
+    "https://scikit-learn.org/stable/modules/generated/sklearn.datasets.load_wine.html",
+    "https://archive.ics.uci.edu/dataset/109/wine"
+  ],
+  "split_experiment": {
+    "entities": 80,
+    "group_accuracy_mean": 0.5,
+    "interpretation": "Synthetic entity memorization demonstration. The intended deployment is to unseen entities; the two splits evaluate different populations.",
+    "model": "1-nearest-neighbor",
+    "random_accuracy_mean": 1.0,
+    "rows": 480,
+    "runs": [
+      {
+        "group_accuracy": 0.55,
+        "group_shared_entities": 0,
+        "random_accuracy": 1.0,
+        "random_shared_entities": 65,
+        "seed": 0
+      },
+      {
+        "group_accuracy": 0.5,
+        "group_shared_entities": 0,
+        "random_accuracy": 1.0,
+        "random_shared_entities": 71,
+        "seed": 1
+      },
+      {
+        "group_accuracy": 0.6,
+        "group_shared_entities": 0,
+        "random_accuracy": 1.0,
+        "random_shared_entities": 65,
+        "seed": 2
+      },
+      {
+        "group_accuracy": 0.55,
+        "group_shared_entities": 0,
+        "random_accuracy": 1.0,
+        "random_shared_entities": 67,
+        "seed": 3
+      },
+      {
+        "group_accuracy": 0.3,
+        "group_shared_entities": 0,
+        "random_accuracy": 1.0,
+        "random_shared_entities": 69,
+        "seed": 4
+      }
+    ]
+  },
+  "test": {
+    "always_clean": {
+      "accuracy": 0.5789473684210527,
+      "average_precision": 0.42105263157894735,
+      "f1": 0.0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "roc_auc": 0.5
+    },
+    "correlation_purity_rules": {
+      "accuracy": 0.7894736842105263,
+      "average_precision": 0.7105263157894737,
+      "f1": 0.6666666666666666,
+      "precision": 1.0,
+      "recall": 0.5,
+      "roc_auc": 0.75
+    },
+    "learned": {
+      "accuracy": 1.0,
+      "average_precision": 1.0,
+      "f1": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "roc_auc": 1.0
+    }
+  },
+  "threshold": 0.5,
+  "threshold_selected_on": "validation only",
+  "versions": {
+    "numpy": "2.3.5",
+    "python": "3.12.14",
+    "scikit_learn": "1.8.0"
+  },
+  "wine_challenge": {
+    "cases": [
+      {
+        "baseline": 0.0,
+        "column_id": "alcohol",
+        "label": 0,
+        "score": 0.3305921052631579,
+        "stats": {
+          "abs_correlation": 0.6472322816284568,
+          "abs_rank_correlation": 0.6553761298467986,
+          "binary_agreement": 0.5,
+          "is_numeric": 1.0,
+          "missing_rate": 0.0,
+          "missingness_auc": 0.5,
+          "oriented_auc": 0.901865831078194,
+          "repeated_value_purity": 0.9333333333333333,
+          "unique_ratio": 0.7078651685393258
+        }
+      },
+      {
+        "baseline": 0.0,
+        "column_id": "malic_acid",
+        "label": 0,
+        "score": 0.28125,
+        "stats": {
+          "abs_correlation": 0.20584680908585015,
+          "abs_rank_correlation": 0.10196954088789216,
+          "binary_agreement": 0.5,
+          "is_numeric": 1.0,
+          "missing_rate": 0.0,
+          "missingness_auc": 0.5,
+          "oriented_auc": 0.5625267055974932,
+          "repeated_value_purity": 0.7575757575757576,
+          "unique_ratio": 0.7471910112359551
+        }
+      },
+      {
+        "baseline": 0.0,
+        "column_id": "ash",
+        "label": 0,
+        "score": 0.39377969121140144,
+        "stats": {
+          "abs_correlation": 0.22926771643934518,
+          "abs_rank_correlation": 0.22383114621945566,
+          "binary_agreement": 0.5,
+          "is_numeric": 1.0,
+          "missing_rate": 0.0,
+          "missingness_auc": 0.5,
+          "oriented_auc": 0.6372311636519015,
+          "repeated_value_purity": 0.7238095238095238,
+          "unique_ratio": 0.4438202247191011
+        }
+      },
+      {
+        "baseline": 0.0,
+        "column_id": "alcalinity_of_ash",
+        "label": 0,
+        "score": 0.5625,
+        "stats": {
+          "abs_correlation": 0.5196455243908195,
+          "abs_rank_correlation": 0.5542117347057257,
+          "binary_agreement": 0.5,
+          "is_numeric": 1.0,
+          "missing_rate": 0.0,
+          "missingness_auc": 0.5,
+          "oriented_auc": 0.8395527702606467,
+          "repeated_value_purity": 0.8294573643410853,
+          "unique_ratio": 0.3539325842696629
+        }
+      },
+      {
+        "baseline": 0.0,
+        "column_id": "magnesium",
+        "label": 0,
+        "score": 0.5625,
+        "stats": {
+          "abs_correlation": 0.3261712193369677,
+          "abs_rank_correlation": 0.4196297834533032,
+          "binary_agreement": 0.5,
+          "is_numeric": 1.0,
+          "missing_rate": 0.0,
+          "missingness_auc": 0.5,
+          "oriented_auc": 0.7571571001281868,
+          "repeated_value_purity": 0.7718120805369127,
+          "unique_ratio": 0.29775280898876405
+        }
+      },
+      {
+        "baseline": 0.0,
+        "column_id": "total_phenols",
+        "label": 0,
+        "score": 0.5625,
+        "stats": {
+          "abs_correlation": 0.6149600953497673,
+          "abs_rank_correlation": 0.6233822792341867,
+          "binary_agreement": 0.5,
+          "is_numeric": 1.0,
+          "missing_rate": 0.0,
+          "missingness_auc": 0.5,
+          "oriented_auc": 0.8822105113231733,
+          "repeated_value_purity": 0.868421052631579,
+          "unique_ratio": 0.5449438202247191
+        }
+      },
+      {
+        "baseline": 0.0,
+        "column_id": "flavanoids",
+        "label": 0,
+        "score": 0.31207358674463936,
+        "stats": {
+          "abs_correlation": 0.6737701693832165,
+          "abs_rank_correlation": 0.7040094346155724,
+          "binary_agreement": 0.5,
+          "is_numeric": 1.0,
+          "missing_rate": 0.0,
+          "missingness_auc": 0.5,
+          "oriented_auc": 0.9317048853439681,
+          "repeated_value_purity": 0.9473684210526315,
+          "unique_ratio": 0.7415730337078652
+        }
+      },
+      {
+        "baseline": 0.0,
+        "column_id": "nonflavanoid_phenols",
+        "label": 0,
+        "score": 0.5256983795605925,
+        "stats": {
+          "abs_correlation": 0.40768044259823927,
+          "abs_rank_correlation": 0.4034099852025988,
+          "binary_agreement": 0.5,
+          "is_numeric": 1.0,
+          "missing_rate": 0.0,
+          "missingness_auc": 0.5,
+          "oriented_auc": 0.7471870103973792,
+          "repeated_value_purity": 0.7375,
+          "unique_ratio": 0.21910112359550563
+        }
+      },
+      {
+        "baseline": 0.0,
+        "column_id": "proanthocyanins",
+        "label": 0,
+        "score": 0.5625,
+        "stats": {
+          "abs_correlation": 0.38049982382863673,
+          "abs_rank_correlation": 0.4454430162128766,
+          "binary_agreement": 0.5,
+          "is_numeric": 1.0,
+          "missing_rate": 0.0,
+          "missingness_auc": 0.5,
+          "oriented_auc": 0.773109243697479,
+          "repeated_value_purity": 0.8470588235294118,
+          "unique_ratio": 0.5674157303370787
+        }
+      },
+      {
+        "baseline": 0.0,
+        "column_id": "color_intensity",
+        "label": 0,
+        "score": 0.28125,
+        "stats": {
+          "abs_correlation": 0.1432206270871556,
+          "abs_rank_correlation": 0.27977241537897923,
+          "binary_agreement": 0.5,
+          "is_numeric": 1.0,
+          "missing_rate": 0.0,
+          "missingness_auc": 0.5,
+          "oriented_auc": 0.6715567582965389,
+          "repeated_value_purity": 0.8333333333333334,
+          "unique_ratio": 0.7415730337078652
+        }
+      },
+      {
+        "baseline": 0.0,
+        "column_id": "hue",
+        "label": 0,
+        "score": 0.53125,
+        "stats": {
+          "abs_correlation": 0.32308801526124187,
+          "abs_rank_correlation": 0.3491624636572419,
+          "binary_agreement": 0.5,
+          "is_numeric": 1.0,
+          "missing_rate": 0.0,
+          "missingness_auc": 0.5,
+          "oriented_auc": 0.7140720695057684,
+          "repeated_value_purity": 0.7745098039215687,
+          "unique_ratio": 0.43820224719101125
+        }
+      },
+      {
+        "baseline": 0.0,
+        "column_id": "od280/od315_of_diluted_wines",
+        "label": 0,
+        "score": 0.28125,
+        "stats": {
+          "abs_correlation": 0.5431308803730079,
+          "abs_rank_correlation": 0.5338849508341176,
+          "binary_agreement": 0.5,
+          "is_numeric": 1.0,
+          "missing_rate": 0.0,
+          "missingness_auc": 0.5,
+          "oriented_auc": 0.8273750178037317,
+          "repeated_value_purity": 0.8536585365853658,
+          "unique_ratio": 0.6853932584269663
+        }
+      },
+      {
+        "baseline": 0.0,
+        "column_id": "proline",
+        "label": 0,
+        "score": 0.8817401960784313,
+        "stats": {
+          "abs_correlation": 0.8270004510913348,
+          "abs_rank_correlation": 0.7896272810246375,
+          "binary_agreement": 0.5,
+          "is_numeric": 1.0,
+          "missing_rate": 0.0,
+          "missingness_auc": 0.5,
+          "oriented_auc": 0.9841902862840052,
+          "repeated_value_purity": 0.9782608695652174,
+          "unique_ratio": 0.6797752808988764
+        }
+      },
+      {
+        "baseline": 1.0,
+        "column_id": "injected_copy",
+        "label": 1,
+        "score": 1.0,
+        "stats": {
+          "abs_correlation": 1.0,
+          "abs_rank_correlation": 1.0000000000000002,
+          "binary_agreement": 1.0,
+          "is_numeric": 1.0,
+          "missing_rate": 0.0,
+          "missingness_auc": 0.5,
+          "oriented_auc": 1.0,
+          "repeated_value_purity": 1.0,
+          "unique_ratio": 0.011235955056179775
+        }
+      },
+      {
+        "baseline": 1.0,
+        "column_id": "injected_scaled",
+        "label": 1,
+        "score": 1.0,
+        "stats": {
+          "abs_correlation": 1.0,
+          "abs_rank_correlation": 1.0000000000000002,
+          "binary_agreement": 0.5,
+          "is_numeric": 1.0,
+          "missing_rate": 0.0,
+          "missingness_auc": 0.5,
+          "oriented_auc": 1.0,
+          "repeated_value_purity": 1.0,
+          "unique_ratio": 0.011235955056179775
+        }
+      },
+      {
+        "baseline": 0.0,
+        "column_id": "injected_noisy",
+        "label": 1,
+        "score": 0.8817401960784313,
+        "stats": {
+          "abs_correlation": 0.9112590613993048,
+          "abs_rank_correlation": 0.8141941155848406,
+          "binary_agreement": 0.5,
+          "is_numeric": 1.0,
+          "missing_rate": 0.0,
+          "missingness_auc": 0.5,
+          "oriented_auc": 0.9992878507335138,
+          "repeated_value_purity": 0.5,
+          "unique_ratio": 1.0
+        }
+      },
+      {
+        "baseline": 0.0,
+        "column_id": "injected_missing",
+        "label": 1,
+        "score": 0.34225746268656715,
+        "stats": {
+          "abs_correlation": 0.009917341205258464,
+          "abs_rank_correlation": 0.0,
+          "binary_agreement": 0.5,
+          "is_numeric": 1.0,
+          "missing_rate": 0.33146067415730335,
+          "missingness_auc": 1.0,
+          "oriented_auc": 0.5,
+          "repeated_value_purity": 0.5,
+          "unique_ratio": 0.6685393258426966
+        }
+      },
+      {
+        "baseline": 1.0,
+        "column_id": "injected_code",
+        "label": 1,
+        "score": 1.0,
+        "stats": {
+          "abs_correlation": 0.8641946933842224,
+          "abs_rank_correlation": 0.8309736196742985,
+          "binary_agreement": 0.5,
+          "is_numeric": 0.0,
+          "missing_rate": 0.0,
+          "missingness_auc": 0.5,
+          "oriented_auc": 1.0,
+          "repeated_value_purity": 1.0,
+          "unique_ratio": 0.033707865168539325
+        }
+      }
+    ],
+    "injected_columns": 5,
+    "learned": {
+      "accuracy": 0.5555555555555556,
+      "average_precision": 0.8369230769230769,
+      "f1": 0.5,
+      "precision": 0.36363636363636365,
+      "recall": 0.8,
+      "roc_auc": 0.8692307692307693
+    },
+    "legitimate_columns": 13,
+    "n": 18,
+    "rules": {
+      "accuracy": 0.8888888888888888,
+      "average_precision": 0.7111111111111111,
+      "f1": 0.75,
+      "precision": 1.0,
+      "recall": 0.6,
+      "roc_auc": 0.8
+    }
+  }
+}
