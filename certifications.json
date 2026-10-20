@@ -1,0 +1,162 @@
+[
+  {
+    "id": "microsoft-ai-ml",
+    "title": "Microsoft AI & ML Engineering Professional Certificate",
+    "issuer": "Microsoft",
+    "credentialId": null,
+    "url": "https://www.linkedin.com/in/morish-macayan/",
+    "linkLabel": "View on LinkedIn",
+    "source": "User-provided resume",
+    "verification": "Profile reference; direct credential URL unavailable"
+  },
+  {
+    "id": "ibm-ml",
+    "title": "IBM Machine Learning",
+    "issuer": "IBM",
+    "credentialId": null,
+    "url": "https://www.linkedin.com/in/morish-macayan/",
+    "linkLabel": "View on LinkedIn",
+    "source": "User-provided resume",
+    "verification": "Profile reference; direct credential URL unavailable"
+  },
+  {
+    "id": "ms-algorithms",
+    "title": "AI and Machine Learning Algorithms and Techniques",
+    "issuer": "Microsoft",
+    "credentialId": null,
+    "url": "https://www.linkedin.com/in/morish-macayan/",
+    "linkLabel": "View on LinkedIn",
+    "source": "User-provided resume",
+    "verification": "Profile reference; direct credential URL unavailable"
+  },
+  {
+    "id": "ms-foundations",
+    "title": "Foundations of AI and Machine Learning",
+    "issuer": "Microsoft",
+    "credentialId": null,
+    "url": "https://www.linkedin.com/in/morish-macayan/",
+    "linkLabel": "View on LinkedIn",
+    "source": "User-provided resume",
+    "verification": "Profile reference; direct credential URL unavailable"
+  },
+  {
+    "id": "aws-foundations",
+    "title": "AWS Educate Machine Learning Foundations",
+    "issuer": "Amazon Web Services",
+    "credentialId": null,
+    "url": "https://www.linkedin.com/in/morish-macayan/",
+    "linkLabel": "View on LinkedIn",
+    "source": "Public LinkedIn badge post",
+    "verification": "Profile reference; direct credential URL unavailable"
+  },
+  {
+    "id": "linear-algebra",
+    "title": "Mathematics for Machine Learning: Linear Algebra",
+    "issuer": "Imperial College London",
+    "credentialId": "D8Q277NIKLCN",
+    "url": "https://www.coursera.org/account/accomplishments/verify/D8Q277NIKLCN",
+    "linkLabel": "Open certificate",
+    "source": "Public LinkedIn certification listing",
+    "verification": "URL formed from listed credential ID; issuer page not independently fetched"
+  },
+  {
+    "id": "data-structures",
+    "title": "Data Structures",
+    "issuer": "University of California San Diego",
+    "credentialId": "G6HMODQVIWV4",
+    "url": "https://www.coursera.org/account/accomplishments/verify/G6HMODQVIWV4",
+    "linkLabel": "Open certificate",
+    "source": "Public LinkedIn certification listing",
+    "verification": "URL formed from listed credential ID; issuer page not independently fetched"
+  },
+  {
+    "id": "database",
+    "title": "Database Management Essentials",
+    "issuer": "University of Colorado System",
+    "credentialId": "VQ33156LCJ89",
+    "url": "https://www.coursera.org/account/accomplishments/verify/VQ33156LCJ89",
+    "linkLabel": "Open certificate",
+    "source": "Public LinkedIn certification listing",
+    "verification": "URL formed from listed credential ID; issuer page not independently fetched"
+  },
+  {
+    "id": "ai-for-everyone",
+    "title": "AI For Everyone",
+    "issuer": "DeepLearning.AI",
+    "credentialId": "523KY4VO83FV",
+    "url": "https://www.coursera.org/account/accomplishments/verify/523KY4VO83FV",
+    "linkLabel": "Open certificate",
+    "source": "Public LinkedIn certification listing",
+    "verification": "URL formed from listed credential ID; issuer page not independently fetched"
+  },
+  {
+    "id": "gen-ai",
+    "title": "Introduction to Generative AI and Prompt Engineering",
+    "issuer": "Mapua University",
+    "credentialId": "IRJLKTSCE6MY",
+    "url": "https://www.coursera.org/account/accomplishments/verify/IRJLKTSCE6MY",
+    "linkLabel": "Open certificate",
+    "source": "Public LinkedIn certification listing",
+    "verification": "URL formed from listed credential ID; issuer page not independently fetched"
+  },
+  {
+    "id": "javascript",
+    "title": "Interactivity with JavaScript",
+    "issuer": "University of Michigan",
+    "credentialId": "GRXVRGIFQYKA",
+    "url": "https://www.coursera.org/account/accomplishments/verify/GRXVRGIFQYKA",
+    "linkLabel": "Open certificate",
+    "source": "Public LinkedIn certification listing",
+    "verification": "URL formed from listed credential ID; issuer page not independently fetched"
+  },
+  {
+    "id": "python-classes",
+    "title": "Python Classes and Inheritance",
+    "issuer": "University of Michigan",
+    "credentialId": "TQR4WLZWOHHM",
+    "url": "https://www.coursera.org/account/accomplishments/verify/TQR4WLZWOHHM",
+    "linkLabel": "Open certificate",
+    "source": "Public LinkedIn certification listing",
+    "verification": "URL formed from listed credential ID; issuer page not independently fetched"
+  },
+  {
+    "id": "python-intro",
+    "title": "Programming for Everybody (Getting Started with Python)",
+    "issuer": "University of Michigan",
+    "credentialId": "7FWGO63MY45F",
+    "url": "https://www.coursera.org/account/accomplishments/verify/7FWGO63MY45F",
+    "linkLabel": "Open certificate",
+    "source": "Public LinkedIn certification listing",
+    "verification": "URL formed from listed credential ID; issuer page not independently fetched"
+  },
+  {
+    "id": "support",
+    "title": "Technical Support Fundamentals",
+    "issuer": "Google",
+    "credentialId": "0Y98LJIP66VY",
+    "url": "https://www.coursera.org/account/accomplishments/verify/0Y98LJIP66VY",
+    "linkLabel": "Open certificate",
+    "source": "Public LinkedIn certification listing",
+    "verification": "URL formed from listed credential ID; issuer page not independently fetched"
+  },
+  {
+    "id": "cybersecurity",
+    "title": "Introduction to Cybersecurity",
+    "issuer": "Cisco",
+    "credentialId": null,
+    "url": "https://www.linkedin.com/in/morish-macayan/",
+    "linkLabel": "View on LinkedIn",
+    "source": "Public LinkedIn badge post",
+    "verification": "Profile reference; direct credential URL unavailable"
+  },
+  {
+    "id": "game-theory",
+    "title": "Welcome to Game Theory",
+    "issuer": "The University of Tokyo",
+    "credentialId": "WGPYYKGJ72XU",
+    "url": "https://www.coursera.org/account/accomplishments/verify/WGPYYKGJ72XU",
+    "linkLabel": "Open certificate",
+    "source": "Public LinkedIn certification listing",
+    "verification": "URL formed from listed credential ID; issuer page not independently fetched"
+  }
+]
