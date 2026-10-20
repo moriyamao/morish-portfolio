@@ -2,6 +2,32 @@
 
 Static portfolio with machine learning case studies and reproducible project source.
 
+## Portfolio design
+
+A buildless, responsive dark portfolio: oversized editorial typography, an original
+pointer-responsive canvas study, two featured projects, and an expandable working
+index. Client work and ML research have distinct paths, with the current résumé
+available at `resume.pdf`. TravelEase has its own source-grounded case study.
+
+Motion honors the operating system preference and can be paused in the footer.
+The canvas pauses offscreen and in background tabs. Content, native project
+disclosures, navigation, and email links remain usable without JavaScript.
+The site does not use remote fonts, animation libraries, or analytics placeholders.
+The Netlify contact form preserves the existing service contract; email is the
+fallback. HTTP failures are not presented as successful submissions.
+
+Design research: [Dennis Snellenberg](https://dennissnellenberg.com/),
+[Brittany Chiang](https://brittanychiang.com/), and
+[Rauno Freiberg](https://raunofreiberg.com/). These informed hierarchy, project
+organization, and attention to interaction. No source, identity, or artwork was copied.
+
+Run portfolio checks with `node --test assets.test.cjs portfolio.test.cjs`.
+The independent ML demos retain their own styles, tests, and source directories.
+Portfolio interaction tests use dependency-free DOM contract doubles, not a real
+browser. The managed preview was unavailable during this redesign because of an
+environment permission error; visual browser QA and live form delivery remain
+unverified. No real contact submission is sent by the tests.
+
 ## LeakageLens
 
 [Project and setup](projects/leakagelens/README.md) · [Browser CSV auditor](projects/leakagelens/web/index.html) · [Model card](projects/leakagelens/MODEL_CARD.md)
