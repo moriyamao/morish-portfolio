@@ -37,7 +37,7 @@ function setup({ reduce = false, stored = null, storageError = false, fetchImpl 
   const filters = ['all', 'ml', 'web'].map(filter => {
     const item = new Element(); item.dataset.filter = filter; return item;
   });
-  const projects = ['ml', 'web', 'ml', 'ml', 'ml', 'ml'].map(category => {
+  const projects = [...html.matchAll(/data-category="(ml|web)"/g)].map(([, category]) => {
     const item = new Element(); item.dataset.category = category; return item;
   });
   const navLink = new Element();
@@ -89,22 +89,22 @@ test('page enhances progressively without an IntersectionObserver', () => {
   assert.equal(e.motion.hidden, false);
   assert.ok(!e.body.classes.has('motion-ready'));
 });
-test('ML filter shows five projects and updates its live count', async () => {
+test('ML filter includes academic research and updates its live count', async () => {
   const { e, projects, filters } = setup();
   await filters[1].fire('click');
-  assert.equal(projects.filter(p => !p.hidden).length, 5);
-  assert.equal(e.counter.textContent, '5 projects in ML & AI');
+  assert.equal(projects.filter(p => !p.hidden).length, 6);
+  assert.equal(e.counter.textContent, '6 projects in ML & AI');
   assert.equal(filters[1].getAttribute('aria-pressed'), 'true');
   assert.equal(filters[0].getAttribute('aria-pressed'), 'false');
 });
 test('web filter isolates TravelEase and removes empty index spacing', async () => {
   const { e, projects, filters } = setup();
   await filters[2].fire('click');
-  assert.deepEqual(projects.map(p => p.hidden), [true, false, true, true, true, true]);
+  assert.deepEqual(projects.map(p => p.hidden), [true, false, true, true, true, true, true]);
   assert.equal(e.index.hidden, true);
   assert.equal(e.counter.textContent, '1 project in Web & systems');
   await filters[0].fire('click');
-  assert.equal(projects.filter(p => !p.hidden).length, 6);
+  assert.equal(projects.filter(p => !p.hidden).length, 7);
   assert.equal(e.index.hidden, false);
 });
 test('menu opens and Escape closes it with restored focus', async () => {
@@ -233,8 +233,8 @@ test('canvas remains drawable while pointer coordinates change', async () => {
 });
 test('homepage has explicit motion controls, native disclosures, and no placeholder trackers', () => {
   assert.match(html, /id="motion-toggle"/);
-  assert.equal((html.match(/class="project index-project/g) || []).length, 4);
-  assert.equal((html.match(/data-category=/g) || []).length, 6);
+  assert.equal((html.match(/class="project index-project/g) || []).length, 5);
+  assert.equal((html.match(/data-category=/g) || []).length, 7);
   assert.match(html, /netlify-honeypot="bot-field"/);
   assert.match(css, /prefers-reduced-motion/);
   assert.match(css, /\[hidden\]/);
