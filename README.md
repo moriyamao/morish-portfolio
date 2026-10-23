@@ -56,3 +56,15 @@ python -m tutorialcheck.train
 The supported target is pandas 2.2.3. This is a measured prototype with a small original benchmark, not a general compatibility guarantee. The project README documents the results, errors and limits.
 
 To preview the complete portfolio, run `python -m http.server 8000 --bind 127.0.0.1` from the repository root and open `http://127.0.0.1:8000/`.
+
+## Business websites
+
+Three self-contained, responsive website concepts are published under Clients in the portfolio. These are independent design and implementation studies, not claims of commissioned client work.
+
+| Website | Live | Source | Interaction |
+| --- | --- | --- | --- |
+| Forma | [Live website](https://moriyamao.github.io/morish-portfolio/clients/forma/) | [Source](clients/forma/) | Project filters, accessible project dialogs, room explorer, downloadable project brief |
+| Torque | [Live website](https://moriyamao.github.io/morish-portfolio/clients/torque/) | [Source](clients/torque/) | Vehicle-size estimate builder, finish simulation, itemized estimate download |
+| Common Ground | [Live website](https://moriyamao.github.io/morish-portfolio/clients/common-ground/) | [Source](clients/common-ground/) | Workspace explorer, daily/monthly pricing, selectable floor map, sample workday plan |
+
+Run business-site checks with `node --test clients/clients.test.cjs`. All calculations run locally, with no booking, payment, account, or submission backend. No personal data is transmitted by these interactions. Fonts load from Google Fonts with system fallbacks; photography is checked into each site. Each site README records imagery and implementation details.
