@@ -3,21 +3,34 @@
     "id": "microsoft-ai-ml",
     "title": "Microsoft AI & ML Engineering Professional Certificate",
     "issuer": "Microsoft",
-    "credentialId": null,
-    "url": "https://www.linkedin.com/in/morish-macayan/",
-    "linkLabel": "View on LinkedIn",
-    "source": "User-provided resume",
-    "verification": "Profile reference; direct credential URL unavailable"
+    "credentialId": "BPYCOJIRP7TI",
+    "url": "https://coursera.org/verify/professional-cert/BPYCOJIRP7TI",
+    "linkLabel": "Open certificate",
+    "source": "User-supplied Microsoft AI & ML Engineering certificate PDF",
+    "verification": "Name, title, issuer, date and credential URL read from supplied PDF; online issuer page not independently verified",
+    "issuedOn": "2026-07-30"
+  },
+  {
+    "id": "microsoft-generative-ai",
+    "title": "Microsoft Generative AI Engineering Professional Certificate",
+    "issuer": "Microsoft",
+    "credentialId": "KXZ7YC2OQRHU",
+    "issuedOn": "2026-08-08",
+    "url": "https://coursera.org/verify/professional-cert/KXZ7YC2OQRHU",
+    "linkLabel": "Open certificate",
+    "source": "User-supplied Coursera certificate PDF",
+    "verification": "Name, title, issuer, date and credential URL read from supplied PDF; online issuer page not independently verified"
   },
   {
     "id": "ibm-ml",
     "title": "IBM Machine Learning",
     "issuer": "IBM",
-    "credentialId": null,
-    "url": "https://www.linkedin.com/in/morish-macayan/",
-    "linkLabel": "View on LinkedIn",
-    "source": "User-provided resume",
-    "verification": "Profile reference; direct credential URL unavailable"
+    "credentialId": "TQCN55QGFK4A",
+    "url": "https://coursera.org/verify/professional-cert/TQCN55QGFK4A",
+    "linkLabel": "Open certificate",
+    "source": "User-supplied IBM Machine Learning certificate PDF",
+    "verification": "Name, title, issuer, date and credential URL read from supplied PDF; online issuer page not independently verified",
+    "issuedOn": "2026-07-30"
   },
   {
     "id": "ms-algorithms",
@@ -43,11 +56,12 @@
     "id": "aws-foundations",
     "title": "AWS Educate Machine Learning Foundations",
     "issuer": "Amazon Web Services",
-    "credentialId": null,
-    "url": "https://www.linkedin.com/in/morish-macayan/",
-    "linkLabel": "View on LinkedIn",
-    "source": "Public LinkedIn badge post",
-    "verification": "Profile reference; direct credential URL unavailable"
+    "credentialId": "0642a386-7642-4039-9a2f-b789a400d126",
+    "url": "https://www.credly.com/badges/0642a386-7642-4039-9a2f-b789a400d126/linked_in_profile",
+    "linkLabel": "Open badge",
+    "source": "User-supplied badge screenshot and Credly URL",
+    "verification": "Badge name, recipient and issue date read from screenshot; online badge page not independently verified",
+    "issuedOn": "2026-06-18"
   },
   {
     "id": "linear-algebra",
@@ -158,5 +172,60 @@
     "linkLabel": "Open certificate",
     "source": "Public LinkedIn certification listing",
     "verification": "URL formed from listed credential ID; issuer page not independently fetched"
+  },
+  {
+    "id": "programming-languages-a",
+    "title": "Programming Languages, Part A",
+    "issuer": "University of Washington",
+    "credentialId": "KTOBG5NO71MM",
+    "issuedOn": "2026-10-11",
+    "url": "https://coursera.org/verify/KTOBG5NO71MM",
+    "linkLabel": "Open certificate",
+    "source": "User-supplied Coursera certificate PDF",
+    "verification": "Name, title, issuer, date and credential URL read from supplied PDF; online issuer page not independently verified"
+  },
+  {
+    "id": "search-engines",
+    "title": "Search Engines for Web and Enterprise Data",
+    "issuer": "The Hong Kong University of Science and Technology",
+    "credentialId": "G45W0PVHYIYA",
+    "issuedOn": "2026-10-07",
+    "url": "https://coursera.org/verify/G45W0PVHYIYA",
+    "linkLabel": "Open certificate",
+    "source": "User-supplied Coursera certificate PDF",
+    "verification": "Name, title, issuer, date and credential URL read from supplied PDF; online issuer page not independently verified"
+  },
+  {
+    "id": "seo",
+    "title": "Search Engine Optimization",
+    "issuer": "Simplilearn",
+    "credentialId": "7OSYDH145RC9",
+    "issuedOn": "2026-10-07",
+    "url": "https://coursera.org/verify/7OSYDH145RC9",
+    "linkLabel": "Open certificate",
+    "source": "User-supplied Coursera certificate PDF",
+    "verification": "Name, title, issuer, date and credential URL read from supplied PDF; online issuer page not independently verified"
+  },
+  {
+    "id": "simulink",
+    "title": "Modeling and Simulation with Simulink",
+    "issuer": "MathWorks",
+    "credentialId": "7XFIWCZK5W04",
+    "issuedOn": "2026-09-02",
+    "url": "https://coursera.org/verify/7XFIWCZK5W04",
+    "linkLabel": "Open certificate",
+    "source": "User-supplied Coursera certificate PDF",
+    "verification": "Name, title, issuer, date and credential URL read from supplied PDF; online issuer page not independently verified"
+  },
+  {
+    "id": "responsive-design",
+    "title": "Advanced Styling with Responsive Design",
+    "issuer": "University of Michigan",
+    "credentialId": "L509I573AXKO",
+    "issuedOn": "2025-02-15",
+    "url": "https://coursera.org/verify/L509I573AXKO",
+    "linkLabel": "Open certificate",
+    "source": "User-supplied Coursera certificate PDF",
+    "verification": "Name, title, issuer, date and credential URL read from supplied PDF; online issuer page not independently verified"
   }
 ]
