@@ -155,9 +155,12 @@ details[open] > summary .expand-icon { transform: rotate(45deg); }
 .derivative { font: italic 60px Georgia, serif; color: var(--teal); }
 .client-section { background: #151812; }
 .client-list { border-top: 1px solid var(--line); }
-.client-list > a { display: grid; grid-template-columns: 30px 1fr 210px 30px; gap: 20px; align-items: center; padding: 22px 0; border-bottom: 1px solid var(--line); text-decoration: none; transition: padding .3s, color .3s; }
-.client-list > a:hover { padding-left: 15px; color: var(--teal); }
-.client-name { font-size: 43px; line-height: 1.2; letter-spacing: -.055em; }
+.client-row { display: grid; grid-template-columns: 30px minmax(0, 1fr) 180px 130px; gap: 20px; align-items: center; padding: 22px 0; border-bottom: 1px solid var(--line); }
+.client-name { font-size: 43px; line-height: 1.2; letter-spacing: -.055em; margin: 0; }
+.client-name a { text-decoration: none; }
+.client-name a:hover, .client-links a:hover { color: var(--teal); }
+.client-links { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+.client-links a { font-size: 12px; padding: 5px 0; text-decoration-thickness: 1px; }
 .client-type { font: 8px var(--mono); color: var(--ink-soft); }
 .client-arrow { color: var(--teal); font-size: 27px; transition: transform .3s; }
 .client-list > a:hover .client-arrow { transform: translate(4px, -4px); }
@@ -355,7 +358,7 @@ html[data-motion=paused] .reveal { opacity: 1; transform: none; }
   .code-study { padding: 22px; max-width: 430px; }
   .code-study strong, .code-study del { font-size: 18px; }
   .index-statement { font-size: 26px; }
-  .client-list > a { grid-template-columns: 24px 1fr 155px 23px; gap: 14px; }
+  .client-row { grid-template-columns: 24px minmax(0, 1fr) 125px 110px; gap: 14px; }
   .client-name { font-size: 35px; }
   .client-type { font-size: 7px; }
   .academic-work { grid-template-columns: 1fr 1fr; gap: 23px; margin-top: 40px; }
@@ -414,7 +417,8 @@ html[data-motion=paused] .reveal { opacity: 1; transform: none; }
   .index-name { font-size: 23px; }
   .code-study strong, .code-study del { font-size: 15px; }
   .index-body { padding-left: 0; }
-  .client-list > a { grid-template-columns: 24px 1fr 23px; gap: 13px; padding: 20px 0; }
+  .client-row { grid-template-columns: 24px minmax(0, 1fr); gap: 13px; padding: 20px 0; }
+  .client-links { grid-column: 2; flex-direction: row; align-items: center; flex-wrap: wrap; gap: 10px 22px; }
   .client-type { grid-column: 2; grid-row: 2; margin-top: -7px; }
   .client-arrow { grid-column: 3; grid-row: 1; }
   .client-name { font-size: 34px; }
