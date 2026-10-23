@@ -28,5 +28,6 @@ test('every extracted asset is referenced by a page', () => {
     const html = pages.map(page => fs.readFileSync(path.join(root, page), 'utf8')).join('\n');
     const assets = fs.readdirSync(root).filter(name => /-page(?:-\d+)?\.(?:js|css)$/.test(name));
     assert.ok(assets.length > 0);
-    for (const asset of assets) assert.ok(html.includes('"' + asset + '"'), 'Unreferenced asset: ' + asset);
+    for (const asset of assets) assert.ok(html.includes('"' + asset + '"') || html.includes('"' + asset + '?'), 'Unreferenced asset: ' + asset);
 });
+

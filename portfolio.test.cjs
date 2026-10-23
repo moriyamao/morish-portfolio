@@ -249,7 +249,8 @@ test('all portfolio-relative links and local script assets exist', () => {
     assert.equal(new Set(ids).size, ids.length, page + ': unique IDs');
     for (const [, reference] of text.matchAll(/(?:href|src)="([^"]+)"/g)) {
       if (/^(?:https?:|data:|mailto:|tel:|\/)/.test(reference)) continue;
-      const [file, hash] = reference.split('#');
+      const [fileWithQuery, hash] = reference.split('#');
+      const file = fileWithQuery.split('?')[0];
       const resolved = path.resolve(__dirname, file || page);
       assert.ok(fs.existsSync(resolved), page + ': ' + reference);
       if (hash && resolved.endsWith('.html')) {
