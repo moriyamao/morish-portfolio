@@ -1,4 +1,4 @@
-/* Navigation, project filtering, motion preferences, and Netlify contact delivery. */
+/* Navigation, motion preferences, and Netlify contact delivery. */
 (() => {
   'use strict';
   document.body.classList.add('js-ready');
@@ -26,28 +26,6 @@
   window.matchMedia('(min-width: 761px)').addEventListener?.('change', event => {
     if (event.matches) closeMenu();
   });
-
-  const filters = document.querySelector('.filters');
-  const filterButtons = [...filters.querySelectorAll('[data-filter]')];
-  const projects = [...document.querySelectorAll('.project')];
-  const counter = document.getElementById('project-count');
-  const index = document.querySelector('.project-index');
-  filters.hidden = false;
-  filterButtons.forEach(button => button.addEventListener('click', () => {
-    const category = button.dataset.filter;
-    filterButtons.forEach(item => item.setAttribute('aria-pressed', String(item === button)));
-    let count = 0;
-    projects.forEach(project => {
-      project.hidden = category !== 'all' && project.dataset.category !== category;
-      if (!project.hidden) {
-        count++;
-        project.classList.add('is-visible');
-      }
-    });
-    index.hidden = ![...index.querySelectorAll('.project')].some(project => !project.hidden);
-    const label = category === 'all' ? 'selected' : category === 'ml' ? 'in ML & AI' : 'in Web & systems';
-    counter.textContent = count + ' ' + (count === 1 ? 'project' : 'projects') + ' ' + label;
-  }));
 
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
   const motionButton = document.getElementById('motion-toggle');

@@ -85,27 +85,28 @@ function setup({ reduce = false, stored = null, storageError = false, fetchImpl 
 test('page enhances progressively without an IntersectionObserver', () => {
   const { e } = setup();
   assert.ok(e.body.classes.has('js-ready'));
-  assert.equal(e.filters.hidden, false);
   assert.equal(e.motion.hidden, false);
   assert.ok(!e.body.classes.has('motion-ready'));
 });
-test('ML filter includes academic research and updates its live count', async () => {
-  const { e, projects, filters } = setup();
-  await filters[1].fire('click');
-  assert.equal(projects.filter(p => !p.hidden).length, 6);
-  assert.equal(e.counter.textContent, '6 projects in ML & AI');
-  assert.equal(filters[1].getAttribute('aria-pressed'), 'true');
-  assert.equal(filters[0].getAttribute('aria-pressed'), 'false');
+test('academic projects are visible together and reachable from main navigation', () => {
+  const academic = html.match(/<section id="academic-projects"[\s\S]*?<\/section>/)?.[0];
+  assert.ok(academic);
+  assert.match(html.match(/<ul id="nav-links">[\s\S]*?<\/ul>/)[0], /href="#academic-projects">Academic Projects/);
+  for (const title of ['TravelEase', 'Breast Ultrasound Research', 'Supply-Chain Resilience', 'ALX Desserts', 'HotelEase']) assert.ok(academic.includes(title), title);
+  assert.equal((academic.match(/class="academic-card/g) || []).length, 5);
+  assert.doesNotMatch(academic, /<details|\bhidden\b|data-category/);
+  const independent = html.match(/<section id="work"[\s\S]*?<\/section>/)[0];
+  assert.doesNotMatch(independent, /case-travelease|case-ultrasound|case-resilience/);
+  assert.doesNotMatch(html, /ALSO BUILT AT MAPÚA|PERSONAL PROJECT/);
 });
-test('web filter isolates TravelEase and removes empty index spacing', async () => {
-  const { e, projects, filters } = setup();
-  await filters[2].fire('click');
-  assert.deepEqual(projects.map(p => p.hidden), [true, false, true, true, true, true, true]);
-  assert.equal(e.index.hidden, true);
-  assert.equal(e.counter.textContent, '1 project in Web & systems');
-  await filters[0].fire('click');
-  assert.equal(projects.filter(p => !p.hidden).length, 7);
-  assert.equal(e.index.hidden, false);
+test('research documents, live demos, and GitHub Pages identity remain available', () => {
+  assert.match(html, /https:\/\/moriyamao.github.io\/morish-portfolio\//);
+  assert.match(html, /https:\/\/travelease-zp7o.onrender.com\/auth\/login.php/);
+  assert.match(html, /https:\/\/breast-ultrasound-web-pragmatism.streamlit.app/);
+  for (const name of ['breast-ultrasound-paper.pdf', 'supply-chain-resilience-paper.pdf']) {
+    assert.match(fs.readFileSync(path.join(__dirname, 'research', name)).subarray(0, 5).toString(), /%PDF-/);
+  }
+  for (const file of fs.readdirSync(__dirname).filter(f => f.endsWith('.html'))) assert.doesNotMatch(fs.readFileSync(path.join(__dirname, file), 'utf8'), /moriyamao\.netlify\.app/);
 });
 test('menu opens and Escape closes it with restored focus', async () => {
   const { e, document } = setup();
@@ -233,8 +234,8 @@ test('canvas remains drawable while pointer coordinates change', async () => {
 });
 test('homepage has explicit motion controls, native disclosures, and no placeholder trackers', () => {
   assert.match(html, /id="motion-toggle"/);
-  assert.equal((html.match(/class="project index-project/g) || []).length, 5);
-  assert.equal((html.match(/data-category=/g) || []).length, 7);
+  assert.equal((html.match(/class="project index-project/g) || []).length, 4);
+  assert.equal((html.match(/data-category=/g) || []).length, 5);
   assert.match(html, /netlify-honeypot="bot-field"/);
   assert.match(css, /prefers-reduced-motion/);
   assert.match(css, /\[hidden\]/);
