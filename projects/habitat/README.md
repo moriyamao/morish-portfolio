@@ -1,5 +1,14 @@
 # HABITAT
 
+Manual checks for this release:
+
+1. **Phone layout.** At 390 px, switch between Floor Plan and Spatial View, scroll the furniture tray, and open and close Details. Draw a room with one finger and pan and zoom with two fingers. Starting a pinch should cancel a pending draw or placement. Swipe outside the drawing surface to scroll the page.
+2. **Overlap feedback.** Drag a rotated item into a wall and another item, then back into open space. The red tint should appear only during the overlap and should still let you drop and undo the move.
+3. **3D fallback.** Block the local Three.js module and reload. Check the message in Spatial View, then switch to Floor Plan and make an edit, save JSON, and export a PNG.
+4. **Share link.** Copy a link and open it in another browser. Check the project name, active floor, and furniture. Open a damaged link and verify the local design remains available.
+5. **Furniture.** Place the eight new items. Inspect them in plan and 3D, change a finish, then save and reopen the JSON.
+6. **Storeys and templates.** Load the townhouse, switch floors, and compare assembled, separated, and active-floor views. Add, copy, rename, and remove a floor. Undo a removal and reload to verify autosave. Open an older single-floor JSON file and verify its geometry.
+
 A buildless, local-first floor-plan editor and synchronized Three.js spatial view.
 All application paths are relative, including the pinned, local Three.js modules.
 No accounts, service calls, remote assets, build step, or package installation.
@@ -128,7 +137,7 @@ browser screenshot, not a mockup.
 
 ## Limits
 
-One floor only; straight horizontal/vertical walls and rectangular room drawing.
+Up to five storeys with separate plans. Walls stay horizontal or vertical, and room drawing is rectangular. Stairs are decorative.
 There are no roofs, curved/free-angle walls, structural calculations, building-code
 checks, measurements from photographs, BIM/CAD interchange or photorealistic
 rendering. Decorative stairs do not create another floor. Furniture can overlap

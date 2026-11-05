@@ -58,7 +58,7 @@ test('wall edits cannot crush or shorten past openings; deleting wall removes de
   const next=deleteEntity(m,wall);assert.equal(next.openings.length,0);assert.equal(next.vertices.length,0);
 });
 test('all catalog entries support dimension, rotation, finish, duplicate and deletion edits',()=>{
-  let m=blank();for(const catalogId of Object.keys(CATALOG))m=addObject(m,catalogId,1,2);assert.equal(m.objects.length,10);const id=m.objects[0].id;m=updateEntity(m,id,{w:2.6,d:1,h:1.1,rotation:45,material:'sage'});const previous=m.objects.find(o=>o.id===id);m=duplicateObject(m,id);const copy=m.objects.at(-1);assert.notEqual(copy.id,id);assert.equal(copy.catalogId,previous.catalogId);assert.equal(copy.rotation,45);assert.equal(copy.w,2.6);assert.equal(copy.x,1.3);m=deleteEntity(m,copy.id);assert.equal(m.objects.length,10);
+  let m=blank();for(const catalogId of Object.keys(CATALOG))m=addObject(m,catalogId,1,2);assert.equal(m.objects.length,Object.keys(CATALOG).length);const id=m.objects[0].id;m=updateEntity(m,id,{w:2.6,d:1,h:1.1,rotation:45,material:'sage'});const previous=m.objects.find(o=>o.id===id);m=duplicateObject(m,id);const copy=m.objects.at(-1);assert.notEqual(copy.id,id);assert.equal(copy.catalogId,previous.catalogId);assert.equal(copy.rotation,45);assert.equal(copy.w,2.6);assert.equal(copy.x,1.3);m=deleteEntity(m,copy.id);assert.equal(m.objects.length,Object.keys(CATALOG).length);
   assert.throws(()=>updateEntity(m,id,{catalogId:'unknown'}),/Unsupported property/);assert.throws(()=>updateEntity(m,id,{w:0}));assert.throws(()=>duplicateObject(m,'missing'));
 });
 test('history commits each gesture as one snapshot, supports redo and branches safely',()=>{

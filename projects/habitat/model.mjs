@@ -7,7 +7,11 @@ export const CATALOG = {
   chair:{label:'Chair',w:.5,d:.55,h:.85,material:'walnut'}, bed:{label:'Double bed',w:1.6,d:2,h:.65,material:'linen'},
   counter:{label:'Counter',w:1.8,d:.6,h:.9,material:'chalk'}, bath:{label:'Bath',w:.8,d:1.7,h:.6,material:'chalk'},
   toilet:{label:'Toilet',w:.45,d:.7,h:.75,material:'chalk'}, plant:{label:'Plant',w:.55,d:.55,h:1.2,material:'sage'},
-  lamp:{label:'Floor lamp',w:.4,d:.4,h:1.6,material:'ink'}, stair:{label:'Decorative stair',w:.9,d:2,h:1.8,material:'oak'}
+  lamp:{label:'Floor lamp',w:.4,d:.4,h:1.6,material:'ink'}, stair:{label:'Decorative stair',w:.9,d:2,h:1.8,material:'oak'},
+  wardrobe:{label:'Wardrobe',w:1.5,d:.6,h:2.1,material:'oak'}, desk:{label:'Desk',w:1.3,d:.65,h:.75,material:'oak'},
+  diningTable:{label:'Oval dining table',w:1.8,d:.95,h:.75,material:'oak'}, tvUnit:{label:'TV unit',w:1.6,d:.45,h:1.15,material:'walnut'},
+  rug:{label:'Rug',w:2,d:1.4,h:.2,material:'clay'}, tallPlant:{label:'Tall plant',w:.7,d:.65,h:1.9,material:'sage'},
+  bookshelf:{label:'Bookshelf',w:1,d:.35,h:1.85,material:'oak'}, vanity:{label:'Vanity',w:.9,d:.52,h:.9,material:'chalk'}
 };
 export const clone = value => structuredClone(value);
 export const snap = n => Math.round(n / GRID) / 10;
