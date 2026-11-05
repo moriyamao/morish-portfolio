@@ -4,6 +4,7 @@ import {fromPlan,parseBuilding,activeFloor,addFloor,setFloorPlan,selectFloor,upd
 import {TEMPLATES,createTemplate} from './templates.mjs';
 import {overlaps} from './collision.mjs';
 import {encodeShare,decodeShare} from './share.mjs';
+import {alignPoint} from './alignment.mjs';
 const $=id=>document.getElementById(id), svg=$('plan'), storageKey='habitat.design.v2';
 let home=fromPlan(preset('studio')),loadNote='',restored=false,hasEdited=false;
 try{const saved=localStorage.getItem(storageKey),legacy=localStorage.getItem('habitat.design.v1');if(saved){try{home=parseBuilding(saved);restored=true;loadNote='Restored your multi-storey home.';}catch(e){if(legacy){home=parseBuilding(legacy);restored=true;loadNote='The latest save could not be read. Your original single-storey backup was restored.';}else loadNote=`Local restore unavailable: ${e.message}`;}}else if(legacy){home=parseBuilding(legacy);restored=true;loadNote='Your saved home is ready for more floors. The original backup is preserved.';}}catch(e){loadNote=`Local restore unavailable: ${e.message}`;}
@@ -66,7 +67,20 @@ function world(event){const point=svg.createSVGPoint();point.x=event.clientX;poi
 function zoom(factor,center={x:view.x+view.w/2,y:view.y+view.h/2}){const width=Math.max(1.5,Math.min(125,view.w*factor)),ratio=width/view.w;view={x:center.x+(view.x-center.x)*ratio,y:center.y+(view.y-center.y)*ratio,w:width,h:view.h*ratio};setView();}
 svg.addEventListener('wheel',e=>{e.preventDefault();zoom(Math.exp(Math.max(-.25,Math.min(.25,e.deltaY*.0015))),world(e));},{passive:false});
 function ghost(p,q){const NS='http://www.w3.org/2000/svg',el=document.createElementNS(NS,tool==='room'?'rect':'line');el.id='draw-preview';el.setAttribute('fill','#c3976420');el.setAttribute('stroke','#a86f49');el.setAttribute('stroke-width','.04');el.setAttribute('stroke-dasharray','.12 .06');if(tool==='room'){el.setAttribute('x',Math.min(p.x,q.x));el.setAttribute('y',Math.min(p.y,q.y));el.setAttribute('width',Math.abs(q.x-p.x));el.setAttribute('height',Math.abs(q.y-p.y));}else{for(const [key,value]of Object.entries({x1:p.x,y1:p.y,x2:q.x,y2:q.y}))el.setAttribute(key,value);}svg.querySelector('#draw-preview')?.remove();svg.append(el);}
-function endPoint(g,p){let q={x:snap(p.x),y:snap(p.y)};if(g.type==='wall'){if(Math.abs(q.x-g.p.x)>Math.abs(q.y-g.p.y))q.y=g.p.y;else q.x=g.p.x;}return q;}
+const alignToggle=$('align');
+try{alignToggle.checked=localStorage.getItem('habitat.align')!=='off';}catch{/* Use the default. */}
+alignToggle.addEventListener('change',()=>{
+  try{localStorage.setItem('habitat.align',alignToggle.checked?'on':'off');}catch{/* The toggle still works for this session. */}
+  message(alignToggle.checked?'Nearby wall alignment on.':'Nearby wall alignment off. Grid snapping is still on.');
+});
+function endPoint(g,p){
+  const q=alignPoint(g.base,p,g.align);
+  if(g.type==='wall'){
+    if(Math.abs(p.x-g.start.x)>Math.abs(p.y-g.start.y))q.y=g.p.y;
+    else q.x=g.p.x;
+  }
+  return q;
+}
 svg.addEventListener('pointerdown',event=>{
   if(event.button!==0&&event.button!==1)return;event.preventDefault();svg.focus({preventScroll:true});svg.setPointerCapture(event.pointerId);points.set(event.pointerId,{x:event.clientX,y:event.clientY});
   if(points.size===2){
@@ -76,7 +90,10 @@ svg.addEventListener('pointerdown',event=>{
   }
   if(points.size>2)return;const p=world(event),base=clone(m),hit=event.target.closest('[data-id]'),id=hit?.dataset.id,vertex=event.target.dataset.vertex,handle=event.target.dataset.handle;
   if(event.button===1||space||tool==='pan'){gesture={type:'pan',p,view:{...view},client:{x:event.clientX,y:event.clientY}};return;}
-  if(tool==='room'||tool==='wall'){gesture={type:tool,p:{x:snap(p.x),y:snap(p.y)},base};return;}
+  if(tool==='room'||tool==='wall'){
+    const align=alignToggle.checked;
+    gesture={type:tool,start:p,p:alignPoint(base,p,align),base,align};return;
+  }
   if(tool.startsWith('object:')||tool==='door'||tool==='window'){
     const place=()=>{if(tool.startsWith('object:')){placeObject(tool.split(':')[1],p);return;}
       const w=m.walls.find(w=>w.id===id);if(!w){message('Tap a wall to place the opening.',true);return;}
