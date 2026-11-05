@@ -5,14 +5,14 @@ import {TEMPLATES,createTemplate} from './templates.mjs';
 import {overlaps} from './collision.mjs';
 import {encodeShare,decodeShare} from './share.mjs';
 import {alignPoint} from './alignment.mjs';
-import {moveRoom,objectBase} from './model.mjs';
+import {moveRoom,objectBase,roomContains} from './model.mjs';
 const $=id=>document.getElementById(id), svg=$('plan'), storageKey='habitat.design.v2';
 let home=fromPlan(preset('studio')),loadNote='',restored=false,hasEdited=false;
 try{const saved=localStorage.getItem(storageKey),legacy=localStorage.getItem('habitat.design.v1');if(saved){try{home=parseBuilding(saved);restored=true;loadNote='Restored your multi-storey home.';}catch(e){if(legacy){home=parseBuilding(legacy);restored=true;loadNote='The latest save could not be read. Your original single-storey backup was restored.';}else loadNote=`Local restore unavailable: ${e.message}`;}}else if(legacy){home=parseBuilding(legacy);restored=true;loadNote='Your saved home is ready for more floors. The original backup is preserved.';}}catch(e){loadNote=`Local restore unavailable: ${e.message}`;}
 try{const shared=await decodeShare(location.hash);if(shared){home=shared;restored=false;loadNote='Shared home opened. Edit it to save a local copy.';}}catch(e){loadNote=e.message;}
 const history=new BuildingHistory(home);home=history.current;let m=activeFloor(home).plan;
 let selected=null,tool='select',view=bounds(m),initialWidth=view.w,scene=null,sceneFailed=false,sceneMode='stacked',saveTimer,gesture=null,space=false,grid=true,labels=true,points=new Map(),pendingAction=null;
-const hints={select:'Select a wall or an object to make it yours.',room:'Drag a rectangle. Connected edges join automatically.',wall:'Drag a straight wall. Ends snap to the 0.1 m grid.',door:'Click a wall to place a 0.9 m door. Keep clear of junctions.',window:'Click a wall to place a 1.2 m window.',pan:'Drag to pan. Pinch or scroll to zoom.'};
+const hints={select:'Hold the floor or furniture to grab the room, then drag.',room:'Drag a rectangle. Connected edges join automatically.',wall:'Drag a straight wall. Ends snap to the 0.1 m grid.',door:'Click a wall to place a 0.9 m door. Keep clear of junctions.',window:'Click a wall to place a 1.2 m window.',pan:'Drag to pan. Pinch or scroll to zoom.'};
 function message(text,error=false){$('message').textContent=text;$('message').classList.toggle('error',error);}
 function entity(){return [...m.objects,...m.walls,...m.openings].find(e=>e.id===selected);}
 function selectedRoom(){return selected?.includes(':')?detectRooms(m).find(room=>room.id===selected):null;}
@@ -97,6 +97,17 @@ function endPoint(g,p){
   }
   return q;
 }
+function armRoomHold(drag,room,event){
+  drag.holdOrigin={x:event.clientX,y:event.clientY};
+  setTimeout(()=>{
+    if(gesture!==drag||drag.moved||points.size!==1||tool!=='select')return;
+    selected=room.id;
+    gesture={type:'room-move',room,p:drag.p,base:drag.base,moved:false};
+    render();
+    message('Room grabbed. Drag to move its walls and furniture.');
+  },450);
+}
+svg.addEventListener('contextmenu',event=>{if(tool==='select')event.preventDefault();});
 svg.addEventListener('pointerdown',event=>{
   if(event.button!==0&&event.button!==1)return;event.preventDefault();svg.focus({preventScroll:true});svg.setPointerCapture(event.pointerId);points.set(event.pointerId,{x:event.clientX,y:event.clientY});
   if(points.size===2){
@@ -122,9 +133,17 @@ svg.addEventListener('pointerdown',event=>{
   if(vertex){gesture={type:'vertex',id:vertex,p,base};return;}
   selected=id||null;render();
   const room=selectedRoom();
-  if(room){gesture={type:'room-move',room,p,base,moved:false};return;}
+  if(room){
+    gesture={type:'room-move',room,p,base,moved:false};
+    armRoomHold(gesture,room,event);
+    return;
+  }
   const e=entity();if(!e)return;
   gesture={type:handle|| (m.objects.includes(e)?'object':m.walls.includes(e)?'wall-move':'opening'),id:e.id,p,base,entity:clone(e),moved:false};
+  if(gesture.type==='object'){
+    const parentRoom=detectRooms(base).find(candidate=>roomContains(candidate,e));
+    if(parentRoom)armRoomHold(gesture,parentRoom,event);
+  }
 });
 svg.addEventListener('pointermove',event=>{
   if(points.has(event.pointerId))points.set(event.pointerId,{x:event.clientX,y:event.clientY});const g=gesture;if(!g)return;
@@ -135,6 +154,10 @@ svg.addEventListener('pointermove',event=>{
     const current=world(mid);view.x+=g.anchor.x-current.x;view.y+=g.anchor.y-current.y;setView();return;
   }
   if(g.type==='tap'){g.moved=g.moved||Math.hypot(event.clientX-g.client.x,event.clientY-g.client.y)>9;return;}
+  if(g.holdOrigin&&!g.moved){
+    if(Math.hypot(event.clientX-g.holdOrigin.x,event.clientY-g.holdOrigin.y)<5)return;
+    g.moved=true;
+  }
   const p=world(event);
   if(g.type==='building'){
     const dx=snap(p.x-g.p.x),dy=snap(p.y-g.p.y);
