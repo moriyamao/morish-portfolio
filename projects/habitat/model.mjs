@@ -145,6 +145,38 @@ export function addObject(m,catalogId,x,y) {return edit(m,n=>{const c=CATALOG[ca
 export function updateEntity(m,entityId,patch) {return edit(m,n=>{const e=[...n.walls,...n.objects,...n.openings].find(e=>e.id===entityId);if(!e)fail('Selection no longer exists.');const allowed=n.objects.includes(e)?['x','y','w','d','h','rotation','material']:n.walls.includes(e)?['height','thickness','material']:['offset','width','height','sill'];for(const k of Object.keys(patch))if(!allowed.includes(k))fail('Unsupported property.');Object.assign(e,patch);});}
 export function deleteEntity(m,entityId) {return edit(m,n=>{n.objects=n.objects.filter(e=>e.id!==entityId);n.openings=n.openings.filter(e=>e.id!==entityId&&e.wallId!==entityId);n.walls=n.walls.filter(e=>e.id!==entityId);const used=new Set(n.walls.flatMap(w=>[w.a,w.b]));n.vertices=n.vertices.filter(v=>used.has(v.id));});}
 export function duplicateObject(m,entityId) {return edit(m,n=>{const o=n.objects.find(o=>o.id===entityId);if(!o)fail('Only furniture can be duplicated.');n.objects.push({...o,id:id(n,'f'),x:snap(o.x+.3),y:snap(o.y+.3)});});}
+function contains(points,p){
+  let yes=false;
+  for(let i=0,j=points.length-1;i<points.length;j=i++){
+    const a=points[i],b=points[j];
+    if((a.y>p.y)!==(b.y>p.y)&&p.x<(b.x-a.x)*(p.y-a.y)/(b.y-a.y)+a.x)yes=!yes;
+  }
+  return yes;
+}
+export function roomContains(room,p){
+  return contains(room.points,p)&&!room.holes.some(hole=>contains(hole,p));
+}
+export function moveRoom(m,room,dx,dy){
+  const offsets={x:snap(dx),y:snap(dy)};
+  return edit(m,next=>{
+    for(const axis of ['x','y']){
+      if(!offsets[axis])continue;
+      const moving=new Set(room.points.map(p=>p.id));
+      // Follow collinear neighbors so attached walls stay orthogonal.
+      const neighbors=new Map(m.vertices.map(v=>[v.id,[]]));
+      for(const wall of m.walls){
+        const [a,b]=wallPoints(m,wall);
+        if(near(a[axis],b[axis])){neighbors.get(a.id).push(b.id);neighbors.get(b.id).push(a.id);}
+      }
+      for(const id of moving)for(const neighbor of neighbors.get(id))moving.add(neighbor);
+      for(const v of next.vertices)if(moving.has(v.id))v[axis]=snap(v[axis]+offsets[axis]);
+    }
+    for(const object of next.objects)if(roomContains(room,object)){
+      object.x=Number((object.x+offsets.x).toFixed(10));
+      object.y=Number((object.y+offsets.y).toFixed(10));
+    }
+  });
+}
 export function detectRooms(m) {
   const adjacency=new Map(m.vertices.map(v=>[v.id,[]]));
   for(const w of m.walls){adjacency.get(w.a).push(w.b);adjacency.get(w.b).push(w.a);}
@@ -163,7 +195,6 @@ export function detectRooms(m) {
   }
   // Every disconnected component has an exterior (negative) boundary. If that
   // boundary is inside another bounded face, it is a hole in that face.
-  const contains=(points,p)=>{let yes=false;for(let i=0,j=points.length-1;i<points.length;j=i++){const a=points[i],b=points[j];if((a.y>p.y)!==(b.y>p.y)&&p.x<(b.x-a.x)*(p.y-a.y)/(b.y-a.y)+a.x)yes=!yes;}return yes;};
   for(const hole of negative){const parent=rooms.filter(r=>r.area>hole.area+1e-6&&contains(r.points,hole.points[0])).sort((a,b)=>a.area-b.area)[0];if(parent)parent.holes.push(hole.points);}
   for(const r of rooms)for(const hole of r.holes)r.area-=Math.abs(hole.reduce((s,p,i)=>{const q=hole[(i+1)%hole.length];return s+p.x*q.y-q.x*p.y;},0)/2);
   return rooms;

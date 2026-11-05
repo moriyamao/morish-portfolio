@@ -2,8 +2,19 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {blank,preset,validate,parseDocument,addWall,addRoom,wallPoints,wallLength,moveVertex,moveWall,resizeWall,addOpening,openingCuts,addObject,updateEntity,duplicateObject,deleteEntity,detectRooms,History,CATALOG} from './model.mjs';
 import {exportSVG,planContent} from './plan.mjs';
+import {moveRoom,roomContains} from './model.mjs';
 const p=(x,y)=>({x,y});
 const area=m=>detectRooms(m).reduce((sum,r)=>sum+r.area,0);
+test('moving an attached room carries its furniture and preserves the shared wall',()=>{
+  let plan=addRoom(addRoom(blank(),p(0,0),p(4,4)),p(4,0),p(8,4));
+  plan=addObject(addObject(plan,'chair',2,2),'chair',6,2);
+  const room=detectRooms(plan).find(r=>roomContains(r,p(2,2)));
+  const moved=moveRoom(plan,room,.5,0);
+  assert.deepEqual(moved.objects.map(o=>o.x),[2.5,6]);
+  assert.deepEqual(moved.walls,plan.walls);
+  assert.deepEqual(detectRooms(moved).map(r=>r.area).sort(),[14,16]);
+  assert.equal(plan.objects[0].x,2);
+});
 test('every furnished preset is valid, round-trips, and conserves enclosed area',()=>{
   for(const [type,expected,roomCount]of [['blank',0,0],['studio',48,2],['1bed',64,3],['2bed',80,4]]){
     const m=preset(type);assert.equal(validate(m),m);assert.deepEqual(parseDocument(JSON.stringify(m)),m);assert.equal(area(m),expected);assert.equal(detectRooms(m).length,roomCount);

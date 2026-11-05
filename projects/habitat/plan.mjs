@@ -1,18 +1,43 @@
-import {MATERIALS,detectRooms,wallPoints,wallLength,pointOnWall,bounds} from './model.mjs';
+import {MATERIALS,detectRooms,roomContains,wallPoints,wallLength,pointOnWall,bounds} from './model.mjs';
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]));
 const line=(a,b,attributes='')=>`<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" ${attributes}/>`;
 const path=points=>points.map((p,i)=>`${i?'L':'M'}${p.x},${p.y}`).join(' ')+'Z';
+const box=(x,y,w,h)=>({left:x-w/2,right:x+w/2,top:y-h/2,bottom:y+h/2});
+const intersects=(a,b)=>a.left<b.right&&a.right>b.left&&a.top<b.bottom&&a.bottom>b.top;
+function roomLabel(room,text,occupied){
+  const width=text.length*.079+.12,height=.24;
+  for(const inset of [.6,.9,1.3])for(const [i,a] of room.points.entries()){
+    const b=room.points[(i+1)%room.points.length],length=Math.hypot(b.x-a.x,b.y-a.y);
+    const x=(a.x+b.x)/2-(b.y-a.y)/length*inset,y=(a.y+b.y)/2+(b.x-a.x)/length*inset;
+    const label=box(x,y,width,height);
+    const corners=[label.left,label.right].flatMap(x=>[label.top,label.bottom].map(y=>({x,y})));
+    if(corners.every(p=>roomContains(room,p))&&!occupied.some(other=>intersects(label,other))){
+      occupied.push(label);
+      return `<text x="${x}" y="${y}" dominant-baseline="central" text-anchor="middle" fill="#817767" font-size=".13" font-family="Arial,sans-serif" pointer-events="none">${text}</text>`;
+    }
+  }
+  return '';
+}
 export function planContent(m,{selected=null,grid=true,labels=true,exporting=false,overlap=null}={}) {
   const out=[];
+  const wallLabels=new Map(), occupied=[];
+  if(labels)for(const wall of m.walls){
+    const [a,b]=wallPoints(m,wall),vertical=a.x===b.x;
+    const x=(a.x+b.x)/2-(vertical?.24:0),y=(a.y+b.y)/2-(vertical?0:.24);
+    const text=`${wallLength(m,wall).toFixed(2)} m`, length=text.length*.085+.1;
+    occupied.push(box(x,y,vertical?.28:length,vertical?length:.28));
+    wallLabels.set(wall.id,`<text x="${x}" y="${y}" text-anchor="middle" fill="#6b6c63" font-family="Arial,sans-serif" font-size=".14" pointer-events="none" ${vertical?`transform="rotate(-90 ${x} ${y})"`:''}>${text}</text>`);
+  }
   if(grid)out.push('<defs><pattern id="grid-small" width=".1" height=".1" patternUnits="userSpaceOnUse"><path d="M .1 0 L 0 0 0 .1" fill="none" stroke="#d5cec2" stroke-width=".003"/></pattern><pattern id="grid-large" width="1" height="1" patternUnits="userSpaceOnUse"><rect width="1" height="1" fill="url(#grid-small)"/><path d="M 1 0 L 0 0 0 1" fill="none" stroke="#cec5b6" stroke-width=".009"/></pattern></defs><rect x="-100" y="-100" width="200" height="200" fill="url(#grid-large)" pointer-events="none"/>');
   for(const [i,r]of detectRooms(m).entries()) {
-    out.push(`<path d="${path(r.points)} ${r.holes.map(path).join(' ')}" fill="${MATERIALS[m.settings.floor]}" fill-opacity=".17" fill-rule="evenodd" stroke="none"/>`);
-    if(labels){const a=r.points[0],b=r.points[1],l=Math.hypot(b.x-a.x,b.y-a.y),x=(a.x+b.x)/2-(b.y-a.y)/l*.45,y=(a.y+b.y)/2+(b.x-a.x)/l*.45;out.push(`<text x="${x}" y="${y}" text-anchor="middle" fill="#817767" font-size=".13" font-family="Arial,sans-serif" pointer-events="none">ROOM ${String(i+1).padStart(2,'0')} · ${r.area.toFixed(1)} m²</text>`);}
+    const active=!exporting&&selected===r.id;
+    out.push(`<path ${exporting?'':`data-id="${r.id}" data-kind="room"`} d="${path(r.points)} ${r.holes.map(path).join(' ')}" fill="${active?'#b96f45':MATERIALS[m.settings.floor]}" fill-opacity="${active?.26:.17}" fill-rule="evenodd" stroke="none"/>`);
+    if(labels)out.push(roomLabel(r,`ROOM ${String(i+1).padStart(2,'0')} · ${r.area.toFixed(1)} m²`,occupied));
   }
   for(const w of m.walls) {
     const [a,b]=wallPoints(m,w),active=w.id===selected;
     out.push(`<g data-id="${w.id}" data-kind="wall">${line(a,b,`stroke="${active?'#b96f45':'#3e423f'}" stroke-width="${w.thickness}" stroke-linecap="square"`)}${exporting?'':line(a,b,'stroke="transparent" stroke-width=".3"')}`);
-    if(labels){const vertical=a.x===b.x;out.push(`<text x="${(a.x+b.x)/2+(vertical?-.24:0)}" y="${(a.y+b.y)/2+(vertical?0:-.24)}" text-anchor="middle" fill="#6b6c63" font-family="Arial,sans-serif" font-size=".14" ${vertical?`transform="rotate(-90 ${(a.x+b.x)/2-.24} ${(a.y+b.y)/2})"`:''}>${wallLength(m,w).toFixed(2)} m</text>`);}
+    if(labels)out.push(wallLabels.get(w.id));
     out.push('</g>');
   }
   for(const o of m.openings){const w=m.walls.find(w=>w.id===o.wallId),[a,b]=wallPoints(m,w),start=pointOnWall(m,w,o.offset-o.width/2),end=pointOnWall(m,w,o.offset+o.width/2),angle=Math.atan2(b.y-a.y,b.x-a.x)*180/Math.PI,active=o.id===selected,c=active?'#b96f45':'#8d9f9f';out.push(`<g data-id="${o.id}" data-kind="opening" transform="translate(${start.x} ${start.y}) rotate(${angle})"><path d="M0 0H${o.width}" stroke="#faf8f3" stroke-width="${w.thickness+.025}"/>`);

@@ -5,6 +5,7 @@ import {TEMPLATES,createTemplate} from './templates.mjs';
 import {overlaps} from './collision.mjs';
 import {encodeShare,decodeShare} from './share.mjs';
 import {alignPoint} from './alignment.mjs';
+import {moveRoom} from './model.mjs';
 const $=id=>document.getElementById(id), svg=$('plan'), storageKey='habitat.design.v2';
 let home=fromPlan(preset('studio')),loadNote='',restored=false,hasEdited=false;
 try{const saved=localStorage.getItem(storageKey),legacy=localStorage.getItem('habitat.design.v1');if(saved){try{home=parseBuilding(saved);restored=true;loadNote='Restored your multi-storey home.';}catch(e){if(legacy){home=parseBuilding(legacy);restored=true;loadNote='The latest save could not be read. Your original single-storey backup was restored.';}else loadNote=`Local restore unavailable: ${e.message}`;}}else if(legacy){home=parseBuilding(legacy);restored=true;loadNote='Your saved home is ready for more floors. The original backup is preserved.';}}catch(e){loadNote=`Local restore unavailable: ${e.message}`;}
@@ -14,12 +15,13 @@ let selected=null,tool='select',view=bounds(m),initialWidth=view.w,scene=null,sc
 const hints={select:'Select a wall or an object to make it yours.',room:'Drag a rectangle. Connected edges join automatically.',wall:'Drag a straight wall. Ends snap to the 0.1 m grid.',door:'Click a wall to place a 0.9 m door. Keep clear of junctions.',window:'Click a wall to place a 1.2 m window.',pan:'Drag to pan. Pinch or scroll to zoom.'};
 function message(text,error=false){$('message').textContent=text;$('message').classList.toggle('error',error);}
 function entity(){return [...m.objects,...m.walls,...m.openings].find(e=>e.id===selected);}
+function selectedRoom(){return selected?.includes(':')?detectRooms(m).find(room=>room.id===selected):null;}
 function setView(){svg.setAttribute('viewBox',`${view.x} ${view.y} ${view.w} ${view.h}`);$('zoom-label').textContent=`${Math.round(initialWidth/view.w*100)}%`;}
 function fit(){view=bounds(m);initialWidth=view.w;setView();}
 function save(){hasEdited=true;clearTimeout(saveTimer);const snapshot=JSON.stringify(home);$('save-status').textContent='Saving locally…';saveTimer=setTimeout(()=>{try{localStorage.setItem(storageKey,snapshot);$('save-status').textContent='Saved on this device';}catch{$('save-status').textContent='Autosave unavailable · download JSON';}},350);}
 function updateScene(){if(scene)try{const preview=gesture?.buildingPreview??{...home,floors:home.floors.map(f=>f.id===home.activeFloorId?{...f,plan:m}:f)};scene.update(preview,selected,{mode:sceneMode});}catch(e){sceneFailure(e);}}
 function render({details=true,three=true}={}){svg.innerHTML=planContent(m,{selected,grid,labels,overlap:gesture?.overlap});setView();$('project-name').value=home.name;$('plan-empty').hidden=!!(m.walls.length||m.objects.length);$('undo').disabled=!history.past.length;$('redo').disabled=!history.future.length;const rooms=detectRooms(m);$('stats').textContent=`${home.floors.length} ${home.floors.length===1?'storey':'storeys'} · ${rooms.reduce((s,r)=>s+r.area,0).toFixed(1)} m² on this floor`;
-  if(selected&&!entity())selected=null;if(details){renderFloorControls();renderProperties();}if(three)updateScene();}
+  if(selected&&!entity()&&!rooms.some(room=>room.id===selected))selected=null;if(details){renderFloorControls();renderProperties();}if(three)updateScene();}
 function commitHome(next,note='Home updated.'){if(history.commit(next)){home=history.current;m=activeFloor(home).plan;save();render();message(note);return true;}return false;}
 function commit(next,note='Design updated.'){return commitHome(setFloorPlan(home,next),note);}
 function attempt(fn,note){try{return commit(fn(),note);}catch(e){message(e.message,true);return false;}}
@@ -41,14 +43,15 @@ document.querySelectorAll('[data-tool]').forEach(button=>button.addEventListener
 document.querySelectorAll('[data-catalog]').forEach(b=>b.addEventListener('click',()=>setTool(`object:${b.dataset.catalog}`)));
 function field(key,label,value,{step=.1,min=-50,max=50,wide=false}={}){return `<label class="field ${wide?'wide':''}">${label}<input data-property="${key}" type="number" value="${value}" step="${step}" min="${min}" max="${max}" required></label>`;}
 function finish(material){return `<div><p class="section-label">FINISH / ${material.toUpperCase()}</p><div class="swatches">${Object.entries(MATERIALS).map(([key,color])=>`<button data-material="${key}" class="${material===key?'active':''}" style="background:${color}" title="${key}" aria-label="${key} finish" aria-pressed="${material===key}"></button>`).join('')}</div></div>`;}
-function renderProperties(){const e=entity(),isObject=m.objects.includes(e),isWall=m.walls.includes(e),isOpening=m.openings.includes(e),container=$('properties');let html='';
-  const entries=[...m.walls.map((e,i)=>({id:e.id,label:`Wall ${i+1} · ${wallLength(m,e).toFixed(1)} m`})),...m.openings.map(e=>({id:e.id,label:`${e.kind} · ${e.id}`})),...m.objects.map(e=>({id:e.id,label:`${CATALOG[e.catalogId].label} · ${e.id}`}))];
+function renderProperties(){const e=entity(),room=selectedRoom(),isObject=m.objects.includes(e),isWall=m.walls.includes(e),isOpening=m.openings.includes(e),container=$('properties');let html='';
+  const entries=[...detectRooms(m).map((r,i)=>({id:r.id,label:`Room ${i+1} · ${r.area.toFixed(1)} m²`})),...m.walls.map((e,i)=>({id:e.id,label:`Wall ${i+1} · ${wallLength(m,e).toFixed(1)} m`})),...m.openings.map(e=>({id:e.id,label:`${e.kind} · ${e.id}`})),...m.objects.map(e=>({id:e.id,label:`${CATALOG[e.catalogId].label} · ${e.id}`}))];
   html+=`<label class="field wide">Select an element<select id="entity-list"><option value="">Design settings</option>${entries.map(e=>`<option value="${e.id}" ${selected===e.id?'selected':''}>${e.label}</option>`).join('')}</select></label>`;
-  $('selection-id').textContent=e?`${isObject?'FURNITURE':isWall?'CONNECTED WALL':'OPENING'} / ${e.id.toUpperCase()}`:'DESIGN SETTINGS';
+  $('selection-id').textContent=room?'ROOM SELECTED':e?`${isObject?'FURNITURE':isWall?'CONNECTED WALL':'OPENING'} / ${e.id.toUpperCase()}`:'DESIGN SETTINGS';
   if(tool==='room'||tool==='wall') {
     html+=`<div><h2 class="property-title">${tool==='room'?'Draw a room':'Draw a wall'}</h2><p class="property-sub">Drag on the plan, or use exact coordinates below.</p></div><form id="create-geometry"><div class="fields">${field('startX','Start X · m',0)}${field('startY','Start Y · m',0)}${field('endX','End X · m',tool==='room'?4:3)}${field('endY','End Y · m',tool==='room'?3:0)}</div><div class="object-actions"><button class="dark" type="submit">Add ${tool}</button></div></form>`;
   }else if(tool.startsWith('object:')){const type=tool.split(':')[1];html+=`<div><h2 class="property-title">${CATALOG[type].label}</h2><p class="property-sub">Click to place on the plan. Or add at the center of your current view.</p><button id="place-center">Place at center</button></div>`;}
   else if((tool==='door'||tool==='window')&&!isOpening){html+=`<div><h2 class="property-title">Add a ${tool}</h2><p class="property-sub">Click a wall, or select a wall above and place the opening at its midpoint.</p><button id="opening-center" ${isWall?'':'disabled'}>Place in selected wall</button></div>`;}
+  else if(room){html+=`<div><h2 class="property-title">Room · ${room.area.toFixed(1)} m²</h2><p class="property-sub">Drag the room floor or use arrow keys. Shared walls stay connected, so neighboring rooms may resize.</p></div>`;}
   else if(e){let fields='';html+=`<div><h2 class="property-title">${isObject?CATALOG[e.catalogId].label:isWall?'Wall':' '+e.kind[0].toUpperCase()+e.kind.slice(1)}</h2><p class="property-sub">${isWall?'Connected corners move together. Edits preserve orthogonal walls.':isOpening?'Position is measured from the start of its host wall.':'Dimensions in metres. Rotation in degrees.'}</p></div>`;
     if(isObject)fields=field('x','Center X · m',e.x)+field('y','Center Y · m',e.y)+field('w','Width · m',e.w,{min:.2,max:10})+field('d','Depth · m',e.d,{min:.2,max:10})+field('h','Height · m',e.h,{min:.2,max:6})+field('rotation','Rotation · °',e.rotation,{step:1,min:0,max:359});
     if(isWall){const [a,b]=wallPoints(m,e);fields=field('length','Length · m',Number(wallLength(m,e).toFixed(2)),{min:.1,max:100})+field('height','Height · m',e.height,{min:1,max:6})+field('thickness','Thickness · m',e.thickness,{step:.01,min:.05,max:.5})+field('ax','Start X · m',a.x)+field('ay','Start Y · m',a.y)+field('bx','End X · m',b.x)+field('by','End Y · m',b.y);}
@@ -113,7 +116,10 @@ svg.addEventListener('pointerdown',event=>{
     return;
   }
   if(vertex){gesture={type:'vertex',id:vertex,p,base};return;}
-  selected=id||null;render();const e=entity();if(!e)return;
+  selected=id||null;render();
+  const room=selectedRoom();
+  if(room){gesture={type:'room-move',room,p,base,moved:false};return;}
+  const e=entity();if(!e)return;
   gesture={type:handle|| (m.objects.includes(e)?'object':m.walls.includes(e)?'wall-move':'opening'),id:e.id,p,base,entity:clone(e),moved:false};
 });
 svg.addEventListener('pointermove',event=>{
@@ -142,6 +148,7 @@ svg.addEventListener('pointermove',event=>{
   if(g.type==='room'||g.type==='wall'){g.q=endPoint(g,p);ghost(g.p,g.q);return;}
   const dx=snap(p.x-g.p.x),dy=snap(p.y-g.p.y);g.moved=g.moved||Math.hypot(p.x-g.p.x,p.y-g.p.y)>.025;if(!g.moved)return;
   try{let next;
+    if(g.type==='room-move')next=dx||dy?moveRoom(g.base,g.room,dx,dy):g.base;
     if(g.type==='vertex')next=moveVertex(g.base,g.id,snap(p.x),snap(p.y));
     if(g.type==='object')next=updateEntity(g.base,g.id,{x:snap(g.entity.x+dx),y:snap(g.entity.y+dy)});
     if(g.type==='wall-move')next=moveWall(g.base,g.id,dx,dy);
@@ -149,7 +156,7 @@ svg.addEventListener('pointermove',event=>{
     if(g.type==='resize'){const o=g.entity,angle=-o.rotation*Math.PI/180,x=p.x-o.x,y=p.y-o.y;next=updateEntity(g.base,g.id,{w:Math.max(.2,snap(Math.abs(x*Math.cos(angle)-y*Math.sin(angle))*2)),d:Math.max(.2,snap(Math.abs(x*Math.sin(angle)+y*Math.cos(angle))*2))});}
     if(g.type==='rotate'){const angle=Math.atan2(p.y-g.entity.y,p.x-g.entity.x)*180/Math.PI+90;next=updateEntity(g.base,g.id,{rotation:(Math.round(angle/15)*15+360)%360});}
     if(next){m=next;g.overlap=g.type==='object'&&overlaps(m,g.id)?g.id:null;render({details:false});message(g.overlap?'Overlapping furniture or wall. You can still place it.':'Release to apply. Esc cancels.',!!g.overlap);}
-  }catch(e){message(e.message,true);}
+  }catch(e){if(g.type==='room-move'){m=g.base;render({details:false});}message(e.message,true);}
 });
 function finishGesture(event,cancel=false){points.delete(event.pointerId);const g=gesture;if(!g)return;if(g.type==='pinch'){if(!points.size)gesture=null;return;}gesture=null;svg.querySelector('#draw-preview')?.remove();
   if(cancel){if(g.base){m=g.base;render();}return;}
@@ -229,7 +236,13 @@ document.addEventListener('keydown',event=>{if(event.target.closest('input,selec
   if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==='z'){event.preventDefault();travel(event.shiftKey?'redo':'undo');return;}if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==='y'){event.preventDefault();travel('redo');return;}if(event.ctrlKey||event.metaKey||event.altKey)return;
   const keys={v:'select',r:'room',w:'wall',d:'door',n:'window'};if(keys[event.key.toLowerCase()]){setTool(keys[event.key.toLowerCase()]);return;}
   if(event.target.closest('#scene'))return;
-  if((event.key==='Delete'||event.key==='Backspace')&&selected){event.preventDefault();attempt(()=>deleteEntity(m,selected),'Element deleted.');selected=null;render();return;}
+  if((event.key==='Delete'||event.key==='Backspace')&&entity()){event.preventDefault();attempt(()=>deleteEntity(m,selected),'Element deleted.');selected=null;render();return;}
+  const room=selectedRoom();
+  if(room&&event.key.startsWith('Arrow')){
+    const step=event.shiftKey?.5:.1;
+    const delta={ArrowLeft:[-step,0],ArrowRight:[step,0],ArrowUp:[0,-step],ArrowDown:[0,step]}[event.key];
+    if(delta){event.preventDefault();attempt(()=>moveRoom(m,room,...delta),'Room moved.');return;}
+  }
   const e=entity(),step=event.shiftKey?.5:.1,delta={ArrowLeft:[-step,0],ArrowRight:[step,0],ArrowUp:[0,-step],ArrowDown:[0,step]}[event.key];if(e&&delta){event.preventDefault();const [dx,dy]=delta;attempt(()=>m.objects.includes(e)?updateEntity(m,e.id,{x:snap(e.x+dx),y:snap(e.y+dy)}):m.walls.includes(e)?moveWall(m,e.id,dx,dy):updateEntity(m,e.id,{offset:snap(e.offset+(dx||dy))}),'Selection moved.');}
 });document.addEventListener('keyup',e=>{if(e.key===' ')space=false;});window.addEventListener('blur',()=>{space=false;if(gesture)cancelGesture();});
 function download(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);}
