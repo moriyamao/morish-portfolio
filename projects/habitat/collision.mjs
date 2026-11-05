@@ -1,4 +1,4 @@
-import {openingCuts} from './model.mjs';
+import {openingCuts,objectBase,objectTop} from './model.mjs';
 
 const EPSILON = 1e-6;
 
@@ -23,7 +23,9 @@ export function overlaps(plan, objectId) {
   const object = plan.objects.find(o => o.id === objectId);
   if (!object) return false;
   const box = footprint(object);
-  if (plan.objects.some(o => o !== object && intersects(box, footprint(o)))) return true;
+  const bottom=objectBase(object),top=objectTop(object);
+  const verticalOverlap=(from,to)=>Math.min(top,to)-Math.max(bottom,from)>EPSILON;
+  if (plan.objects.some(o => o !== object && verticalOverlap(objectBase(o),objectTop(o)) && intersects(box, footprint(o)))) return true;
 
   const vertices = new Map(plan.vertices.map(v => [v.id, v]));
   for (const wall of plan.walls) {
@@ -35,9 +37,8 @@ export function overlaps(plan, objectId) {
       return {x:a.x+c*mid, y:a.y+s*mid, hw:(to-from)/2, hd:wall.thickness/2, c, s};
     };
     if (!intersects(box, segment(0,length))) continue;
-    // Floor-standing objects occupy [0, h]. Sills and low lintels still collide.
     if (openingCuts(plan,wall).some(cut =>
-      Math.min(cut.top,object.h)-cut.bottom > EPSILON && intersects(box,segment(cut.from,cut.to))
+      verticalOverlap(cut.bottom,cut.top) && intersects(box,segment(cut.from,cut.to))
     )) return true;
   }
   return false;

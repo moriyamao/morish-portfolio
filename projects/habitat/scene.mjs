@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import {OrbitControls} from './vendor/OrbitControls.js';
-import {MATERIALS,wallPoints,wallLength,openingCuts,detectRooms} from './model.mjs';
+import {MATERIALS,wallPoints,wallLength,openingCuts,detectRooms,objectBase} from './model.mjs';
 import {floorLayout,fitDistance,SLAB_THICKNESS} from './scene-layout.mjs';
 export function createScene(container,onSelect,onFailure) {
   const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.7));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.setClearColor('#e9e7dd');container.prepend(renderer.domElement);
@@ -18,7 +18,7 @@ export function createScene(container,onSelect,onFailure) {
   const material=(color,metalness=0)=>{const mat=new THREE.MeshStandardMaterial({color,roughness:.78,metalness});materials.add(mat);return mat;};
   function box(parent,w,h,d,x,y,z,mat){const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);mesh.position.set(x,y,z);mesh.castShadow=true;mesh.receiveShadow=true;parent.add(mesh);return mesh;}
   function cylinder(parent,r1,r2,h,x,y,z,mat,segments=16){const mesh=new THREE.Mesh(new THREE.CylinderGeometry(r1,r2,h,segments),mat);mesh.position.set(x,y,z);mesh.castShadow=true;mesh.receiveShadow=true;parent.add(mesh);return mesh;}
-  function object(o,parent,floorId,active){const g=new THREE.Group();g.position.set(o.x,0,o.y);g.rotation.y=-o.rotation*Math.PI/180;g.userData={id:o.id,floorId};const w=o.w,d=o.d,h=o.h,c=material(MATERIALS[o.material]),light=material('#ede7da'),dark=material('#665b4c'),leaf=material('#79866b');
+  function object(o,parent,floorId,active){const g=new THREE.Group();g.position.set(o.x,objectBase(o),o.y);g.rotation.y=-o.rotation*Math.PI/180;g.userData={id:o.id,floorId};const w=o.w,d=o.d,h=o.h,c=material(MATERIALS[o.material]),light=material('#ede7da'),dark=material('#665b4c'),leaf=material('#79866b');
     const legs=(top)=>{for(const x of [-w*.36,w*.36])for(const z of [-d*.34,d*.34])box(g,.045,top,.045,x,top/2,z,dark);};
     switch(o.catalogId){
       case 'sofa':legs(h*.2);box(g,w,h*.28,d,0,h*.36,0,c);box(g,w,h*.65,d*.18,0,h*.64,-d*.41,c);for(const x of [-w*.46,w*.46])box(g,w*.08,h*.48,d,x,h*.52,0,c);for(const x of [-w*.23,w*.23])box(g,w*.43,h*.16,d*.7,x,h*.57,d*.04,light);break;

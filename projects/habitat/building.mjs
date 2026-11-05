@@ -1,4 +1,4 @@
-import {blank, clone, validate, parseDocument, snap} from './model.mjs';
+import {blank, clone, validate, parseDocument, snap, objectBase, objectTop} from './model.mjs';
 
 export const BUILDING_VERSION = 2;
 export const MAX_FLOORS = 5;
@@ -24,7 +24,7 @@ export function validateBuilding(home) {
     ids.add(floor.id); text(floor.name, 40, 'Floor name');
     if (typeof floor.height !== 'number' || !Number.isFinite(floor.height) || floor.height < 2 || floor.height > 8) fail('Floor-to-floor height must be between 2 and 8 metres.');
     validate(floor.plan);
-    const tallest = Math.max(floor.plan.settings.height, ...floor.plan.walls.map(w => w.height), ...floor.plan.objects.filter(o => o.catalogId !== 'stair').map(o => o.h));
+    const tallest = Math.max(floor.plan.settings.height, ...floor.plan.walls.map(w => w.height), ...floor.plan.objects.filter(o => o.catalogId !== 'stair'||objectBase(o)>0).map(objectTop));
     if (tallest > floor.height - SLAB_THICKNESS + 1e-6) fail(`${floor.name}: increase floor height to at least ${(tallest + SLAB_THICKNESS).toFixed(2)} m to fit its walls, furniture and slab.`);
   }
   if (!ids.has(home.activeFloorId)) fail('The selected floor does not exist.');
@@ -32,7 +32,7 @@ export function validateBuilding(home) {
 }
 export function fromPlan(plan, name = plan.name) {
   const clean = parseDocument(JSON.stringify(plan));
-  const tallest = Math.max(clean.settings.height, ...clean.walls.map(w => w.height), ...clean.objects.map(o => o.h));
+  const tallest = Math.max(clean.settings.height, ...clean.walls.map(w => w.height), ...clean.objects.map(objectTop));
   const height = Math.max(3, Math.ceil((tallest + .3) * 10) / 10);
   return validateBuilding({version:2, name, nextFloorId:2, activeFloorId:'s1', floors:[{id:'s1', name:'Ground floor', height, plan:clean}]});
 }

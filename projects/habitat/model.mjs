@@ -14,6 +14,8 @@ export const CATALOG = {
   bookshelf:{label:'Bookshelf',w:1,d:.35,h:1.85,material:'oak'}, vanity:{label:'Vanity',w:.9,d:.52,h:.9,material:'chalk'}
 };
 export const clone = value => structuredClone(value);
+export const objectBase = object => object.elevation ?? 0;
+export const objectTop = object => objectBase(object) + object.h * (object.catalogId === 'rug' ? .08 : 1);
 export const snap = n => Math.round(n / GRID) / 10;
 const near = (a,b) => Math.abs(a-b)<1e-6;
 const fail = message => { throw new Error(message); };
@@ -85,6 +87,7 @@ export function validate(m) {
   for(const o of m.objects) {
     if(!Object.hasOwn(CATALOG,o.catalogId))fail('Unknown catalog item.');
     range(o.x,-50,50,'Object X');range(o.y,-50,50,'Object Y');range(o.w,.2,10,'Object width');range(o.d,.2,10,'Object depth');range(o.h,.2,6,'Object height');range(o.rotation,0,359.999999,'Rotation');
+    if(o.elevation!==undefined)range(o.elevation,0,8,'Object elevation');
     if(!Object.hasOwn(MATERIALS,o.material))fail('Invalid object material.');
   }
   return m;
@@ -97,7 +100,7 @@ export function parseDocument(text) {
   return {version:VERSION,name:m.name,nextId:m.nextId,settings:{height:m.settings.height,thickness:m.settings.thickness,floor:m.settings.floor},
     vertices:m.vertices.map(({id,x,y})=>({id,x,y})),walls:m.walls.map(({id,a,b,height,thickness,material})=>({id,a,b,height,thickness,material})),
     openings:m.openings.map(({id,wallId,kind,offset,width,height,sill})=>({id,wallId,kind,offset,width,height,sill})),
-    objects:m.objects.map(({id,catalogId,x,y,w,d,h,rotation,material})=>({id,catalogId,x,y,w,d,h,rotation,material}))};
+    objects:m.objects.map(({id,catalogId,x,y,w,d,h,rotation,material,elevation})=>({id,catalogId,x,y,w,d,h,rotation,material,...(elevation===undefined?{}:{elevation})}))};
 }
 export function edit(m,fn) {const next=clone(m);fn(next);return validate(next);}
 function vertex(m,p) {let v=m.vertices.find(v=>near(v.x,p.x)&&near(v.y,p.y));if(!v){v={id:id(m,'v'),x:snap(p.x),y:snap(p.y)};m.vertices.push(v);}return v;}
@@ -142,7 +145,7 @@ export function moveWall(m,wallId,dx,dy) {return edit(m,n=>{const w=n.walls.find
 export function resizeWall(m,wallId,length) {range(length,.1,100,'Wall length');return edit(m,n=>{const w=n.walls.find(w=>w.id===wallId);if(!w)fail('Wall not found.');const [a,b]=wallPoints(n,w),l=wallLength(n,w);moveVertexRaw(n,b.id,a.x+(b.x-a.x)*length/l,a.y+(b.y-a.y)*length/l);});}
 export function addOpening(m,wallId,kind,offset) {return edit(m,n=>{const w=n.walls.find(w=>w.id===wallId);if(!w)fail('Select a wall for the opening.');n.openings.push({id:id(n,'o'),wallId,kind,offset:snap(offset),width:kind==='door'?.9:1.2,height:kind==='door'?Math.min(2.1,w.height):Math.min(1.2,w.height),sill:kind==='door'?0:Math.max(0,Math.min(.9,w.height-1.2))});});}
 export function addObject(m,catalogId,x,y) {return edit(m,n=>{const c=CATALOG[catalogId];if(!c)fail('Unknown catalog item.');n.objects.push({id:id(n,'f'),catalogId,x:snap(x),y:snap(y),w:c.w,d:c.d,h:c.h,rotation:0,material:c.material});});}
-export function updateEntity(m,entityId,patch) {return edit(m,n=>{const e=[...n.walls,...n.objects,...n.openings].find(e=>e.id===entityId);if(!e)fail('Selection no longer exists.');const allowed=n.objects.includes(e)?['x','y','w','d','h','rotation','material']:n.walls.includes(e)?['height','thickness','material']:['offset','width','height','sill'];for(const k of Object.keys(patch))if(!allowed.includes(k))fail('Unsupported property.');Object.assign(e,patch);});}
+export function updateEntity(m,entityId,patch) {return edit(m,n=>{const e=[...n.walls,...n.objects,...n.openings].find(e=>e.id===entityId);if(!e)fail('Selection no longer exists.');const allowed=n.objects.includes(e)?['x','y','w','d','h','elevation','rotation','material']:n.walls.includes(e)?['height','thickness','material']:['offset','width','height','sill'];for(const k of Object.keys(patch))if(!allowed.includes(k))fail('Unsupported property.');Object.assign(e,patch);});}
 export function deleteEntity(m,entityId) {return edit(m,n=>{n.objects=n.objects.filter(e=>e.id!==entityId);n.openings=n.openings.filter(e=>e.id!==entityId&&e.wallId!==entityId);n.walls=n.walls.filter(e=>e.id!==entityId);const used=new Set(n.walls.flatMap(w=>[w.a,w.b]));n.vertices=n.vertices.filter(v=>used.has(v.id));});}
 export function duplicateObject(m,entityId) {return edit(m,n=>{const o=n.objects.find(o=>o.id===entityId);if(!o)fail('Only furniture can be duplicated.');n.objects.push({...o,id:id(n,'f'),x:snap(o.x+.3),y:snap(o.y+.3)});});}
 function contains(points,p){

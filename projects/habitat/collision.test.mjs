@@ -2,8 +2,20 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {overlaps} from './collision.mjs';
 import {addObject, addOpening, addWall, blank, updateEntity} from './model.mjs';
+import {fromPlan,parseBuilding,setFloorPlan} from './building.mjs';
 
 const point = (x,y) => ({x,y});
+
+test('stacked objects allow surface contact and preserve elevation in a saved home',()=>{
+  const plan=addObject(addObject(blank(),'table',0,0),'plant',0,0);
+  const plant=plan.objects[1].id;
+  const stacked=updateEntity(plan,plant,{elevation:.75});
+  assert.equal(overlaps(stacked,plant),false);
+  assert.equal(overlaps(updateEntity(stacked,plant,{elevation:.7}),plant),true);
+  const home=fromPlan(stacked);
+  assert.equal(parseBuilding(JSON.stringify(home)).floors[0].plan.objects[1].elevation,.75);
+  assert.throws(()=>setFloorPlan(home,updateEntity(stacked,plant,{elevation:2.5})),/increase floor height/);
+});
 
 test('rotated furniture detects penetration in both directions and allows exact contact', () => {
   let plan = addObject(addObject(blank(),'chair',0,0),'chair',0,0);

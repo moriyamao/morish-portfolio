@@ -5,7 +5,7 @@ import {TEMPLATES,createTemplate} from './templates.mjs';
 import {overlaps} from './collision.mjs';
 import {encodeShare,decodeShare} from './share.mjs';
 import {alignPoint} from './alignment.mjs';
-import {moveRoom} from './model.mjs';
+import {moveRoom,objectBase} from './model.mjs';
 const $=id=>document.getElementById(id), svg=$('plan'), storageKey='habitat.design.v2';
 let home=fromPlan(preset('studio')),loadNote='',restored=false,hasEdited=false;
 try{const saved=localStorage.getItem(storageKey),legacy=localStorage.getItem('habitat.design.v1');if(saved){try{home=parseBuilding(saved);restored=true;loadNote='Restored your multi-storey home.';}catch(e){if(legacy){home=parseBuilding(legacy);restored=true;loadNote='The latest save could not be read. Your original single-storey backup was restored.';}else loadNote=`Local restore unavailable: ${e.message}`;}}else if(legacy){home=parseBuilding(legacy);restored=true;loadNote='Your saved home is ready for more floors. The original backup is preserved.';}}catch(e){loadNote=`Local restore unavailable: ${e.message}`;}
@@ -53,10 +53,10 @@ function renderProperties(){const e=entity(),room=selectedRoom(),isObject=m.obje
   else if((tool==='door'||tool==='window')&&!isOpening){html+=`<div><h2 class="property-title">Add a ${tool}</h2><p class="property-sub">Click a wall, or select a wall above and place the opening at its midpoint.</p><button id="opening-center" ${isWall?'':'disabled'}>Place in selected wall</button></div>`;}
   else if(room){html+=`<div><h2 class="property-title">Room · ${room.area.toFixed(1)} m²</h2><p class="property-sub">Drag the room floor or use arrow keys. Shared walls stay connected, so neighboring rooms may resize.</p></div>`;}
   else if(e){let fields='';html+=`<div><h2 class="property-title">${isObject?CATALOG[e.catalogId].label:isWall?'Wall':' '+e.kind[0].toUpperCase()+e.kind.slice(1)}</h2><p class="property-sub">${isWall?'Connected corners move together. Edits preserve orthogonal walls.':isOpening?'Position is measured from the start of its host wall.':'Dimensions in metres. Rotation in degrees.'}</p></div>`;
-    if(isObject)fields=field('x','Center X · m',e.x)+field('y','Center Y · m',e.y)+field('w','Width · m',e.w,{min:.2,max:10})+field('d','Depth · m',e.d,{min:.2,max:10})+field('h','Height · m',e.h,{min:.2,max:6})+field('rotation','Rotation · °',e.rotation,{step:1,min:0,max:359});
+    if(isObject)fields=field('x','Center X · m',e.x)+field('y','Center Y · m',e.y)+field('w','Width · m',e.w,{min:.2,max:10})+field('d','Depth · m',e.d,{min:.2,max:10})+field('h','Height · m',e.h,{min:.2,max:6})+field('rotation','Rotation · °',e.rotation,{step:1,min:0,max:359})+field('elevation','Elevation above floor · m',objectBase(e),{step:'any',min:0,max:8,wide:true});
     if(isWall){const [a,b]=wallPoints(m,e);fields=field('length','Length · m',Number(wallLength(m,e).toFixed(2)),{min:.1,max:100})+field('height','Height · m',e.height,{min:1,max:6})+field('thickness','Thickness · m',e.thickness,{step:.01,min:.05,max:.5})+field('ax','Start X · m',a.x)+field('ay','Start Y · m',a.y)+field('bx','End X · m',b.x)+field('by','End Y · m',b.y);}
     if(isOpening)fields=field('offset','Position · m',Number(e.offset.toFixed(2)),{min:0,max:100})+field('width','Width · m',e.width,{min:.3,max:5})+field('height','Height · m',e.height,{min:.3,max:5})+(e.kind==='window'?field('sill','Sill height · m',e.sill,{min:0,max:5}):'');
-    html+=`<div class="fields">${fields}</div>${!isOpening?finish(e.material):''}<div class="object-actions">${isObject?'<button id="rotate-object">Rotate 90°</button><button id="duplicate">Duplicate</button>':''}<button class="delete" id="delete">Delete ${isWall?'wall':isOpening?e.kind:'object'}</button></div>`;
+    html+=`<div class="fields">${fields}</div>${isObject?`<div class="object-actions"><button id="lower-object" ${objectBase(e)===0?'disabled':''}>↓ Lower 10 cm</button><button id="raise-object">↑ Raise 10 cm</button></div>`:''}${!isOpening?finish(e.material):''}<div class="object-actions">${isObject?'<button id="rotate-object">Rotate 90°</button><button id="duplicate">Duplicate</button>':''}<button class="delete" id="delete">Delete ${isWall?'wall':isOpening?e.kind:'object'}</button></div>`;
   }else {html+=`<div><h2 class="property-title">Your foundation.</h2><p class="property-sub">Select something to edit, or set the defaults for your next walls.</p></div><div class="fields">${field('height','New wall height · m',m.settings.height,{min:1,max:6})}${field('thickness','Thickness · m',m.settings.thickness,{step:.01,min:.05,max:.5})}</div>${finish(m.settings.floor)}<p class="inspector-note">Floor finish applies to all enclosed rooms. Wall defaults apply to newly drawn walls. Draw connected boundaries to discover room areas.</p>`;}
   container.innerHTML=html;
   $('entity-list').addEventListener('change',event=>{selected=event.target.value||null;setTool('select');render();});
@@ -69,6 +69,10 @@ function renderProperties(){const e=entity(),room=selectedRoom(),isObject=m.obje
   $('delete')?.addEventListener('click',()=>{if(attempt(()=>deleteEntity(m,selected),'Element deleted.')){selected=null;render();}});
   $('duplicate')?.addEventListener('click',()=>{if(attempt(()=>duplicateObject(m,selected),'Object duplicated.')){selected=m.objects.at(-1).id;render();}});
   $('rotate-object')?.addEventListener('click',()=>attempt(()=>updateEntity(m,e.id,{rotation:(e.rotation+90)%360}),'Object rotated.'));
+  for(const [id,delta] of [['lower-object',-.1],['raise-object',.1]])$(id)?.addEventListener('click',()=>{
+    const elevation=Math.max(0,Number((objectBase(e)+delta).toFixed(8)));
+    if(attempt(()=>updateEntity(m,e.id,{elevation}),'Object elevation updated.'))$(id)?.focus();
+  });
   $('place-center')?.addEventListener('click',()=>placeObject(tool.split(':')[1],{x:view.x+view.w/2,y:view.y+view.h/2}));
   $('opening-center')?.addEventListener('click',()=>placeOpening(e.id,wallLength(m,e)/2));
   $('create-geometry')?.addEventListener('submit',event=>{event.preventDefault();const get=key=>Number(container.querySelector(`[data-property="${key}"]`).value),p={x:get('startX'),y:get('startY')},q={x:get('endX'),y:get('endY')};if(attempt(()=>tool==='room'?addRoom(m,p,q):addWall(m,p,q),`${tool==='room'?'Room':'Wall'} added.`)){fit();setTool('select');}});

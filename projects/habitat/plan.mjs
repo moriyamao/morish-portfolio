@@ -1,4 +1,4 @@
-import {MATERIALS,detectRooms,roomContains,wallPoints,wallLength,pointOnWall,bounds} from './model.mjs';
+import {MATERIALS,detectRooms,roomContains,wallPoints,wallLength,pointOnWall,bounds,objectBase} from './model.mjs';
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]));
 const line=(a,b,attributes='')=>`<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" ${attributes}/>`;
 const path=points=>points.map((p,i)=>`${i?'L':'M'}${p.x},${p.y}`).join(' ')+'Z';
@@ -44,7 +44,7 @@ export function planContent(m,{selected=null,grid=true,labels=true,exporting=fal
     if(o.kind==='window')out.push(`<rect x="0" y="${-w.thickness/2}" width="${o.width}" height="${w.thickness}" fill="#c6d8d6" stroke="${c}" stroke-width=".025"/><path d="M0 0H${o.width}" stroke="${c}" stroke-width=".02"/>`);
     else out.push(`<path d="M0 0V${-o.width}M0 ${-o.width}A${o.width} ${o.width} 0 0 1 ${o.width} 0" fill="none" stroke="${active?c:'#a18c71'}" stroke-width=".025"/><path d="M0 0H${o.width}" stroke="transparent" stroke-width=".35"/>`);
     out.push('</g>');}
-  const objects=[...m.objects.filter(o=>o.catalogId==='rug'),...m.objects.filter(o=>o.catalogId!=='rug')];
+  const objects=[...m.objects].sort((a,b)=>objectBase(a)-objectBase(b)||Number(b.catalogId==='rug')-Number(a.catalogId==='rug'));
   for(const o of objects){const warning=!exporting&&o.id===overlap,c=warning?'#e7a59e':MATERIALS[o.material],active=o.id===selected,w=o.w,d=o.d;out.push(`<g data-id="${o.id}" data-kind="object" transform="translate(${o.x} ${o.y}) rotate(${o.rotation})" fill="${c}" stroke="${warning?'#a3322c':active?'#b96f45':'#726b5f'}" stroke-width="${active||warning?.035:.018}">`);
     if(o.catalogId==='plant'){out.push(`<ellipse rx="${w/2}" ry="${d/2}" fill="${warning?c:'#9ca58c'}"/><path d="M${-w*.3} 0Q0 ${-d*.5} ${w*.3} 0Q0 ${d*.5} ${-w*.3} 0M0 ${-d*.35}V${d*.35}" fill="none"/>`);}
     else if(o.catalogId==='tallPlant'){
