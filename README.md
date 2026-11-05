@@ -28,6 +28,25 @@ browser. The managed preview was unavailable during this redesign because of an
 environment permission error; visual browser QA and live form delivery remain
 unverified. No real contact submission is sent by the tests.
 
+## Interactive sandboxes
+
+Two independent browser applications extend the portfolio beyond presentation websites:
+
+| Project | Demo | Case study | Source |
+| --- | --- | --- | --- |
+| HABITAT | [Home-design sandbox](projects/habitat/) | [Architecture and implementation](case-habitat.html) | [Source and checks](projects/habitat/README.md) |
+| TRACE | [Computer Science learning lab](projects/trace/) | [Execution model and teaching flow](case-trace.html) | [Source and checks](projects/trace/README.md) |
+
+Both run on the existing static GitHub Pages deployment. HABITAT vendors Three.js
+locally; TRACE has no external runtime dependencies. Each project documents its
+implemented features, tests, data handling, and limits in its README.
+
+Run the portfolio, existing client-site, and sandbox checks from the repository root:
+
+```powershell
+node --test assets.test.cjs portfolio.test.cjs clients/clients.test.cjs sandboxes.test.cjs projects/habitat/model.test.mjs projects/trace/engine.test.mjs
+```
+
 ## LeakageLens
 
 [Project and setup](projects/leakagelens/README.md) · [Browser CSV auditor](projects/leakagelens/web/index.html) · [Model card](projects/leakagelens/MODEL_CARD.md)

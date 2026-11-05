@@ -234,12 +234,22 @@ test('canvas remains drawable while pointer coordinates change', async () => {
 });
 test('homepage has explicit motion controls, native disclosures, and no placeholder trackers', () => {
   assert.match(html, /id="motion-toggle"/);
-  assert.equal((html.match(/class="project index-project/g) || []).length, 4);
-  assert.equal((html.match(/data-category=/g) || []).length, 5);
+  assert.equal((html.match(/class="project index-project/g) || []).length, 6);
+  assert.equal((html.match(/data-category=/g) || []).length, 7);
   assert.match(html, /netlify-honeypot="bot-field"/);
   assert.match(css, /prefers-reduced-motion/);
   assert.match(css, /\[hidden\]/);
   assert.doesNotMatch(html, /PASTE_|cloudflareinsights|fonts\.googleapis/);
+});
+test('independent sandboxes have demo, case-study and source links', () => {
+  const independent = html.match(/<section id="work"[\s\S]*?<\/section>/)[0];
+  assert.match(independent, /7 independent &amp; internship projects/);
+  for (const slug of ['habitat', 'trace']) {
+    assert.ok(independent.includes('href="projects/' + slug + '/"'));
+    assert.ok(independent.includes('href="case-' + slug + '.html"'));
+    assert.ok(independent.includes('https://github.com/moriyamao/morish-portfolio/tree/main/projects/' + slug));
+    assert.ok(fs.existsSync(path.join(__dirname, 'projects', slug, 'index.html')));
+  }
 });
 test('all portfolio-relative links and local script assets exist', () => {
   const pages = fs.readdirSync(__dirname).filter(file => file.endsWith('.html'));

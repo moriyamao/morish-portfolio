@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101411">
+  <meta name="description" content="TRACE is an interactive computer science sandbox. Predict, step, rewind, and compare real algorithm operations in five visual labs.">
+  <title>TRACE — Think in steps</title>
+  <link rel="stylesheet" href="./styles.css">
+  <script type="module" src="./app.mjs"></script>
+</head>
+<body>
+  <a class="skip" href="#workspace">Skip to lab</a>
+  <header class="masthead">
+    <a href="./" class="wordmark" aria-label="TRACE home"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 8h10v8h8v8h8M13 3v5M21 16v-5M3 24h10v-8"/><circle cx="3" cy="8" r="2"/><circle cx="29" cy="24" r="2"/></svg>TRACE</a>
+    <span class="masthead-caption">AN INTERACTIVE CS FIELD GUIDE</span>
+    <a class="back-link" href="../../">Morish / Portfolio <span aria-hidden="true">↗</span></a>
+  </header>
+  <main>
+    <section class="intro" aria-labelledby="title">
+      <div><p class="eyebrow"><span class="status-dot"></span> THE ALGORITHM IS THE JOURNEY</p><h1 id="title">Think in <em>steps.</em></h1></div>
+      <div class="intro-note"><p>Make a prediction. Follow the state.<br>See exactly <strong>why</strong> the next move happens.</p><span>05 LABS <i>/</i> YOUR INPUT <i>/</i> EVERY OPERATION</span></div>
+    </section>
+    <nav class="labs" aria-label="Choose a lab">
+      <button type="button" data-lab="search" aria-pressed="true"><span>01</span> Search <small>Find the first match</small></button>
+      <button type="button" data-lab="sort" aria-pressed="false"><span>02</span> Sort <small>Put things in order</small></button>
+      <button type="button" data-lab="container" aria-pressed="false"><span>03</span> Stack / Queue <small>Follow the flow</small></button>
+      <button type="button" data-lab="bst" aria-pressed="false"><span>04</span> Binary tree <small>Choose a branch</small></button>
+      <button type="button" data-lab="graph" aria-pressed="false"><span>05</span> Graph <small>Explore the connections</small></button>
+    </nav>
+    <section id="workspace" class="workspace" aria-label="Algorithm workspace" tabindex="-1">
+      <aside class="input-panel">
+        <div class="section-label"><span>01 / SET THE SCENE</span><span aria-hidden="true">↙</span></div>
+        <h2 id="lab-heading">Search lab</h2>
+        <p id="lab-description" class="muted"></p>
+        <form id="config" novalidate>
+          <label for="preset">Starting point</label><select id="preset" name="preset"></select>
+          <div id="fields"></div>
+          <p id="input-error" class="error" role="alert" hidden></p>
+          <button class="apply" type="submit">Apply input <span aria-hidden="true">↗</span></button>
+          <p id="draft-note" class="micro">Apply input starts a fresh trace.</p>
+        </form>
+        <div class="principle"><span class="tiny-label">THE MENTAL MODEL</span><p id="mental-model"></p></div>
+        <details class="complexity"><summary>Complexity & counting</summary><div id="complexity"></div></details>
+      </aside>
+      <div class="lab-stage">
+        <div class="stage-heading"><div><span class="section-label">02 / FOLLOW THE STATE</span><h2 id="run-title">Linear search</h2></div><span id="run-status" class="run-status">READY</span></div>
+        <div class="stage-meta"><p id="run-subtitle"></p><div class="legend" aria-label="Diagram legend"><span><i class="key-current"></i>Current</span><span><i class="key-seen"></i>Examined</span><span><i class="key-found"></i>Resolved</span></div></div>
+        <div id="lanes" class="lanes"></div>
+        <div class="transport" aria-label="Playback controls">
+          <div class="transport-buttons"><button id="reset" type="button" title="Reset to first frame" aria-label="Reset to first frame">↺</button><button id="back" type="button" title="Previous frame (Left arrow)" aria-label="Previous frame">←</button><button id="play" class="play" type="button" aria-label="Play" aria-pressed="false">▶ <span>Play</span></button><button id="step" type="button" title="Next frame (Right arrow)">Step <span aria-hidden="true">→</span></button></div>
+          <label class="speed" for="speed">Speed <select id="speed"><option value="1">1×</option><option value="2">2×</option><option value="4">4×</option></select></label>
+        </div>
+        <div class="scrubber"><label for="history" id="history-label">Frame 0 / 0</label><input type="range" id="history" min="0" max="1" value="0" aria-describedby="history-help"><span id="history-help">Rewind any state</span></div>
+        <div class="predict-option"><label class="check"><input type="checkbox" id="predict"> Predict before each step</label><span>Pause. Think. Then reveal.</span></div>
+        <form id="prediction" class="prediction" hidden><label for="guess" id="prediction-question"></label><p id="prediction-hint" class="micro"></p><div class="prediction-answer"><input id="guess" autocomplete="off" maxlength="30" aria-describedby="prediction-hint"><button type="submit">Check prediction</button><button id="reveal" type="button">Reveal step</button></div><p id="prediction-feedback" role="status"></p></form>
+        <p id="comparison-note" class="comparison-note" hidden>Both lanes use the same input and advance one recorded event per tick. A finished lane holds its final state. Counters measure operations, not elapsed time. Predictions follow the left lane.</p>
+      </div>
+    </section>
+    <section class="reasoning" aria-label="Explanation and pseudocode">
+      <div class="explanation-panel"><span class="section-label">03 / CONNECT THE DOTS</span><h2>Every move has a reason.</h2><div id="explanations"></div><div class="keyboard-hint"><kbd>←</kbd><kbd>→</kbd> step through <span>·</span> <kbd>space</kbd> play / pause <span>·</span> outside input fields</div></div>
+      <div class="code-panel"><div class="code-heading"><span class="section-label">THE RECIPE / PSEUDOCODE</span><span class="micro">Active line highlighted</span></div><div id="codes"></div></div>
+    </section>
+    <section class="history-panel" aria-label="Recorded history"><div><span class="section-label">THE PAPER TRAIL</span><h2>Nothing happens off the record.</h2></div><label for="frame-select">Jump to a recorded frame<select id="frame-select"></select></label></section>
+    <p id="announcement" class="sr-only" aria-live="polite" aria-atomic="true"></p>
+  </main>
+  <footer><a href="./" class="footer-brand">TRACE<span> / </span>MAKE THE INVISIBLE LEGIBLE.</a><p>Built for understanding. No accounts. No server. No simulated benchmarks.</p><a href="./README.md">Read the field notes ↗</a></footer>
+  <noscript><p class="no-script">TRACE needs JavaScript modules to compute and replay algorithm states. Enable JavaScript and serve this folder over HTTP.</p></noscript>
+</body>
+</html>
