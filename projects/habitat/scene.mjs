@@ -71,8 +71,8 @@ export function createScene(container,onSelect,onFailure) {
       }parent.add(g);
     }
     for(const o of m.objects)object(o,parent,floorId,active);
-    // Keep the active storey opaque; surrounding storeys provide a cutaway context.
-    if(!active){const opacity=mode==='exploded'?.55:.22,seen=new Set();parent.traverse(o=>{o.castShadow=false;if(o.material)for(const mat of [].concat(o.material)){if(seen.has(mat))continue;seen.add(mat);mat.transparent=true;mat.opacity*=opacity;mat.depthWrite=false;}});}
+    // Only ghost surrounding storeys when the user explicitly chooses a cutaway.
+    if(mode==='cutaway'&&!active){const seen=new Set();parent.traverse(o=>{o.castShadow=false;if(o.material)for(const mat of [].concat(o.material)){if(seen.has(mat))continue;seen.add(mat);mat.transparent=true;mat.opacity*=.22;mat.depthWrite=false;}});}
   }
   function update(home,selection,{mode='stacked'}={}){model=home;selected=selection;clear();const floors=floorLayout(home,mode);for(const floor of floors)renderFloor(floor,mode);
     root.updateMatrixWorld(true);sceneBounds=new THREE.Box3().setFromObject(root);
