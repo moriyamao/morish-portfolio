@@ -1,6 +1,6 @@
 import {CATALOG,MATERIALS,clone,snap,edit,preset,wallPoints,wallLength,pointOnWall,addWall,addRoom,moveVertex,moveWall,resizeWall,addOpening,addObject,updateEntity,deleteEntity,duplicateObject,detectRooms,bounds} from './model.mjs';
 import {planContent,exportSVG} from './plan.mjs';
-import {fromPlan,parseBuilding,activeFloor,addFloor,setFloorPlan,selectFloor,updateFloor,removeFloor,editBuilding,BuildingHistory,MAX_FLOORS,MAX_BUILDING_BYTES} from './building.mjs';
+import {fromPlan,parseBuilding,activeFloor,addFloor,setFloorPlan,selectFloor,updateFloor,removeFloor,editBuilding,moveBuilding,BuildingHistory,MAX_FLOORS,MAX_BUILDING_BYTES} from './building.mjs';
 import {TEMPLATES,createTemplate} from './templates.mjs';
 import {overlaps} from './collision.mjs';
 import {encodeShare,decodeShare} from './share.mjs';
@@ -17,7 +17,7 @@ function entity(){return [...m.objects,...m.walls,...m.openings].find(e=>e.id===
 function setView(){svg.setAttribute('viewBox',`${view.x} ${view.y} ${view.w} ${view.h}`);$('zoom-label').textContent=`${Math.round(initialWidth/view.w*100)}%`;}
 function fit(){view=bounds(m);initialWidth=view.w;setView();}
 function save(){hasEdited=true;clearTimeout(saveTimer);const snapshot=JSON.stringify(home);$('save-status').textContent='Saving locally…';saveTimer=setTimeout(()=>{try{localStorage.setItem(storageKey,snapshot);$('save-status').textContent='Saved on this device';}catch{$('save-status').textContent='Autosave unavailable · download JSON';}},350);}
-function updateScene(){if(scene)try{const preview={...home,floors:home.floors.map(f=>f.id===home.activeFloorId?{...f,plan:m}:f)};scene.update(preview,selected,{mode:sceneMode});}catch(e){sceneFailure(e);}}
+function updateScene(){if(scene)try{const preview=gesture?.buildingPreview??{...home,floors:home.floors.map(f=>f.id===home.activeFloorId?{...f,plan:m}:f)};scene.update(preview,selected,{mode:sceneMode});}catch(e){sceneFailure(e);}}
 function render({details=true,three=true}={}){svg.innerHTML=planContent(m,{selected,grid,labels,overlap:gesture?.overlap});setView();$('project-name').value=home.name;$('plan-empty').hidden=!!(m.walls.length||m.objects.length);$('undo').disabled=!history.past.length;$('redo').disabled=!history.future.length;const rooms=detectRooms(m);$('stats').textContent=`${home.floors.length} ${home.floors.length===1?'storey':'storeys'} · ${rooms.reduce((s,r)=>s+r.area,0).toFixed(1)} m² on this floor`;
   if(selected&&!entity())selected=null;if(details){renderFloorControls();renderProperties();}if(three)updateScene();}
 function commitHome(next,note='Home updated.'){if(history.commit(next)){home=history.current;m=activeFloor(home).plan;save();render();message(note);return true;}return false;}
@@ -29,7 +29,16 @@ function setTool(next){tool=next;document.querySelectorAll('[data-tool]').forEac
 const icons={wardrobe:'<rect x="5" y="4" width="30" height="26"/><path d="M20 4v26"/>',desk:'<path d="M5 11h30v6H5zM8 17v13m24-13v13"/>',diningTable:'<ellipse cx="20" cy="17" rx="16" ry="10"/>',tvUnit:'<rect x="5" y="4" width="30" height="20"/><path d="M13 29h14m-7-5v5"/>',rug:'<rect x="5" y="5" width="30" height="24" rx="3"/><path d="M11 10h18v14H11z"/>',tallPlant:'<path d="M14 24h12l-2 7h-8zM20 24V3m0 9L11 7m9 12 10-7"/>',bookshelf:'<path d="M6 3h28v28H6zM6 13h28M6 22h28M13 5v8m10 2v7"/>',vanity:'<rect x="4" y="6" width="32" height="22"/><ellipse cx="20" cy="18" rx="8" ry="5"/>',sofa:'<rect x="4" y="12" width="32" height="13" rx="2"/><path d="M8 12V6h24v6M12 13v9m16-9v9M7 25v3m26-3v3"/>',table:'<path d="M7 9h26v9H7zM10 18v10m20-10v10"/>',chair:'<path d="M11 15V5h18v10M9 15h22v5H9zM12 20v9m16-9v9"/>',bed:'<rect x="7" y="4" width="26" height="25" rx="2"/><path d="M7 14h26M11 8h7v4h-7zm11 0h7v4h-7z"/>',counter:'<path d="M3 8h34v20H3zM3 12h34m-22 0v16m10-16v16M7 16h4m7 0h4m6 0h5"/>',bath:'<rect x="9" y="3" width="22" height="27" rx="6"/><rect x="13" y="7" width="14" height="19" rx="4"/>',toilet:'<path d="M12 3h16v8H12z"/><ellipse cx="20" cy="20" rx="10" ry="10"/><ellipse cx="20" cy="20" rx="6" ry="6"/>',plant:'<path d="M14 21h12l-2 10h-8zM20 22V8M20 16C4 18 8 4 20 16M20 12C32 15 33 2 20 12M20 9C10 9 17-3 20 9"/>',lamp:'<path d="M10 4h20l5 12H5zM20 16v13M11 30h18"/>',stair:'<path d="M5 28V21h8v-7h8V7h8V1h7v27z"/>'};
 $('catalog').innerHTML=Object.entries(CATALOG).map(([id,c])=>`<button data-catalog="${id}" aria-pressed="false" title="Place ${c.label.toLowerCase()}"><svg viewBox="0 0 40 34" aria-hidden="true">${icons[id]}</svg>${c.label==='Dining table'?'Table':c.label==='Double bed'?'Bed':c.label==='Floor lamp'?'Lamp':c.label==='Decorative stair'?'Stair':c.label}</button>`).join('');
 document.querySelector('.tools').insertAdjacentHTML('beforeend','<button data-tool="pan" title="Pan the plan"><span aria-hidden="true">✥</span>Pan</button>');
-document.querySelectorAll('[data-tool]').forEach(b=>b.addEventListener('click',()=>setTool(b.dataset.tool)));document.querySelectorAll('[data-catalog]').forEach(b=>b.addEventListener('click',()=>setTool(`object:${b.dataset.catalog}`)));
+hints.building='Drag anywhere on the plan to move all floors together. Esc exits.';
+document.querySelectorAll('[data-tool]').forEach(button=>button.addEventListener('click',()=>{
+  const next=button.dataset.tool;
+  if(next==='building'){
+    if(tool==='building'){setTool('select');return;}
+    selected=null;setTab(false);render();
+  }
+  setTool(next);
+}));
+document.querySelectorAll('[data-catalog]').forEach(b=>b.addEventListener('click',()=>setTool(`object:${b.dataset.catalog}`)));
 function field(key,label,value,{step=.1,min=-50,max=50,wide=false}={}){return `<label class="field ${wide?'wide':''}">${label}<input data-property="${key}" type="number" value="${value}" step="${step}" min="${min}" max="${max}" required></label>`;}
 function finish(material){return `<div><p class="section-label">FINISH / ${material.toUpperCase()}</p><div class="swatches">${Object.entries(MATERIALS).map(([key,color])=>`<button data-material="${key}" class="${material===key?'active':''}" style="background:${color}" title="${key}" aria-label="${key} finish" aria-pressed="${material===key}"></button>`).join('')}</div></div>`;}
 function renderProperties(){const e=entity(),isObject=m.objects.includes(e),isWall=m.walls.includes(e),isOpening=m.openings.includes(e),container=$('properties');let html='';
@@ -90,6 +99,7 @@ svg.addEventListener('pointerdown',event=>{
   }
   if(points.size>2)return;const p=world(event),base=clone(m),hit=event.target.closest('[data-id]'),id=hit?.dataset.id,vertex=event.target.dataset.vertex,handle=event.target.dataset.handle;
   if(event.button===1||space||tool==='pan'){gesture={type:'pan',p,view:{...view},client:{x:event.clientX,y:event.clientY}};return;}
+  if(tool==='building'){gesture={type:'building',p,base};return;}
   if(tool==='room'||tool==='wall'){
     const align=alignToggle.checked;
     gesture={type:tool,start:p,p:alignPoint(base,p,align),base,align};return;
@@ -116,6 +126,18 @@ svg.addEventListener('pointermove',event=>{
   }
   if(g.type==='tap'){g.moved=g.moved||Math.hypot(event.clientX-g.client.x,event.clientY-g.client.y)>9;return;}
   const p=world(event);
+  if(g.type==='building'){
+    const dx=snap(p.x-g.p.x),dy=snap(p.y-g.p.y);
+    try{
+      g.buildingPreview=dx||dy?moveBuilding(home,dx,dy):null;
+      m=g.buildingPreview?activeFloor(g.buildingPreview).plan:g.base;
+      render({details:false});
+      message('Release to move all floors. Esc cancels.');
+    }catch(e){
+      g.buildingPreview=null;m=g.base;render({details:false});message(e.message,true);
+    }
+    return;
+  }
   if(g.type==='pan'){const matrix=svg.getScreenCTM();view={...g.view,x:g.view.x-(event.clientX-g.client.x)/matrix.a,y:g.view.y-(event.clientY-g.client.y)/matrix.d};setView();return;}
   if(g.type==='room'||g.type==='wall'){g.q=endPoint(g,p);ghost(g.p,g.q);return;}
   const dx=snap(p.x-g.p.x),dy=snap(p.y-g.p.y);g.moved=g.moved||Math.hypot(p.x-g.p.x,p.y-g.p.y)>.025;if(!g.moved)return;
@@ -131,6 +153,12 @@ svg.addEventListener('pointermove',event=>{
 });
 function finishGesture(event,cancel=false){points.delete(event.pointerId);const g=gesture;if(!g)return;if(g.type==='pinch'){if(!points.size)gesture=null;return;}gesture=null;svg.querySelector('#draw-preview')?.remove();
   if(cancel){if(g.base){m=g.base;render();}return;}
+  if(g.type==='building'){
+    m=g.base;
+    if(g.buildingPreview){commitHome(g.buildingPreview,'Building moved.');scene?.reset();}
+    else render();
+    return;
+  }
   if(g.type==='tap'){if(!g.moved)g.place();return;}
   if(g.type==='room'||g.type==='wall'){if(g.q)attempt(()=>g.type==='room'?addRoom(g.base,g.p,g.q):addWall(g.base,g.p,g.q),`${g.type==='room'?'Room':'Wall'} added.`);return;}
   if(g.base&&m!==g.base){const next=m;m=g.base;if(commit(next,'Edit applied.'))return;render();}

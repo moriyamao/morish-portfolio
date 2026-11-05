@@ -1,4 +1,4 @@
-import {blank, clone, validate, parseDocument} from './model.mjs';
+import {blank, clone, validate, parseDocument, snap} from './model.mjs';
 
 export const BUILDING_VERSION = 2;
 export const MAX_FLOORS = 5;
@@ -47,6 +47,17 @@ export function parseBuilding(source) {
 }
 export function editBuilding(home, change) {
   const next = clone(home); change(next); return validateBuilding(next);
+}
+export function moveBuilding(home, dx, dy) {
+  return editBuilding(home, next => {
+    for (const {plan} of next.floors) {
+      for (const point of [...plan.vertices, ...plan.objects]) {
+        // Round the sum without snapping away any existing offset.
+        point.x = Number((point.x + snap(dx)).toFixed(10));
+        point.y = Number((point.y + snap(dy)).toFixed(10));
+      }
+    }
+  });
 }
 export function selectFloor(home, floorId) {
   return editBuilding(home, next => { next.activeFloorId = floorId; });

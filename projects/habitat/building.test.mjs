@@ -1,7 +1,29 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {preset,addObject,updateEntity} from './model.mjs';
-import {fromPlan,parseBuilding,validateBuilding,activeFloor,addFloor,setFloorPlan,selectFloor,updateFloor,removeFloor,BuildingHistory} from './building.mjs';
+import {fromPlan,parseBuilding,validateBuilding,activeFloor,addFloor,setFloorPlan,selectFloor,updateFloor,removeFloor,moveBuilding,BuildingHistory} from './building.mjs';
+
+test('move building translates all floor geometry in one undoable edit',()=>{
+  const home=addFloor(fromPlan(preset('studio')),{copy:true});
+  const history=new BuildingHistory(home);
+  const moved=moveBuilding(home,1.21,-.48);
+  for(const [i,{plan}] of moved.floors.entries()){
+    const original=home.floors[i].plan;
+    for(const key of ['vertices','objects']){
+      for(const [index,point] of plan[key].entries()){
+        const before=original[key][index];
+        assert.ok(Math.abs(point.x-before.x-1.2)<1e-9);
+        assert.ok(Math.abs(point.y-before.y+.5)<1e-9);
+      }
+    }
+    assert.deepEqual(plan.walls,original.walls);
+    assert.deepEqual(plan.openings,original.openings);
+  }
+  assert.throws(()=>moveBuilding(home,1000,0));
+  assert.equal(history.commit(moved),true);
+  assert.deepEqual(history.undo(),home);
+  assert.deepEqual(history.redo(),moved);
+});
 
 test('legacy version 1 migration retains every entity and does not mutate the original design',()=>{
   const old=preset('2bed'), before=JSON.stringify(old), migrated=parseBuilding(before);
