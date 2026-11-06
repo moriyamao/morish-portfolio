@@ -108,6 +108,14 @@ test('research documents, live demos, and GitHub Pages identity remain available
   }
   for (const file of fs.readdirSync(__dirname).filter(f => f.endsWith('.html'))) assert.doesNotMatch(fs.readFileSync(path.join(__dirname, file), 'utf8'), /moriyamao\.netlify\.app/);
 });
+test('available credential PDFs are local, valid, and include the internship certificate', () => {
+  const certificateLinks = [...html.matchAll(/href="(certificates\/[^"]+\.pdf)"/g)].map(match => match[1]);
+  assert.equal(certificateLinks.length, 9);
+  assert.ok(certificateLinks.includes('certificates/flyrank-machine-learning-internship.pdf'));
+  for (const reference of certificateLinks) {
+    assert.match(fs.readFileSync(path.join(__dirname, reference)).subarray(0, 5).toString(), /%PDF-/);
+  }
+});
 test('portfolio positioning, Lab route, and project brief fields are explicit', () => {
   assert.match(html, /I build useful web products/);
   assert.match(html, /class="now-strip"/);
