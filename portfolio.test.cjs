@@ -78,7 +78,16 @@ function setup({ reduce = false, stored = null, storageError = false, fetchImpl 
     calls.push(args);
     return fetchImpl ? fetchImpl(...args) : { ok: true, status: 200 };
   };
-  class FormData { *[Symbol.iterator]() { yield ['form-name', 'contact']; yield ['message', 'A test only']; } }
+  class FormData {
+    constructor() {
+      this.values = new Map([
+        ['bot-field', ''], ['name', 'Test Sender'], ['email', 'sender@example.com'],
+        ['project-type', 'Web application'], ['timeline', 'Within 1 month'],
+        ['message', 'A test only']
+      ]);
+    }
+    get(key) { return this.values.get(key) ?? null; }
+  }
   vm.runInNewContext(source, { document, window, fetch, FormData, URLSearchParams });
   return { e, filters, projects, navLink, document, media, calls };
 }
@@ -186,8 +195,15 @@ test('contact success requires an OK response and resets the form', async () => 
   assert.equal(e.form.resetCount, 1);
   assert.equal(e.submit.disabled, false);
   assert.equal(e.submit.innerHTML, 'Send message <span>↗</span>');
-  assert.equal(calls[0][0], '/');
-  assert.match(calls[0][1].body, /form-name=contact/);
+  assert.equal(calls[0][0], 'https://api.emailjs.com/api/v1.0/email/send');
+  const payload = JSON.parse(calls[0][1].body);
+  assert.equal(payload.service_id, 'service_t79kzen');
+  assert.equal(payload.template_id, 'template_dyq9o4r');
+  assert.equal(payload.user_id, 'tsCajoh5dqxR93vz5');
+  assert.deepEqual(payload.template_params, {
+    name: 'Test Sender', email: 'sender@example.com', reply_to: 'sender@example.com',
+    project_type: 'Web application', timeline: 'Within 1 month', message: 'A test only'
+  });
 });
 test('HTTP errors do not masquerade as a successful contact submission', async () => {
   const { e } = setup({ fetchImpl: async () => ({ ok: false, status: 503 }) });
@@ -262,7 +278,9 @@ test('homepage has explicit motion controls, native disclosures, and no placehol
   assert.match(html, /id="motion-toggle"/);
   assert.equal((html.match(/class="project index-project/g) || []).length, 4);
   assert.equal((html.match(/data-category=/g) || []).length, 5);
-  assert.match(html, /netlify-honeypot="bot-field"/);
+  assert.match(html, /name="bot-field"/);
+  assert.match(html, /Delivered securely through EmailJS/);
+  assert.doesNotMatch(html, /data-netlify|netlify-honeypot|name="form-name"/);
   assert.match(css, /prefers-reduced-motion/);
   assert.match(css, /\[hidden\]/);
   assert.doesNotMatch(html, /PASTE_|cloudflareinsights|fonts\.googleapis/);

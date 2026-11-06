@@ -1,4 +1,4 @@
-/* Navigation, motion preferences, and Netlify contact delivery. */
+/* Navigation, motion preferences, and EmailJS contact delivery. */
 (() => {
   'use strict';
   document.body.classList.add('js-ready');
@@ -72,20 +72,39 @@
 
   const form = document.getElementById('contactForm');
   const status = document.getElementById('formStatus');
+  const emailJsConfig = {
+    serviceId: 'service_t79kzen',
+    templateId: 'template_dyq9o4r',
+    publicKey: 'tsCajoh5dqxR93vz5'
+  };
   form.addEventListener('submit', async event => {
     event.preventDefault();
     const button = form.querySelector('button[type="submit"]');
     if (button.disabled || !form.reportValidity()) return;
+    const data = new FormData(form);
+    if (data.get('bot-field')) return;
     const original = button.innerHTML;
     button.disabled = true;
     button.textContent = 'Sending…';
     status.textContent = '';
     delete status.dataset.state;
     try {
-      const response = await fetch('/', {
+      const response = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams(new FormData(form)).toString()
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          service_id: emailJsConfig.serviceId,
+          template_id: emailJsConfig.templateId,
+          user_id: emailJsConfig.publicKey,
+          template_params: {
+            name: data.get('name'),
+            email: data.get('email'),
+            reply_to: data.get('email'),
+            project_type: data.get('project-type'),
+            timeline: data.get('timeline') || 'Not specified',
+            message: data.get('message')
+          }
+        })
       });
       if (!response.ok) throw new Error('Contact service returned ' + response.status);
       status.dataset.state = 'success';
