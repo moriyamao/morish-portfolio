@@ -108,6 +108,24 @@ test('research documents, live demos, and GitHub Pages identity remain available
   }
   for (const file of fs.readdirSync(__dirname).filter(f => f.endsWith('.html'))) assert.doesNotMatch(fs.readFileSync(path.join(__dirname, file), 'utf8'), /moriyamao\.netlify\.app/);
 });
+test('portfolio positioning, Lab route, and project brief fields are explicit', () => {
+  assert.match(html, /I build useful web products/);
+  assert.match(html, /class="now-strip"/);
+  assert.match(html, /href="lab\.html">Lab/);
+  assert.match(html, /name="project-type"/);
+  assert.match(html, /name="timeline"/);
+});
+test('Lab is a complete, honest index of the five sandbox projects', () => {
+  const lab = fs.readFileSync(path.join(__dirname, 'lab.html'), 'utf8');
+  assert.equal((lab.match(/data-project/g) || []).length, 5);
+  for (const slug of ['habitat', 'trace', 'marketwise', 'catalyst']) {
+    assert.match(lab, new RegExp('href="projects/' + slug + '/"'));
+  }
+  const lastTenant = lab.match(/<article class="lab-card lab-card--studio"[\s\S]*?<\/article>/)[0];
+  assert.match(lastTenant, /IN PROGRESS/);
+  assert.doesNotMatch(lastTenant, /<a\b/);
+  new vm.Script(fs.readFileSync(path.join(__dirname, 'lab.js'), 'utf8'), { filename: 'lab.js' });
+});
 test('menu opens and Escape closes it with restored focus', async () => {
   const { e, document } = setup();
   await e.menu.fire('click');

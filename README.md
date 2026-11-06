@@ -45,6 +45,11 @@ vendors Three.js locally; the others have no external runtime dependencies. Each
 published project documents its implemented features, tests, data handling, and
 limits in its README.
 
+`lab.html` provides a filterable, keyboard-accessible index for the five sandbox
+projects. The homepage links to that Lab, states the portfolio's product direction,
+shows a factual current-work strip, and collects project type and timeline in the
+existing Netlify contact form.
+
 Run the portfolio, existing client-site, and sandbox checks from the repository root:
 
 ```powershell
