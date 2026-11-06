@@ -1,0 +1,19 @@
+/* Original generated raster assets; gameplay effects remain independent layers. */
+.pov-lab{height:auto;aspect-ratio:3/2;min-height:340px;max-height:650px;isolation:isolate;perspective:none;box-shadow:none}
+.lab-art{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;image-rendering:pixelated;pointer-events:none}
+.pov-lab:before,.pov-lab:after{display:none}
+.pov-lab .bench{left:0;right:0;bottom:0;height:100%;pointer-events:none}
+.pov-lab .vessel{width:22%;height:auto;aspect-ratio:1;bottom:23%;left:50%;border:0;clip-path:none;background:url('./assets/flask.png') center/contain no-repeat;box-shadow:none;transform:translateX(-50%);image-rendering:pixelated}
+.pov-lab .vessel:before,.pov-lab .vessel span,.pov-lab .vessel i,.pov-lab .burner{display:none}
+.pov-lab .pov-hand-right{width:40%;height:auto;aspect-ratio:1;right:-4%;bottom:-7%;border:0;background:none;box-shadow:none;transform:rotate(8deg);transform-origin:85% 90%;pointer-events:none}
+.pov-hand-right img{display:block;width:100%;height:100%;object-fit:contain;image-rendering:pixelated}
+.pov-lab .pov-hand-right:before,.pov-lab .pov-hand-right:after{display:none!important}
+.pov-lab.reacting .pov-hand-right{animation:asset-pour .7s steps(6,end) both}
+.pov-lab.reacting .vessel{animation:asset-bubble .35s steps(2,end) infinite}
+.pov-lab .reaction-fx{bottom:40%;width:22%;height:20%}
+.pov-lab .view-label{color:var(--paper)}
+.pov-lab .lab-status{bottom:12px}
+@keyframes asset-pour{0%,100%{transform:rotate(8deg)}50%{transform:translate(-22%,-27%) rotate(-38deg)}}
+@keyframes asset-bubble{0%,100%{transform:translateX(-50%)}50%{transform:translate(-50%,-3px)}}
+@media(max-width:760px){.pov-lab{min-height:320px;aspect-ratio:1/1}.lab-art{object-position:center}.pov-lab .vessel{width:29%;bottom:24%}.pov-lab .pov-hand-right{width:53%;right:-10%;bottom:-2%}.pov-lab .reaction-fx{bottom:42%}}
+@media(prefers-reduced-motion:reduce){.pov-lab,.pov-lab *{animation:none!important;transition:none!important}}

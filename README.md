@@ -30,16 +30,20 @@ unverified. No real contact submission is sent by the tests.
 
 ## Interactive sandboxes
 
-Two independent browser applications extend the portfolio beyond presentation websites:
+The Sandbox / Just Because section collects interactive tools, learning games, and exploratory projects:
 
 | Project | Demo | Case study | Source |
 | --- | --- | --- | --- |
 | HABITAT | [Home-design sandbox](projects/habitat/) | [Architecture and implementation](case-habitat.html) | [Source and checks](projects/habitat/README.md) |
 | TRACE | [Computer Science learning lab](projects/trace/) | [Execution model and teaching flow](case-trace.html) | [Source and checks](projects/trace/README.md) |
+| MARKETWISE | [Market learning game](projects/marketwise/) | — | [Source and checks](projects/marketwise/README.md) |
+| CATALYST | [Pixel chemistry adventure](projects/catalyst/) | — | [Source and checks](projects/catalyst/README.md) |
+| LAST TENANT | Roblox Studio project in progress | — | — |
 
-Both run on the existing static GitHub Pages deployment. HABITAT vendors Three.js
-locally; TRACE has no external runtime dependencies. Each project documents its
-implemented features, tests, data handling, and limits in its README.
+The browser projects run on the existing static GitHub Pages deployment. HABITAT
+vendors Three.js locally; the others have no external runtime dependencies. Each
+published project documents its implemented features, tests, data handling, and
+limits in its README.
 
 Run the portfolio, existing client-site, and sandbox checks from the repository root:
 

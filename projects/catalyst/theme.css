@@ -1,0 +1,22 @@
+:root{
+  --night:#111827;
+  --navy:#17253a;
+  --slate:#31445f;
+  --steel:#60718a;
+  --fog:#a9b5c3;
+  --paper:#f5eedc;
+  --cream:#e6d4ac;
+  --gold:#f0c36a;
+  --orange:#d97a50;
+  --red:#b84a55;
+  --violet:#7762a6;
+  --blue:#4c88c7;
+  --cyan:#66c6cf;
+  --mint:#4fc1a1;
+  --green:#4f8a62;
+  --ink:#24202a;
+  --pixel:2px;
+  --shadow:4px 4px 0 var(--night);
+  --heading:"Lucida Console","Courier New",monospace;
+  --body:Arial,Helvetica,sans-serif;
+}

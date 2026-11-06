@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#17253a">
+  <meta name="description" content="CATALYST — a beginner-friendly pixel chemistry laboratory game.">
+  <title>CATALYST — Pixel Chemistry Lab</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./theme.css">
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./art.css">
+  <script type="module" src="./game.mjs"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./" aria-label="CATALYST home"><span class="brand-mark">C</span><span>CATALYST<small>PIXEL CHEMISTRY LAB</small></span></a>
+    <div class="status"><span>LAB FUNDS</span><b id="credits">000</b></div>
+    <button id="sound-toggle" class="icon-button" aria-pressed="false" title="Toggle sound">♪ OFF</button>
+    <button id="reset-game" class="quiet-button">New lab</button>
+  </header>
+
+  <main>
+    <section class="intro">
+      <div><p class="kicker">REBUILD THE LAB · MASTER THE REACTION</p><h1>Small particles.<br><em>Big discoveries.</em></h1></div>
+      <div class="guide-card"><span class="guide-sprite" aria-hidden="true"><i></i></span><p><b>Professor Pip</b><br><span id="guide-line">The old lab still works. Let’s prove it.</span></p></div>
+    </section>
+
+    <section class="game-shell">
+      <aside class="mission-panel">
+        <header><span>MISSION BOARD</span><b id="progress-count">0 / 6</b></header>
+        <nav id="mission-list" aria-label="Chemistry missions"></nav>
+        <div class="safety-note"><b>LAB NOTE</b><p>Experiments use simplified classroom models and abstract quantities. Never recreate them without proper supervision.</p></div>
+      </aside>
+
+      <section class="lab-panel">
+        <header class="panel-title"><div><span id="chapter">CHAPTER 01</span><h2 id="mission-title">Mixture Rescue</h2></div><div class="stars" id="stars" aria-label="Mission grade">☆☆☆</div></header>
+
+        <div class="pixel-lab pov-lab" id="pixel-lab" aria-label="First-person pixel chemistry laboratory">
+          <img class="lab-art" src="./assets/lab-background.png" alt="Moonlit laboratory with bottle shelves, an analyzer and a wooden workbench" width="1536" height="1024">
+          <div class="bench"><div id="vessel" class="vessel idle"><span></span><i></i></div><div class="burner"><i></i></div></div>
+          <div class="reaction-fx" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+          <div class="pov-hand pov-hand-right" aria-hidden="true"><img src="./assets/gloved-hand.png" alt="" width="1280" height="1280"></div>
+          <div class="view-label">YOUR VIEW · MIXING BENCH</div>
+          <div class="lab-status" id="lab-status">READY</div>
+        </div>
+
+        <article class="briefing">
+          <div><span>OBJECTIVE</span><p id="briefing-copy"></p></div>
+          <button class="why-button" id="why-button" aria-expanded="false">WHY THIS MATTERS +</button>
+          <p id="why-copy" class="why-copy" hidden></p>
+        </article>
+
+        <section class="workbench" aria-labelledby="workbench-title">
+          <header><span>WORKBENCH</span><h3 id="workbench-title">Choose your process</h3></header>
+          <div id="puzzle-area"></div>
+          <div class="bench-actions"><button id="clear-answer">Clear</button><button id="run-experiment" class="primary">Run experiment</button></div>
+          <div id="feedback" class="feedback" role="status" aria-live="polite">Set up the experiment, then run it.</div>
+        </section>
+      </section>
+
+      <aside class="archive-panel">
+        <header><span>MOLECULAR ARCHIVE</span><b id="archive-count">0 FOUND</b></header>
+        <div id="archive-list" class="archive-list"></div>
+        <div class="upgrade-card"><span>LAB LEVEL</span><div class="level-track"><i id="level-fill"></i></div><p id="level-copy">Dusty basement</p></div>
+      </aside>
+    </section>
+  </main>
+
+  <footer><span>CATALYST <i>by Morish</i></span><span>Learn through safe, simplified chemistry models. <a href="../../">Back to portfolio ↗</a></span></footer>
+</body>
+</html>
