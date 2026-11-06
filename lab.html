@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10110f">
+  <title>The Lab — Morish Macayan</title>
+  <meta name="description" content="An experimental index of interactive sandboxes, learning tools, and game projects by Morish Macayan.">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="lab.css">
+  <script src="lab.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#projects">Skip to projects</a>
+
+  <header class="lab-header">
+    <a class="brand" href="index.html" aria-label="Return to Morish Macayan portfolio">
+      morish<span aria-hidden="true">.</span>
+      <small>LAB / 005</small>
+    </a>
+    <nav aria-label="Lab navigation">
+      <a href="#filters">Filter experiments</a>
+      <a href="index.html">Portfolio ↗</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="lab-intro" aria-labelledby="lab-title">
+      <div class="intro-copy">
+        <p class="eyebrow">SANDBOX / JUST BECAUSE</p>
+        <h1 id="lab-title">THE<br><em>LAB.</em></h1>
+      </div>
+      <div class="intro-note">
+        <p>Five experiments built to test an idea, teach a concept, or make something interesting enough to keep exploring.</p>
+        <p class="microcopy">No single discipline. One rule: make the idea tangible.</p>
+      </div>
+      <div class="signal" aria-hidden="true">
+        <span></span><span></span><span></span><span></span><span></span>
+      </div>
+    </section>
+
+    <section class="filter-panel" id="filters" aria-labelledby="filter-title">
+      <div class="filter-heading">
+        <div>
+          <p class="eyebrow">INDEX CONTROLS</p>
+          <h2 id="filter-title">Find an experiment</h2>
+        </div>
+        <p class="filter-help" id="filter-help">Use Tab to enter a group, then arrow keys to change its selection.</p>
+      </div>
+
+      <form id="lab-filters" aria-describedby="filter-help">
+        <fieldset>
+          <legend>Type</legend>
+          <div class="filter-options">
+            <input type="radio" name="type" id="type-all" value="all" checked>
+            <label for="type-all">All</label>
+            <input type="radio" name="type" id="type-space" value="space">
+            <label for="type-space">Space</label>
+            <input type="radio" name="type" id="type-learning" value="learning">
+            <label for="type-learning">Learning</label>
+            <input type="radio" name="type" id="type-game" value="game">
+            <label for="type-game">Game</label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Status</legend>
+          <div class="filter-options">
+            <input type="radio" name="status" id="status-all" value="all" checked>
+            <label for="status-all">All</label>
+            <input type="radio" name="status" id="status-live" value="live">
+            <label for="status-live">Playable</label>
+            <input type="radio" name="status" id="status-progress" value="progress">
+            <label for="status-progress">In progress</label>
+          </div>
+        </fieldset>
+
+        <button class="reset-button" type="reset">Reset filters</button>
+      </form>
+
+      <p class="result-count" id="result-count" role="status" aria-live="polite">Showing all 5 experiments</p>
+      <noscript><p class="no-script">JavaScript is unavailable, so all projects are shown.</p></noscript>
+    </section>
+
+    <section class="project-grid" id="projects" aria-label="Lab projects">
+      <article class="lab-card lab-card--wide" data-project data-type="space" data-status="live" aria-labelledby="project-habitat">
+        <div class="card-index" aria-hidden="true">01</div>
+        <div class="card-topline"><span>ARCHITECTURAL PLAYGROUND</span><span class="status status--live">PLAYABLE</span></div>
+        <h2 id="project-habitat">HABITAT</h2>
+        <p>Shape a home in a precise 2D plan, then explore the same design in 3D. Draw walls, arrange furniture, work across storeys, and save the concept in your browser.</p>
+        <ul class="capabilities" aria-label="HABITAT technologies"><li>JavaScript</li><li>SVG</li><li>Three.js</li></ul>
+        <div class="card-links"><a class="launch" href="projects/habitat/">Open HABITAT <span aria-hidden="true">↗</span></a><a href="case-habitat.html">Case study</a></div>
+      </article>
+
+      <article class="lab-card" data-project data-type="learning" data-status="live" aria-labelledby="project-trace">
+        <div class="card-index" aria-hidden="true">02</div>
+        <div class="card-topline"><span>COMPUTER SCIENCE LAB</span><span class="status status--live">PLAYABLE</span></div>
+        <h2 id="project-trace">TRACE</h2>
+        <p>Step through algorithms and data structures one recorded state at a time. Predict the next move, inspect the timeline, and move backward without rerunning the algorithm.</p>
+        <ul class="capabilities" aria-label="TRACE technologies"><li>JavaScript</li><li>SVG</li><li>Algorithms</li></ul>
+        <div class="card-links"><a class="launch" href="projects/trace/">Open TRACE <span aria-hidden="true">↗</span></a><a href="case-trace.html">Case study</a></div>
+      </article>
+
+      <article class="lab-card" data-project data-type="learning" data-status="live" aria-labelledby="project-marketwise">
+        <div class="card-index" aria-hidden="true">03</div>
+        <div class="card-topline"><span>MARKET LEARNING GAME</span><span class="status status--live">PLAYABLE</span></div>
+        <h2 id="project-marketwise">MARKETWISE</h2>
+        <p>Learn market orders, limit orders, spreads, fees, risk, and portfolio value inside a responsive pixel-art market town with generated daily price movement.</p>
+        <ul class="capabilities" aria-label="MARKETWISE technologies"><li>JavaScript</li><li>Canvas</li><li>Learning design</li></ul>
+        <div class="card-links"><a class="launch" href="projects/marketwise/">Open MARKETWISE <span aria-hidden="true">↗</span></a></div>
+      </article>
+
+      <article class="lab-card lab-card--wide" data-project data-type="game" data-status="live" aria-labelledby="project-catalyst">
+        <div class="card-index" aria-hidden="true">04</div>
+        <div class="card-topline"><span>PIXEL CHEMISTRY ADVENTURE</span><span class="status status--live">PLAYABLE</span></div>
+        <h2 id="project-catalyst">CATALYST</h2>
+        <p>Rebuild a first-person pixel laboratory through six classroom-level chemistry missions covering separation, equation balancing, neutralization, energy transfer, and limiting reactants.</p>
+        <ul class="capabilities" aria-label="CATALYST technologies"><li>JavaScript</li><li>CSS art</li><li>Canvas</li></ul>
+        <div class="card-links"><a class="launch" href="projects/catalyst/">Enter CATALYST <span aria-hidden="true">↗</span></a></div>
+      </article>
+
+      <article class="lab-card lab-card--studio" data-project data-type="game" data-status="progress" aria-labelledby="project-last-tenant">
+        <div class="card-index" aria-hidden="true">05</div>
+        <div class="card-topline"><span>ROBLOX STUDIO PROJECT</span><span class="status status--progress">IN PROGRESS</span></div>
+        <h2 id="project-last-tenant">LAST TENANT</h2>
+        <p>A residential-hall survival game project centered on tense room interactions and environmental storytelling. The current work remains a Roblox Studio build in progress.</p>
+        <ul class="capabilities" aria-label="LAST TENANT technologies"><li>Roblox Studio</li><li>Luau</li><li>Level design</li></ul>
+        <p class="studio-note">No public experience link yet.</p>
+      </article>
+    </section>
+
+    <p class="empty-state" id="empty-state" hidden>No experiments match both filters. Reset the index to see everything.</p>
+  </main>
+
+  <footer>
+    <p><span>LAB / MORISH MACAYAN</span><span>BUILD → TEST → LEARN → REPEAT</span></p>
+    <a href="index.html">Return to the portfolio ↑</a>
+  </footer>
+</body>
+</html>
