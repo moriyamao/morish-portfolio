@@ -130,8 +130,8 @@ test('Lab is a complete, honest index of the five sandbox projects', () => {
     assert.match(lab, new RegExp('href="projects/' + slug + '/"'));
   }
   const lastTenant = lab.match(/<article class="lab-card lab-card--studio"[\s\S]*?<\/article>/)[0];
-  assert.match(lastTenant, /IN PROGRESS/);
-  assert.doesNotMatch(lastTenant, /<a\b/);
+  assert.match(lastTenant, /PLAYABLE BUILD/);
+  assert.match(lastTenant, /https:\/\/www\.roblox\.com\/games\/102651311116462\/LAST-TENANT/);
   new vm.Script(fs.readFileSync(path.join(__dirname, 'lab.js'), 'utf8'), { filename: 'lab.js' });
 });
 test('menu opens and Escape closes it with restored focus', async () => {
@@ -267,7 +267,7 @@ test('homepage has explicit motion controls, native disclosures, and no placehol
   assert.match(css, /\[hidden\]/);
   assert.doesNotMatch(html, /PASTE_|cloudflareinsights|fonts\.googleapis/);
 });
-test('sandbox section has the published tools and an honest Studio-only project', () => {
+test('sandbox section has the published tools and verified Roblox experience', () => {
   const sandboxes = html.match(/<section id="sandbox-projects"[\s\S]*?<\/section>/)[0];
   assert.match(sandboxes, /SANDBOX \/ JUST BECAUSE/);
   assert.match(html.match(/<section id="work"[\s\S]*?<\/section>/)[0], /5 independent &amp; internship projects/);
@@ -283,7 +283,7 @@ test('sandbox section has the published tools and an honest Studio-only project'
     assert.ok(fs.existsSync(path.join(__dirname, 'projects', slug, 'index.html')));
   }
   assert.match(sandboxes, /LAST TENANT/);
-  assert.match(sandboxes, /Studio build in progress/);
+  assert.match(sandboxes, /https:\/\/www\.roblox\.com\/games\/102651311116462\/LAST-TENANT/);
 });
 test('all portfolio-relative links and local script assets exist', () => {
   const pages = fs.readdirSync(__dirname).filter(file => file.endsWith('.html'));

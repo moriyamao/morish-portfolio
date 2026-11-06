@@ -38,7 +38,7 @@ The Sandbox / Just Because section collects interactive tools, learning games, a
 | TRACE | [Computer Science learning lab](projects/trace/) | [Execution model and teaching flow](case-trace.html) | [Source and checks](projects/trace/README.md) |
 | MARKETWISE | [Market learning game](projects/marketwise/) | — | [Source and checks](projects/marketwise/README.md) |
 | CATALYST | [Pixel chemistry adventure](projects/catalyst/) | — | [Source and checks](projects/catalyst/README.md) |
-| LAST TENANT | Roblox Studio project in progress | — | — |
+| LAST TENANT | [Playable Roblox experience](https://www.roblox.com/games/102651311116462/LAST-TENANT) | — | Roblox Studio / Luau |
 
 The browser projects run on the existing static GitHub Pages deployment. HABITAT
 vendors Three.js locally; the others have no external runtime dependencies. Each
