@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f4f1e9">
+  <meta name="description" content="MARKETWISE — learn how investing works in a hands-on practice market.">
+  <title>MARKETWISE — Learn by investing</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./theme.css">
+  <link rel="stylesheet" href="./styles.css">
+  <script type="module" src="./app.mjs"></script>
+  <script type="module" src="./city.mjs"></script>
+</head>
+<body>
+  <header class="masthead">
+    <a class="brand" href="./" aria-label="MARKETWISE home">M<span></span>MARKETWISE <small>LEARNING MARKET / 01</small></a>
+    <div class="save-state"><span id="save-status">Local market</span><b id="day-label">DAY 0</b></div>
+    <div class="file-actions"><button id="load-button">Open JSON</button><button id="save-button">Save JSON ↓</button><button id="reset-button">Start over</button><input id="load-file" type="file" accept=".json,application/json" hidden></div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div><p class="eyebrow">LEARN THE MARKET WITHOUT RISKING A DOLLAR</p><h1>Build confidence.<br><em>One trade at a time.</em></h1></div>
+      <div class="disclaimer"><span></span><p><b>Generated MARKETWISE prices with practice capital.</b><br>No real-money trades occur. Real markets differ, and this is not financial advice.</p></div>
+    </section>
+
+    <section class="summary" aria-label="Portfolio summary">
+      <article><span>CASH <button class="why" data-tip="Cash is money you have not invested. It does not rise or fall with MARKETWISE prices.">Why this matters</button></span><strong id="cash-value">$10,000.00</strong></article>
+      <article><span>INVESTMENTS <button class="why" data-tip="This is what your shares are worth at the current middle price. Their value changes every MARKETWISE day.">Why this matters</button></span><strong id="holdings-value">$0.00</strong></article>
+      <article><span>TOTAL VALUE <button class="why" data-tip="Total value is your cash plus all current investments. It is the clearest snapshot of your whole portfolio.">Why this matters</button></span><strong id="total-value">$10,000.00</strong></article>
+      <article><span>PROFIT / LOSS <button class="why" data-tip="Profit or loss compares your current total with the $10,000 you started with. A green number is a gain; red is a loss.">Why this matters</button></span><strong id="pnl-value">$0.00</strong><small id="pnl-percent">0.00%</small></article>
+    </section>
+
+    <section class="news-strip" aria-live="polite"><span>MARKET NOTE</span><p id="news-headline">The market opens quietly. Prices will change as each MARKETWISE day passes.</p><button class="why" data-tip="News can change what buyers believe a company is worth. Here, a headline can add an immediate positive or negative price shock.">Why this matters</button><button id="next-day" class="dark">Next day →</button></section>
+
+    <section class="city-panel" aria-labelledby="city-title"><header><div><p class="eyebrow">PORTFOLIO CITY</p><h2 id="city-title">Every sector has a place in town.</h2></div><p>Each building represents one MARKETWISE company or fund.</p></header><div id="portfolio-city" class="city-grid"></div></section>
+
+    <section class="workspace">
+      <div class="market-panel">
+        <header class="panel-heading"><div><span>01</span><h2>Market exchange</h2></div><p>Choose a company to inspect or trade.</p></header>
+        <div class="table-wrap"><table><thead><tr><th>Company</th><th>Sector</th><th>Price</th><th>Risk <button class="why compact" data-tip="Volatility means how sharply a price tends to move. Higher volatility can bring larger gains and larger losses.">?</button></th></tr></thead><tbody id="market-rows"></tbody></table></div>
+      </div>
+
+      <aside class="trade-panel">
+        <header class="panel-heading"><div><span>02</span><h2>Order ticket</h2></div></header>
+        <div id="asset-detail"></div>
+        <form id="order-form">
+          <fieldset><legend>Action</legend><label><input type="radio" name="side" value="buy" checked> Buy</label><label><input type="radio" name="side" value="sell"> Sell</label></fieldset>
+          <label class="field">Order type <button type="button" class="why" data-tip="A market order trades now at the available price. A limit order waits until the price reaches a number you choose.">Why this matters</button><select id="order-type"><option value="market">Market — trade now</option><option value="limit">Limit — wait for my price</option></select></label>
+          <label class="field">Shares<input id="quantity" type="number" min="1" max="10000" step="1" value="1" required></label>
+          <label class="field" id="limit-field" hidden>Limit price ($)<input id="limit-price" type="number" min="0.01" step="0.01"></label>
+          <div class="quote-box"><div><span>SELL / BID</span><b id="bid-price">—</b></div><div><span>BUY / ASK</span><b id="ask-price">—</b></div><button type="button" class="why" data-tip="The bid is what buyers offer; the ask is what sellers want. The gap is the spread. Buying then selling immediately usually loses that gap, even before fees.">Why this matters</button></div>
+          <div class="estimate"><span>Estimated total</span><strong id="order-estimate">—</strong><small id="fee-estimate">Includes trading fee</small></div>
+          <button class="dark submit-order" type="submit">Place order</button>
+        </form>
+        <p id="order-message" class="message" role="status" aria-live="polite"></p>
+      </aside>
+
+      <div class="portfolio-panel">
+        <header class="panel-heading"><div><span>03</span><h2>Your portfolio</h2></div><p id="fee-total">$0.00 paid in fees</p></header>
+        <div id="holdings" class="holdings"></div>
+        <section class="pending"><h3>Pending limit orders <button class="why compact" data-tip="A pending limit order has not traded yet. It waits for your chosen price and may never fill.">?</button></h3><div id="pending-orders"></div></section>
+      </div>
+    </section>
+  </main>
+
+  <footer><span>MARKETWISE <i>by Morish</i></span><span>Step 1 · Price engine, portfolio, and orders. <a href="../../">Back to portfolio ↗</a></span></footer>
+</body>
+</html>

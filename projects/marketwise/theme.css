@@ -1,0 +1,22 @@
+:root{
+  --paper:#f6ead1;
+  --canvas:#fff8e7;
+  --cream:#ead6ad;
+  --sand:#c9a979;
+  --gold:#d59b3d;
+  --clay:#a96f49;
+  --brick:#a94f42;
+  --leaf:#668052;
+  --pine:#344e41;
+  --sky:#91bdc6;
+  --water:#4f7f8d;
+  --ink:#292725;
+  --muted:#675f55;
+  --line:#473d34;
+  --green:#4f6f48;
+  --red:#963e39;
+  --pixel-border:2px;
+  --pixel-shadow:4px 4px 0 var(--line);
+  --heading-font:"Lucida Console","Courier New",monospace;
+  --body-font:Arial,Helvetica,sans-serif;
+}
