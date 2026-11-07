@@ -12,15 +12,19 @@ export function Hero() {
     if(!el) return;
     const media=window.matchMedia("(prefers-reduced-motion: reduce)");
     let frame=0;
+    let progress:number|undefined;
     const clamp=(n:number)=>Math.max(0,Math.min(1,n));
     const ease=(n:number)=>{const v=clamp(n);return v*v*(3-2*v);};
     const paint=()=>{
       frame=0;
       const reduced=media.matches || !motion;
       el.dataset.reduced=String(reduced);
-      const p=reduced ? 0.5 : clamp(-el.getBoundingClientRect().top/Math.max(1,el.offsetHeight-window.innerHeight));
+      const target=clamp(-el.getBoundingClientRect().top/Math.max(1,el.offsetHeight-window.innerHeight));
+      progress=progress===undefined || reduced ? target : progress+(target-progress)*.22;
+      if(Math.abs(target-progress)<.001) progress=target;
+      const p=reduced ? 0.5 : progress;
       const spread=reduced ? 1 : ease(p/0.3);
-      const resolve=reduced ? 0 : ease((p-0.68)/0.25);
+      const resolve=reduced ? 0 : ease((p-0.66)/0.28);
       const positions=projectPositions.map(h=>({x:50+(h.x-50)*spread,y:45+(h.y-45)*spread}));
       el.querySelectorAll<HTMLElement>(".universe-node").forEach((node,i)=>{
         node.style.left=positions[i].x+"%";
@@ -41,12 +45,17 @@ export function Hero() {
       el.style.setProperty("--connect-opacity",String(ease((p-.18)/.12)*(1-ease((p-.62)/.1))));
       el.style.setProperty("--resolve-opacity",String(ease((p-.7)/.18)));
       el.style.setProperty("--scroll-progress",String(p));
-      const phase=p<.23?"assemble":p<.72?"connect":"build";
+      const phase=p<.23?"assemble":p<.9?"connect":"build";
       el.dataset.phase=phase;
       const universe=el.querySelector<HTMLElement>(".universe-viewport");
       const final=el.querySelector<HTMLElement>(".showcase-grid");
-      if(universe) universe.inert=phase==="build";
-      if(final) final.inert=phase!=="build" && !reduced;
+      if(universe) universe.inert=resolve>.9;
+      if(final) final.inert=resolve<.1 && !reduced;
+      const inspector=el.querySelector<HTMLElement>(".system-inspector");
+      const note=el.querySelector<HTMLElement>(".showcase-note");
+      if(inspector) inspector.inert=resolve>.9;
+      if(note) note.inert=resolve<.1 && !reduced;
+      if(progress!==target) frame=requestAnimationFrame(paint);
     };
     const update=()=>{if(!frame)frame=requestAnimationFrame(paint);};
     paint();
@@ -60,7 +69,7 @@ export function Hero() {
     <div className="system-pin">
       <div className="system-strap"><span>Morish Macayan / Portfolio</span><span>{allProjects.length} projects · One connected practice</span></div>
       <div className="scroll-chapters" aria-hidden="true"><span className="scroll-chapter chapter-intro">An idea starts here.</span><span className="scroll-chapter chapter-connect">Connect the pieces.</span><span className="scroll-chapter chapter-build">Make something real.</span></div>
-      <div className="universe-seed" aria-hidden="true"><span>m.</span><i/></div><div className="universe-viewport" aria-label="All projects, grouped by discipline">
+      <div className="universe-seed" aria-hidden="true"><img src="/assets/brand/favicon.svg" alt=""/><i/></div><div className="universe-viewport" aria-label="All projects, grouped by discipline">
         <div className="universe-map">
           <svg viewBox="0 0 1000 600" preserveAspectRatio="none" aria-hidden="true">
             <path className="universe-backbone" d="M100 30 H900"/>

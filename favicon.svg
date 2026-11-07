@@ -1,1 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="12" fill="#10110f"/><text x="9" y="46" fill="#d3f99b" font-family="Georgia,serif" font-size="49" font-style="italic">m.</text></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <title>Morish Macayan</title>
+  <rect width="64" height="64" rx="13" fill="#173326"/>
+  <path d="M12 46V18L32 37L52 18V46" fill="none" stroke="#dbff73" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="12" cy="18" r="4" fill="#f3f5ef"/>
+  <circle cx="32" cy="37" r="4" fill="#f3f5ef"/>
+  <circle cx="52" cy="18" r="4" fill="#f3f5ef"/>
+</svg>

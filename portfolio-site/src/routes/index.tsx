@@ -30,7 +30,7 @@ function Index() {
     return () => { observer?.disconnect(); media.removeEventListener("change", configure); items.forEach(node => node.classList.remove("reveal-pending")); };
   }, []);
   return <div className="system-site">
-    <header className="system-nav"><a href="#top" className="system-brand" aria-label="Morish Macayan home">m<span>↗</span></a><nav aria-label="Main navigation"><a href="#work">Work</a><a href="#sandbox">Play</a><a href="#clients">Clients</a><a href="#about">About</a><a href="#certifications">Certificates</a></nav><a className="system-contact-link" href="#contact">Let's talk ↗</a></header>
+    <header className="system-nav"><a href="#top" className="system-brand" aria-label="Morish Macayan home"><img src="/assets/brand/favicon.svg" alt=""/></a><nav aria-label="Main navigation"><a href="#work">Work</a><a href="#sandbox">Play</a><a href="#clients">Clients</a><a href="#about">About</a><a href="#certifications">Certificates</a></nav><a className="system-contact-link" href="#contact">Let's talk ↗</a></header>
     <main>
       <Hero/>
       <section className="system-work system-section" id="work"><span id="projects" aria-hidden="true"/>
