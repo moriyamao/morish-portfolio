@@ -87,7 +87,7 @@ To preview the complete portfolio, run `python -m http.server 8000 --bind 127.0.
 
 ## Business websites
 
-Three self-contained, responsive website concepts are published under Clients in the portfolio. These are independent design and implementation studies, not claims of commissioned client work.
+Forma, Torque, and Common Ground are interactive website demos I built and presented to prospective clients.
 
 | Website | Live | Source | Interaction |
 | --- | --- | --- | --- |
