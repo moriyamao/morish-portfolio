@@ -4,29 +4,40 @@ Static portfolio with machine learning case studies and reproducible project sou
 
 ## Portfolio design
 
-A buildless, responsive dark portfolio: oversized editorial typography, an original
-pointer-responsive canvas study, two featured projects, and an expandable working
-index. Client work and ML research have distinct paths, with the current résumé
-available at `resume.pdf`. TravelEase has its own source-grounded case study.
+The portfolio uses the exported Higgsfield design: a sage-and-chartreuse system
+map, reversible scroll animation, project screenshots, case studies, and visible
+certifications. "Connect the pieces" includes all 22 distinct published projects.
+"Make something real" narrows to HABITAT, LeakageLens, TravelEase, and FlyRank.
+Co-authored research and client concepts retain their attribution and status.
 
-Motion honors the operating system preference and can be paused in the footer.
-The canvas pauses offscreen and in background tabs. Content, native project
-disclosures, navigation, and email links remain usable without JavaScript.
-The site does not use remote fonts, animation libraries, or analytics placeholders.
-The Netlify contact form preserves the existing service contract; email is the
-fallback. HTTP failures are not presented as successful submissions.
+GitHub Pages serves committed static HTML, CSS, and JavaScript from the repository
+root. The React source and static exporter live in `portfolio-site/`. There is no
+Higgsfield runtime, Worker, server API, or external animation dependency. The 11
+exported pages support direct loads under `/morish-portfolio/`; existing demos,
+certificate PDFs, and older case-study URLs remain available.
 
-Design research: [Dennis Snellenberg](https://dennissnellenberg.com/),
-[Brittany Chiang](https://brittanychiang.com/), and
-[Rauno Freiberg](https://raunofreiberg.com/). These informed hierarchy, project
-organization, and attention to interaction. No source, identity, or artwork was copied.
+To rebuild after changing source:
 
-Run portfolio checks with `node --test assets.test.cjs portfolio.test.cjs`.
-The independent ML demos retain their own styles, tests, and source directories.
-Portfolio interaction tests use dependency-free DOM contract doubles, not a real
-browser. The managed preview was unavailable during this redesign because of an
-environment permission error; visual browser QA and live form delivery remain
-unverified. No real contact submission is sent by the tests.
+```powershell
+cd portfolio-site
+npm ci --ignore-scripts
+npm run build
+node preview.mjs
+```
+
+Open `http://127.0.0.1:4173/morish-portfolio/`. Commit both the source and generated
+output. No dependency installation or build is needed on GitHub Pages itself.
+The source matches the hosted page except for the static routing adapter and the
+contact form, which retains this repository's existing EmailJS delivery contract.
+Archivo and JetBrains Mono load from Google Fonts with system fallbacks.
+
+Motion honors reduced-motion preferences. The motion control removes the pinned
+journey and leaves the map and shortlist usable. Static HTML contains the content
+before hydration, including all 23 credential links. Email remains a fallback.
+
+Run `node --test assets.test.cjs portfolio.test.cjs clients/clients.test.cjs sandboxes.test.cjs`
+after building. Tests check project coverage, static paths, credential visibility,
+existing demos, and mocked EmailJS success/failure handling. No real email is sent.
 
 ## Interactive sandboxes
 
@@ -45,10 +56,10 @@ vendors Three.js locally; the others have no external runtime dependencies. Each
 published project documents its implemented features, tests, data handling, and
 limits in its README.
 
-`lab.html` provides a filterable, keyboard-accessible index for the five sandbox
+`lab/` provides a filterable, keyboard-accessible index for the five sandbox
 projects. The homepage links to that Lab, states the portfolio's product direction,
-shows a factual current-work strip, and collects project type and timeline in the
-existing Netlify contact form.
+collects project type and timeline in the
+existing EmailJS contact form.
 
 Run the portfolio, existing client-site, and sandbox checks from the repository root:
 
@@ -83,7 +94,7 @@ python -m tutorialcheck.train
 
 The supported target is pandas 2.2.3. This is a measured prototype with a small original benchmark, not a general compatibility guarantee. The project README documents the results, errors and limits.
 
-To preview the complete portfolio, run `python -m http.server 8000 --bind 127.0.0.1` from the repository root and open `http://127.0.0.1:8000/`.
+To preview the complete portfolio at its deployed base path, run `node portfolio-site/preview.mjs` and open `http://127.0.0.1:4173/morish-portfolio/`.
 
 ## Business websites
 

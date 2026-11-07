@@ -1,326 +1,67 @@
-const test = require('node:test');
-const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
-const vm = require('node:vm');
-const source = fs.readFileSync(path.join(__dirname, 'index-page.js'), 'utf8');
-const signalSource = fs.readFileSync(path.join(__dirname, 'signal-study.js'), 'utf8');
-const html = fs.readFileSync(path.join(__dirname, 'index.html'), 'utf8');
-const css = fs.readFileSync(path.join(__dirname, 'style.css'), 'utf8');
+const test=require('node:test');
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const vm=require('node:vm');
+const {pathToFileURL}=require('node:url');
+const root=__dirname;
+const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
+const manifest=JSON.parse(fs.readFileSync(path.join(root,'portfolio-site/.build/manifest.json'),'utf8'));
 
-// Small DOM contract doubles keep the static repository dependency-free.
-class Element {
-  constructor() {
-    this.attributes = {}; this.dataset = {}; this.hidden = false;
-    this.listeners = {}; this.classes = new Set(); this.textContent = '';
-    this.innerHTML = ''; this.disabled = false;
-    this.classList = {
-      add: value => this.classes.add(value),
-      remove: value => this.classes.delete(value),
-      contains: value => this.classes.has(value),
-      toggle: (value, enabled) => enabled ? this.classes.add(value) : this.classes.delete(value)
-    };
+test('all 22 projects appear exactly once in the connected map and four curated projects resolve to case studies',async()=>{
+ const data=await import(pathToFileURL(path.join(root,'portfolio-site/.build/render.mjs')).href);
+ assert.equal(data.allProjects.length,22);
+ assert.equal(new Set(data.allProjects.map(p=>p.key)).size,22);
+ assert.deepEqual(data.showcase.map(p=>p.key),['habitat','leakagelens','travelease','flyrank']);
+ for(const p of data.showcase)assert.ok(p.href.startsWith('/morish-portfolio/case/'),p.title);
+ for(const key of ['tutorialcheck','data-scout','mlp','ultrasound','resilience','alx','hotel','trace','marketwise','catalyst','last-tenant','solace','celeste','thriftnest','furever','forma','torque','common-ground'])assert.ok(data.allProjects.some(p=>p.key===key),key);
+ assert.equal((html.match(/class="universe-node"/g)||[]).length,22);
+ assert.equal((html.match(/class="showcase-card"/g)||[]).length,4);
+});
+test('23 certificates are visible as links, with no closed disclosure around them',()=>{
+ assert.equal((html.match(/class="credential-card"/g)||[]).length,23);
+ assert.match(html,/href="#certifications"/);
+ assert.match(html,/<section[^>]*id="certifications"/);
+ assert.ok(!/<details[^>]*id="certifications"/.test(html));
+});
+test('every generated page loads its assets and internal links under the GitHub project base',()=>{
+ for(const r of manifest.records){
+  const text=fs.readFileSync(path.join(root,r.path),'utf8');
+  assert.match(text,/data-page=/);
+  assert.ok(!/\b(?:href|src)="\/(?:assets|case|lab)(?:\/|")/.test(text),r.path);
+  assert.ok(!text.includes('higgsfield.app'),r.path+' depends on Higgsfield');
+  for(const [,raw] of text.matchAll(/\b(?:href|src)="([^"]+)"/g)){
+   const href=raw.replace(/&amp;/g,'&');
+   if(href.startsWith('#')){if(href.length>1)assert.ok(text.includes('id="'+href.slice(1)+'"'),r.path+': missing '+href);continue;}
+   const url=new URL(href,'https://moriyamao.github.io/morish-portfolio/'+r.path);
+   if(url.origin!=='https://moriyamao.github.io'||!url.pathname.startsWith('/morish-portfolio/'))continue;
+   let file=path.join(root,decodeURIComponent(url.pathname.slice('/morish-portfolio/'.length)));
+   assert.ok(fs.existsSync(file),r.path+': missing '+href);
+   if(fs.statSync(file).isDirectory())file=path.join(file,'index.html');
+   assert.ok(fs.existsSync(file),r.path+': missing index '+href);
   }
-  setAttribute(key, value) { this.attributes[key] = value; }
-  getAttribute(key) { return this.attributes[key]; }
-  addEventListener(key, fn) { (this.listeners[key] ??= []).push(fn); }
-  async fire(key, value = {}) {
-    for (const fn of this.listeners[key] ?? []) await fn({ target: this, preventDefault() {}, ...value });
-  }
-  focus() { this.focused = true; }
+ }
+});
+test('static HTML retains content and a reduced-motion readable fallback before hydration',()=>{
+ assert.match(html,/data-reduced="true"/);
+ for(const id of ['work','sandbox','clients','about','academic','contact'])assert.ok(html.includes('id="'+id+'"'),id);
+ assert.ok(fs.statSync(path.join(root,'.nojekyll')).isFile());
+});
+function contactSetup(response){
+ const {transformSync}=require('./portfolio-site/node_modules/esbuild');
+ const code=transformSync(fs.readFileSync(path.join(root,'portfolio-site/src/components/site/contact.tsx'),'utf8'),{loader:'tsx',format:'cjs',jsx:'automatic'}).code;
+ const states=[],calls=[];let resets=0;
+ const data={name:'Test User',email:'test@example.com','project-type':'Web application',timeline:'','message':'Offline test only','bot-field':''};
+ const module={exports:{}};
+ const scope={module,exports:module.exports,require(id){if(id==='react')return {useState:v=>[v,n=>states.push(n)],useRef:v=>({current:v})};if(id==='react/jsx-runtime')return {jsx:(type,props)=>({type,props}),jsxs:(type,props)=>({type,props})};throw Error(id);},FormData:class{get(k){return data[k]}},fetch:async(url,options)=>{calls.push({url,body:JSON.parse(options.body)});return response;}};
+ vm.runInNewContext(code,scope);
+ const element=module.exports.ContactForm();
+ return {submit:()=>element.props.onSubmit({preventDefault(){},currentTarget:{reportValidity:()=>true,reset(){resets++}}}),states,calls,data,resets:()=>resets};
 }
-function setup({ reduce = false, stored = null, storageError = false, fetchImpl } = {}) {
-  const elements = {};
-  for (const key of ['body', 'root', 'nav', 'menu', 'filters', 'counter', 'index', 'motion', 'form', 'status', 'submit'])
-    elements[key] = new Element();
-  const e = elements;
-  const filters = ['all', 'ml', 'web'].map(filter => {
-    const item = new Element(); item.dataset.filter = filter; return item;
-  });
-  const projects = [...html.matchAll(/data-category="(ml|web)"/g)].map(([, category]) => {
-    const item = new Element(); item.dataset.category = category; return item;
-  });
-  const navLink = new Element();
-  e.nav.querySelectorAll = () => [navLink];
-  e.nav.contains = target => [e.nav, e.menu, navLink].includes(target);
-  e.menu.setAttribute('aria-expanded', 'false');
-  e.filters.querySelectorAll = () => filters;
-  e.filters.hidden = true;
-  e.index.querySelectorAll = () => projects.slice(2);
-  e.form.querySelector = () => e.submit;
-  e.form.reportValidity = () => true;
-  e.form.reset = () => { e.form.resetCount = (e.form.resetCount || 0) + 1; };
-  e.submit.innerHTML = 'Send message <span>↗</span>';
-  const ids = { 'project-count': e.counter, 'motion-toggle': e.motion,
-    contactForm: e.form, formStatus: e.status };
-  const queries = { '.nav': e.nav, '.nav-toggle': e.menu, '.filters': e.filters, '.project-index': e.index };
-  const document = new Element();
-  document.body = e.body; document.documentElement = e.root;
-  document.querySelector = key => queries[key];
-  document.querySelectorAll = key => key === '.project' ? projects : [];
-  document.getElementById = id => ids[id];
-  const media = {};
-  const calls = [];
-  const window = {
-    matchMedia(query) {
-      if (!media[query]) {
-        media[query] = new Element();
-        media[query].matches = query.includes('reduced-motion') && reduce;
-      }
-      return media[query];
-    },
-    localStorage: {
-      getItem() { if (storageError) throw new Error('blocked'); return stored; },
-      setItem(key, value) { if (storageError) throw new Error('blocked'); calls.push({ key, value }); }
-    }
-  };
-  const fetch = async (...args) => {
-    calls.push(args);
-    return fetchImpl ? fetchImpl(...args) : { ok: true, status: 200 };
-  };
-  class FormData {
-    constructor() {
-      this.values = new Map([
-        ['bot-field', ''], ['name', 'Test Sender'], ['email', 'sender@example.com'],
-        ['project-type', 'Web application'], ['timeline', 'Within 1 month'],
-        ['message', 'A test only']
-      ]);
-    }
-    get(key) { return this.values.get(key) ?? null; }
-  }
-  vm.runInNewContext(source, { document, window, fetch, FormData, URLSearchParams });
-  return { e, filters, projects, navLink, document, media, calls };
-}
-test('page enhances progressively without an IntersectionObserver', () => {
-  const { e } = setup();
-  assert.ok(e.body.classes.has('js-ready'));
-  assert.equal(e.motion.hidden, false);
-  assert.ok(!e.body.classes.has('motion-ready'));
+test('contact keeps the existing delivery contract without sending a real email',async()=>{
+ const t=contactSetup({ok:true});await t.submit();assert.equal(t.calls.length,1);assert.equal(t.calls[0].url,'https://api.emailjs.com/api/v1.0/email/send');assert.equal(t.calls[0].body.service_id,'service_t79kzen');assert.equal(t.calls[0].body.template_id,'template_dyq9o4r');assert.equal(t.calls[0].body.template_params.reply_to,'test@example.com');assert.equal(t.calls[0].body.template_params.timeline,'Not specified');assert.equal(t.resets(),1);assert.ok(t.states.includes('Message sent. Thanks for reaching out!'));
 });
-test('academic projects are visible together and reachable from main navigation', () => {
-  const academic = html.match(/<section id="academic-projects"[\s\S]*?<\/section>/)?.[0];
-  assert.ok(academic);
-  assert.match(html.match(/<ul id="nav-links">[\s\S]*?<\/ul>/)[0], /href="#academic-projects">Academic Projects/);
-  for (const title of ['TravelEase', 'Breast Ultrasound Research', 'Supply-Chain Resilience', 'ALX Desserts', 'HotelEase']) assert.ok(academic.includes(title), title);
-  assert.equal((academic.match(/class="academic-card/g) || []).length, 5);
-  assert.doesNotMatch(academic, /<details|\bhidden\b|data-category/);
-  const independent = html.match(/<section id="work"[\s\S]*?<\/section>/)[0];
-  assert.doesNotMatch(independent, /case-travelease|case-ultrasound|case-resilience/);
-  assert.doesNotMatch(html, /ALSO BUILT AT MAPÚA|PERSONAL PROJECT/);
-});
-test('research documents, live demos, and GitHub Pages identity remain available', () => {
-  assert.match(html, /https:\/\/moriyamao.github.io\/morish-portfolio\//);
-  assert.match(html, /https:\/\/travelease-zp7o.onrender.com\/auth\/login.php/);
-  assert.match(html, /https:\/\/breast-ultrasound-web-pragmatism.streamlit.app/);
-  for (const name of ['breast-ultrasound-paper.pdf', 'supply-chain-resilience-paper.pdf']) {
-    assert.match(fs.readFileSync(path.join(__dirname, 'research', name)).subarray(0, 5).toString(), /%PDF-/);
-  }
-  for (const file of fs.readdirSync(__dirname).filter(f => f.endsWith('.html'))) assert.doesNotMatch(fs.readFileSync(path.join(__dirname, file), 'utf8'), /moriyamao\.netlify\.app/);
-});
-test('available credential PDFs are local, valid, and include the internship certificate', () => {
-  const certificateLinks = [...html.matchAll(/href="(certificates\/[^"]+\.pdf)"/g)].map(match => match[1]);
-  assert.equal(certificateLinks.length, 9);
-  assert.ok(certificateLinks.includes('certificates/flyrank-machine-learning-internship.pdf'));
-  for (const reference of certificateLinks) {
-    assert.match(fs.readFileSync(path.join(__dirname, reference)).subarray(0, 5).toString(), /%PDF-/);
-  }
-});
-test('portfolio positioning, Lab route, and project brief fields are explicit', () => {
-  assert.match(html, /I build useful web products/);
-  assert.match(html, /class="now-strip"/);
-  assert.match(html, /href="lab\.html">Lab/);
-  assert.match(html, /name="project-type"/);
-  assert.match(html, /name="timeline"/);
-});
-test('Lab is a complete, honest index of the five sandbox projects', () => {
-  const lab = fs.readFileSync(path.join(__dirname, 'lab.html'), 'utf8');
-  assert.equal((lab.match(/data-project/g) || []).length, 5);
-  for (const slug of ['habitat', 'trace', 'marketwise', 'catalyst']) {
-    assert.match(lab, new RegExp('href="projects/' + slug + '/"'));
-  }
-  const lastTenant = lab.match(/<article class="lab-card lab-card--studio"[\s\S]*?<\/article>/)[0];
-  assert.match(lastTenant, /PLAYABLE BUILD/);
-  assert.match(lastTenant, /https:\/\/www\.roblox\.com\/games\/102651311116462\/LAST-TENANT/);
-  new vm.Script(fs.readFileSync(path.join(__dirname, 'lab.js'), 'utf8'), { filename: 'lab.js' });
-});
-test('menu opens and Escape closes it with restored focus', async () => {
-  const { e, document } = setup();
-  await e.menu.fire('click');
-  assert.equal(e.menu.getAttribute('aria-expanded'), 'true');
-  await document.fire('keydown', { key: 'Escape' });
-  assert.equal(e.menu.getAttribute('aria-expanded'), 'false');
-  assert.equal(e.menu.focused, true);
-});
-test('navigation links and outside clicks close the mobile menu', async () => {
-  const { e, document, navLink } = setup();
-  await e.menu.fire('click'); await navLink.fire('click');
-  assert.equal(e.menu.getAttribute('aria-expanded'), 'false');
-  await e.menu.fire('click'); await document.fire('click', { target: new Element() });
-  assert.equal(e.menu.getAttribute('aria-expanded'), 'false');
-});
-test('desktop resize resets a previously open mobile menu', async () => {
-  const { e, media } = setup();
-  await e.menu.fire('click');
-  await media['(min-width: 761px)'].fire('change', { matches: true });
-  assert.equal(e.menu.getAttribute('aria-expanded'), 'false');
-});
-test('reduced motion is honored and cannot be overridden by the toggle', () => {
-  const { e } = setup({ reduce: true });
-  assert.equal(e.root.dataset.motion, 'paused');
-  assert.equal(e.motion.disabled, true);
-  assert.equal(e.motion.textContent, 'Reduced motion');
-});
-test('a stored pause is honored; preference persistence is optional', async () => {
-  const { e, calls } = setup({ stored: 'paused' });
-  assert.equal(e.root.dataset.motion, 'paused');
-  await e.motion.fire('click');
-  assert.equal(e.root.dataset.motion, 'playing');
-  assert.deepEqual(calls[0], { key: 'portfolio-motion', value: 'playing' });
-  const blocked = setup({ storageError: true });
-  await blocked.e.motion.fire('click');
-  assert.equal(blocked.e.root.dataset.motion, 'paused');
-});
-test('a new OS reduced-motion preference stops motion immediately', async () => {
-  const { e, media } = setup();
-  const preference = media['(prefers-reduced-motion: reduce)'];
-  preference.matches = true;
-  await preference.fire('change');
-  assert.equal(e.root.dataset.motion, 'paused');
-  assert.equal(e.motion.disabled, true);
-});
-test('contact success requires an OK response and resets the form', async () => {
-  const { e, calls } = setup();
-  await e.form.fire('submit');
-  assert.equal(e.status.dataset.state, 'success');
-  assert.equal(e.form.resetCount, 1);
-  assert.equal(e.submit.disabled, false);
-  assert.equal(e.submit.innerHTML, 'Send message <span>↗</span>');
-  assert.equal(calls[0][0], 'https://api.emailjs.com/api/v1.0/email/send');
-  const payload = JSON.parse(calls[0][1].body);
-  assert.equal(payload.service_id, 'service_t79kzen');
-  assert.equal(payload.template_id, 'template_dyq9o4r');
-  assert.equal(payload.user_id, 'tsCajoh5dqxR93vz5');
-  assert.deepEqual(payload.template_params, {
-    name: 'Test Sender', email: 'sender@example.com', reply_to: 'sender@example.com',
-    project_type: 'Web application', timeline: 'Within 1 month', message: 'A test only'
-  });
-});
-test('HTTP errors do not masquerade as a successful contact submission', async () => {
-  const { e } = setup({ fetchImpl: async () => ({ ok: false, status: 503 }) });
-  await e.form.fire('submit');
-  assert.equal(e.status.dataset.state, 'error');
-  assert.equal(e.form.resetCount, undefined);
-  assert.match(e.status.textContent, /email me directly/);
-  assert.equal(e.submit.disabled, false);
-});
-test('network failure retains the message; invalid forms do not submit', async () => {
-  const { e, calls } = setup({ fetchImpl: async () => { throw new Error('offline'); } });
-  await e.form.fire('submit');
-  assert.equal(e.status.dataset.state, 'error');
-  const count = calls.length;
-  e.form.reportValidity = () => false;
-  await e.form.fire('submit');
-  assert.equal(calls.length, count);
-});
-test('contact sends once while a request is in flight', async () => {
-  let finish;
-  const { e, calls } = setup({ fetchImpl: () => new Promise(resolve => { finish = resolve; }) });
-  const pending = e.form.fire('submit');
-  await e.form.fire('submit');
-  assert.equal(calls.length, 1);
-  finish({ ok: true }); await pending;
-});
-
-function signalSetup() {
-  const context = new Proxy({}, { get: (obj, key) => obj[key] ?? (() => {}) });
-  const canvas = new Element(); const figure = new Element();
-  canvas.getContext = () => context;
-  canvas.closest = () => figure;
-  canvas.getBoundingClientRect = () => ({ width: 400, height: 200, left: 0, top: 0 });
-  const callbacks = new Map(); let next = 0; const observers = [];
-  const document = new Element(); document.hidden = false;
-  const window = new Element();
-  window.devicePixelRatio = 3;
-  window.requestAnimationFrame = cb => { callbacks.set(++next, cb); return next; };
-  window.cancelAnimationFrame = id => callbacks.delete(id);
-  window.ResizeObserver = class { constructor(cb) { this.cb = cb; } observe() {} };
-  window.IntersectionObserver = class { constructor(cb) { observers.push(cb); } observe() {} };
-  vm.runInNewContext(signalSource, { window, document });
-  const signal = window.createSignalStudy(canvas);
-  return { signal, callbacks, canvas, figure, observers, document, window };
-}
-test('canvas is initially static and caps its device-pixel ratio at two', () => {
-  const { canvas, callbacks, figure } = signalSetup();
-  assert.equal(canvas.width, 800);
-  assert.equal(canvas.height, 400);
-  assert.equal(callbacks.size, 0);
-  assert.ok(figure.classes.has('canvas-ready'));
-});
-test('canvas cancels frames when paused, offscreen, or in a hidden tab', async () => {
-  const { signal, callbacks, observers, document } = signalSetup();
-  signal.setPaused(false); assert.equal(callbacks.size, 1);
-  observers[0]([{ isIntersecting: false }]); assert.equal(callbacks.size, 0);
-  observers[0]([{ isIntersecting: true }]); assert.equal(callbacks.size, 1);
-  document.hidden = true; await document.fire('visibilitychange'); assert.equal(callbacks.size, 0);
-  document.hidden = false; await document.fire('visibilitychange'); assert.equal(callbacks.size, 1);
-  signal.setPaused(true); assert.equal(callbacks.size, 0);
-});
-test('canvas remains drawable while pointer coordinates change', async () => {
-  const { signal, callbacks, canvas } = signalSetup();
-  signal.setPaused(false);
-  await canvas.fire('pointermove', { clientX: 130, clientY: 90 });
-  const [id, tick] = callbacks.entries().next().value; callbacks.delete(id); tick(16);
-  assert.equal(callbacks.size, 1);
-  await canvas.fire('pointerleave');
-  signal.setPaused(true); assert.equal(callbacks.size, 0);
-});
-test('homepage has explicit motion controls, native disclosures, and no placeholder trackers', () => {
-  assert.match(html, /id="motion-toggle"/);
-  assert.equal((html.match(/class="project index-project/g) || []).length, 4);
-  assert.equal((html.match(/data-category=/g) || []).length, 5);
-  assert.match(html, /name="bot-field"/);
-  assert.match(html, /Delivered securely through EmailJS/);
-  assert.doesNotMatch(html, /data-netlify|netlify-honeypot|name="form-name"/);
-  assert.match(css, /prefers-reduced-motion/);
-  assert.match(css, /\[hidden\]/);
-  assert.doesNotMatch(html, /PASTE_|cloudflareinsights|fonts\.googleapis/);
-});
-test('sandbox section has the published tools and verified Roblox experience', () => {
-  const sandboxes = html.match(/<section id="sandbox-projects"[\s\S]*?<\/section>/)[0];
-  assert.match(sandboxes, /SANDBOX \/ JUST BECAUSE/);
-  assert.match(html.match(/<section id="work"[\s\S]*?<\/section>/)[0], /5 independent &amp; internship projects/);
-  for (const slug of ['habitat', 'trace']) {
-    assert.ok(sandboxes.includes('href="projects/' + slug + '/"'));
-    assert.ok(sandboxes.includes('href="case-' + slug + '.html"'));
-    assert.ok(sandboxes.includes('https://github.com/moriyamao/morish-portfolio/tree/main/projects/' + slug));
-    assert.ok(fs.existsSync(path.join(__dirname, 'projects', slug, 'index.html')));
-  }
-  for (const slug of ['marketwise', 'catalyst']) {
-    assert.ok(sandboxes.includes('href="projects/' + slug + '/"'));
-    assert.ok(sandboxes.includes('https://github.com/moriyamao/morish-portfolio/tree/main/projects/' + slug));
-    assert.ok(fs.existsSync(path.join(__dirname, 'projects', slug, 'index.html')));
-  }
-  assert.match(sandboxes, /LAST TENANT/);
-  assert.match(sandboxes, /https:\/\/www\.roblox\.com\/games\/102651311116462\/LAST-TENANT/);
-});
-test('all portfolio-relative links and local script assets exist', () => {
-  const pages = fs.readdirSync(__dirname).filter(file => file.endsWith('.html'));
-  for (const page of pages) {
-    const text = fs.readFileSync(path.join(__dirname, page), 'utf8');
-    const ids = [...text.matchAll(/\bid="([^"]+)"/g)].map(match => match[1]);
-    assert.equal(new Set(ids).size, ids.length, page + ': unique IDs');
-    for (const [, reference] of text.matchAll(/(?:href|src)="([^"]+)"/g)) {
-      if (/^(?:https?:|data:|mailto:|tel:|\/)/.test(reference)) continue;
-      const [fileWithQuery, hash] = reference.split('#');
-      const file = fileWithQuery.split('?')[0];
-      const resolved = path.resolve(__dirname, file || page);
-      assert.ok(fs.existsSync(resolved), page + ': ' + reference);
-      if (hash && resolved.endsWith('.html')) {
-        assert.ok(fs.readFileSync(resolved, 'utf8').includes('id="' + hash + '"'), reference);
-      }
-      if (file.endsWith('.js')) new vm.Script(fs.readFileSync(resolved, 'utf8'), { filename: file });
-    }
-  }
-  const resume = fs.readFileSync(path.join(__dirname, 'resume.pdf'));
-  assert.equal(resume.subarray(0, 5).toString(), '%PDF-');
+test('contact rejects honeypot input and reports delivery failure without clearing user data',async()=>{
+ const blocked=contactSetup({ok:true});blocked.data['bot-field']='bot';await blocked.submit();assert.equal(blocked.calls.length,0);
+ const failure=contactSetup({ok:false});await failure.submit();assert.equal(failure.resets(),0);assert.ok(failure.states.some(x=>typeof x==='string'&&x.includes('could not be sent')));
 });

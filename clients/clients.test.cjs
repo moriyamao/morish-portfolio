@@ -8,8 +8,8 @@ const { calculate } = require('./common-ground/planner.js');
 
 test('Clients includes all seven websites with live and source links', () => {
   const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
-  const clients = html.match(/<section id="client-work"[\s\S]*?<\/section>/)[0];
-  assert.equal((clients.match(/class="client-row"/g) || []).length, 7);
+  const clients = html.match(/<section\b[^>]*id="clients"[\s\S]*?<\/section>/)[0];
+  assert.equal((clients.match(/<article\b/g) || []).length, 7);
   for (const slug of ['forma', 'torque', 'common-ground']) {
     assert.ok(clients.includes(`https://moriyamao.github.io/morish-portfolio/clients/${slug}/`));
     assert.ok(clients.includes(`https://github.com/moriyamao/morish-portfolio/tree/main/clients/${slug}`));
