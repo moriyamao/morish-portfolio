@@ -1738,9 +1738,7 @@ ul {
 }
 .case-fig img {
   width: 100%;
-  aspect-ratio: 16 / 10;
-  object-fit: cover;
-  object-position: top center;
+  height: auto;
 }
 .case-fig figcaption {
   display: flex;
