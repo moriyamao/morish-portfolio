@@ -114,7 +114,7 @@ function LabPage() {
             </div>
 
             <p className="note-line" style={{ marginTop: 26 }}>
-              Captures are of the live experiments. LAST TENANT runs on Roblox and is shown as an illustrative diagram.
+              Captures are of the live experiments. LAST TENANT runs on Roblox and uses its game artwork.
             </p>
           </div>
         </section>

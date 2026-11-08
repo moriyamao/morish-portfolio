@@ -706,7 +706,8 @@ export const lab: LabItem[] = [
     status: "Playable build",
     line: "A solo first-person horror story set in a Philippine boarding house. Restore the power, find a way out, stay quiet when something knocks.",
     tags: ["Roblox Studio", "Luau", "Level design"],
-    plate: "tenant",
+    img: "/assets/shots/last-tenant.png",
+    alt: "LAST TENANT horror game artwork showing a dark boarding-house corridor and the game's title",
     href: "https://www.roblox.com/games/102651311116462/LAST-TENANT",
   },
 ];

@@ -1024,6 +1024,7 @@ ul {
   filter: saturate(0.9);
   transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
+.lab-card .shot img[src*="last-tenant"] { object-fit: contain; background: #101615; }
 .lab-card:hover .shot img {
   transform: scale(1.04);
 }
