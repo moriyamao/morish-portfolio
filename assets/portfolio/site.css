@@ -2167,7 +2167,7 @@ body:has(.system-site)::before{display:none}
 .system-play .system-section-head h2{font-size:clamp(90px,14vw,190px)}
 .system-play .system-section-head h2 span{color:var(--acid)}
 .experiment-strip{display:flex;gap:30px;overflow-x:auto;padding-bottom:30px;margin-bottom:30px;scroll-snap-type:x mandatory}
-.experiment-strip article{flex:0 0 40%;min-width:0;scroll-snap-align:start}
+.experiment-strip article{flex:0 0 calc((100% - 30px)/2);min-width:0;scroll-snap-align:start}
 .experiment-image{display:block;aspect-ratio:16/10;position:relative;overflow:hidden;margin-bottom:20px;background:#283c30}
 .experiment-image img{width:100%;height:100%;object-fit:cover;object-position:top;transition:transform .45s}
 .experiment-image:hover img{transform:scale(1.04)}
