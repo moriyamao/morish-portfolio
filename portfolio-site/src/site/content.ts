@@ -170,12 +170,13 @@ export const cases: CaseStudy[] = [
     title: "TravelEase",
     kicker: "Academic project / full-stack development",
     lede:
-      "An academic full-stack project: I built the front end and back end for trips, daily plans, budgets, and AI-to-human support.",
+      "An academic full-stack project for trips, daily plans, budgets, and AI-to-human support. The application is currently under renovation.",
     tags: ["PHP", "MySQL", "JavaScript", "Groq API"],
     facts: [
       { k: "Role", v: "Front end and back end" },
       { k: "Deployed", v: "Render, PHP and MySQL" },
       { k: "Access", v: "Customer, staff, administrator" },
+      { k: "Status", v: "Under renovation" },
     ],
     sections: [
       {
@@ -187,14 +188,46 @@ export const cases: CaseStudy[] = [
       {
         h: "What I built",
         fig: {
-          src: "/assets/shots/travelease.jpg",
-          alt: "TravelEase sign-in page on the deployed Render application",
-          caption: "The deployed application on Render. Sign-in is the public entry point; the workspace sits behind the account.",
+          src: "/assets/shots/travelease-dashboard.png",
+          alt: "TravelEase dashboard showing a journey card, search and filter controls, and a support panel",
+          caption: "The customer dashboard brings trips, search, planning, and support together.",
         },
         p: [
           "Customers can create, view, edit, and delete trips, organize itinerary items by day and time, and track estimated versus actual costs. Budget summaries expose planned spending, actual spending, and the remaining or exceeded trip budget.",
           "The support assistant calls the Groq API from the server. Rules escalate sensitive categories such as account security, billing, and complaints. For other TravelEase questions, the assistant can flag that a human is needed, while unrelated questions are declined. Escalations are supported by customer and staff messaging routes. Service failures also fall back to staff escalation rather than displaying a fabricated answer.",
         ],
+      },
+      {
+        h: "Sign in",
+        fig: {
+          src: "/assets/shots/travelease.jpg",
+          alt: "TravelEase sign-in page on the deployed Render application",
+          caption: "The deployed application's sign-in page. The travel workspace is available after authentication.",
+        },
+      },
+      {
+        h: "Plan a trip",
+        fig: {
+          src: "/assets/shots/travelease-plan.png",
+          alt: "TravelEase new-trip form with destination, dates, status, currency, budget, and notes",
+          caption: "The trip form captures dates, destination, currency, optional budget, and notes.",
+        },
+      },
+      {
+        h: "A sample journey",
+        fig: {
+          src: "/assets/shots/travelease-trip.png",
+          alt: "Sample TravelEase trip showing an itinerary item and estimated and actual costs",
+          caption: "Sample trip data showing the itinerary and estimated versus actual costs; the figures are illustrative.",
+        },
+      },
+      {
+        h: "Support chat",
+        fig: {
+          src: "/assets/shots/travelease-chat.png",
+          alt: "TravelEase support chat with a greeting and reply",
+          caption: "The customer-facing support chat. This screenshot shows the interface, not an escalation example.",
+        },
       },
       {
         h: "The hardest technical choice",
@@ -586,8 +619,8 @@ export const selected: Work[] = [
     line: "A travel planner with daily itineraries, estimated and actual budgets, role-based access, and AI-to-human support.",
     built: "I built the front end and the back end: trips, itineraries, budget summaries, and staff escalation.",
     tags: ["PHP", "MySQL", "Groq API"],
-    img: "/assets/shots/travelease.jpg",
-    alt: "TravelEase sign-in page on the deployed application",
+    img: "/assets/shots/travelease-dashboard.png",
+    alt: "TravelEase customer dashboard with a sample journey and planning controls",
     links: [
       { label: "Open the live site", href: "https://travelease-zp7o.onrender.com/auth/login.php", primary: true },
       { label: "Case study", href: "/case/travelease" },
