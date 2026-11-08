@@ -1024,7 +1024,6 @@ ul {
   filter: saturate(0.9);
   transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
-.lab-card .shot img[src*="last-tenant"] { object-fit: contain; background: #101615; }
 .lab-card:hover .shot img {
   transform: scale(1.04);
 }
@@ -2169,9 +2168,8 @@ body:has(.system-site)::before{display:none}
 .system-play .system-section-head h2 span{color:var(--acid)}
 .experiment-strip{display:flex;gap:30px;overflow-x:auto;padding-bottom:30px;margin-bottom:30px;scroll-snap-type:x mandatory}
 .experiment-strip article{flex:0 0 40%;min-width:0;scroll-snap-align:start}
-.experiment-image{display:block;aspect-ratio:4/3;position:relative;overflow:hidden;margin-bottom:20px;background:#283c30}
+.experiment-image{display:block;aspect-ratio:16/10;position:relative;overflow:hidden;margin-bottom:20px;background:#283c30}
 .experiment-image img{width:100%;height:100%;object-fit:cover;object-position:top;transition:transform .45s}
-.experiment-image img[src*="last-tenant"]{object-fit:contain;background:#101615}
 .experiment-image:hover img{transform:scale(1.04)}
 .experiment-arrow{position:absolute;bottom:16px;right:16px;display:grid;place-items:center;border-radius:50%;width:48px;height:48px;background:var(--acid);color:#101615;font-size:25px}
 .experiment-placeholder{display:flex;align-items:center;justify-content:center;height:100%;font-size:60px;line-height:.85;font-weight:800;color:#c2cdab}
