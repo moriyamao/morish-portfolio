@@ -23,7 +23,7 @@ export function Hero() {
       progress=progress===undefined || reduced ? target : progress+(target-progress)*.22;
       if(Math.abs(target-progress)<.001) progress=target;
       const p=reduced ? 0.5 : progress;
-      const spread=reduced ? 1 : ease(p/0.3);
+      const spread=reduced ? 1 : ease(p/0.4);
       const resolve=reduced ? 0 : ease((p-0.66)/0.28);
       const positions=projectPositions.map(h=>({x:50+(h.x-50)*spread,y:45+(h.y-45)*spread}));
       el.querySelectorAll<HTMLElement>(".universe-node").forEach((node,i)=>{
@@ -36,16 +36,16 @@ export function Hero() {
         const group=mapGroups.indexOf(allProjects[i].group);
         node.setAttribute("d",`M ${(10+group*20)*10} 30 L ${(10+group*20)*10} ${h.y*6} L ${h.x*10} ${h.y*6}`);
       });
-      el.style.setProperty("--universe-opacity",String((reduced?1:ease((p-.04)/.16))*(1-resolve)));
+      el.style.setProperty("--universe-opacity",String((reduced?1:ease((p-.06)/.23))*(1-resolve)));
       el.style.setProperty("--universe-scale",String(1-resolve*.2));
       el.style.setProperty("--showcase-opacity",String(resolve));
       el.style.setProperty("--showcase-shift",`${(1-resolve)*80}px`);
       el.style.setProperty("--wire-progress",String(spread));
-      el.style.setProperty("--intro-opacity",String(1-ease((p-.1)/.13)));
-      el.style.setProperty("--connect-opacity",String(ease((p-.18)/.12)*(1-ease((p-.62)/.1))));
+      el.style.setProperty("--intro-opacity",String(1-ease((p-.14)/.18)));
+      el.style.setProperty("--connect-opacity",String(ease((p-.26)/.16)*(1-ease((p-.62)/.1))));
       el.style.setProperty("--resolve-opacity",String(ease((p-.7)/.18)));
       el.style.setProperty("--scroll-progress",String(p));
-      const phase=p<.23?"assemble":p<.9?"connect":"build";
+      const phase=p<.34?"assemble":p<.9?"connect":"build";
       el.dataset.phase=phase;
       const universe=el.querySelector<HTMLElement>(".universe-viewport");
       const final=el.querySelector<HTMLElement>(".showcase-grid");
