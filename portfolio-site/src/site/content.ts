@@ -200,9 +200,9 @@ export const cases: CaseStudy[] = [
       {
         h: "Sign in",
         fig: {
-          src: "/assets/shots/travelease.jpg",
-          alt: "TravelEase sign-in page on the deployed Render application",
-          caption: "The deployed application's sign-in page. The travel workspace is available after authentication.",
+          src: "/assets/shots/travelease-login.png",
+          alt: "TravelEase sign-in page with email, password, and Google sign-in options",
+          caption: "The current sign-in screen. The travel workspace is available after authentication.",
         },
       },
       {
