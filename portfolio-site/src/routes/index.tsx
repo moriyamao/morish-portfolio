@@ -67,6 +67,10 @@ function Head({ num, label, title, accent, note }: { num: string; label: string;
   </header>;
 }
 
+function Chapter({ num, name }: { num: string; name: string }) {
+  return <div className="v-chapter" aria-hidden="true"><span className="v-chapter__num"><span>{num}</span></span><i/><span className="v-chapter__name"><span>{name}</span></span></div>;
+}
+
 function Index() {
   const root = useRef<HTMLDivElement>(null);
   const list = useRef<HTMLOListElement>(null);
@@ -141,7 +145,7 @@ function Index() {
         </a>)}
       </nav>
 
-      <section className="v-featured" id="work">
+      <section className="v-featured v-section" id="work">
         <div className="v-featured__intro">
           <Head num="01" label="Selected work" title="Built to be" accent="used." note="Five projects that carry the most weight: real interfaces, measured models, and honest limits."/>
           <p className="v-featured__hint" data-reveal><span>Scroll</span><i aria-hidden="true">→</i></p>
@@ -167,8 +171,9 @@ function Index() {
         </div>
       </section>
 
-      <section className="v-index" id="index">
+      <section className="v-index v-section" id="index">
         <div className="v-wrap">
+          <Chapter num="02" name="Index"/>
           <Head num="02" label="Index" title="Every project," accent="sorted." note="Filter by discipline. Hover a row to preview it."/>
           <div className="v-filters" role="toolbar" aria-label="Filter projects" data-reveal>
             {filters.map(f => <button key={f} aria-pressed={filter === f} onClick={() => setFilter(f)}>{f}<sup>{f === "All" ? allProjects.length : allProjects.filter(p => p.group === f).length}</sup></button>)}
@@ -187,9 +192,10 @@ function Index() {
         </div>
       </section>
 
-      <section className="v-play" id="play">
+      <section className="v-play v-section" id="play">
         <div className="v-play__bg" aria-hidden="true"/>
         <div className="v-wrap">
+          <Chapter num="03" name="Playground"/>
           <Head num="03" label="The playground" title="What" accent="if?" note="Small questions turned into things you can play with."/>
         </div>
         <div className="v-play__track" data-cursor="Drag">
@@ -206,8 +212,9 @@ function Index() {
         <div className="v-wrap v-play__foot"><a className="v-btn is-lime" href="/lab" data-magnetic><span>Enter the full Lab</span><i aria-hidden="true">↗</i></a></div>
       </section>
 
-      <section className="v-clients" id="clients">
+      <section className="v-clients v-section" id="clients">
         <div className="v-wrap">
+          <Chapter num="04" name="Clients"/>
           <Head num="04" label="Clients & concepts" title="Made for" accent="people." note="Storefronts delivered end to end, and interactive concepts pitched to prospective clients."/>
           {[["Delivered", delivered], ["Presented concepts", concepts]].map(([label, group]) => <div className="v-clients__group" key={label as string}>
             <h3 className="v-label" data-reveal>{label as string} · {(group as typeof clients).length}</h3>
@@ -221,8 +228,9 @@ function Index() {
         </div>
       </section>
 
-      <section className="v-about" id="about">
+      <section className="v-about v-section" id="about">
         <div className="v-wrap">
+          <Chapter num="05" name="About"/>
           <span className="v-label" data-reveal>05 / The person behind the systems</span>
           <p className="v-scrub"><Words text={`I'm ${site.fullName} — a Computer Science student on the AI track at Mapúa University and an independent developer in Malolos. I care about understanding how something works, and being clear about where it doesn't.`}/></p>
           <div className="v-about__grid">
@@ -236,8 +244,9 @@ function Index() {
         </div>
       </section>
 
-      <section className="v-certs" id="certifications">
+      <section className="v-certs v-section" id="certifications">
         <div className="v-wrap">
+          <Chapter num="06" name="Credentials"/>
           <Head num="06" label={`Credentials · ${credentials.length}`} title="Learning" accent="with proof." note="The six that carry the most weight. Every record links to its evidence."/>
           <div className="v-certs__grid">{featuredCredentials.map((c, i) => <a className="v-cert" key={c.name} href={c.href} target="_blank" rel="noreferrer" data-reveal>
             <span className="v-cert__top"><span className="v-label">{c.org}</span><i aria-hidden="true">↗</i></span>
@@ -251,8 +260,9 @@ function Index() {
         </div>
       </section>
 
-      <section className="v-academic" id="academic">
+      <section className="v-academic v-section" id="academic">
         <div className="v-wrap">
+          <Chapter num="07" name="Academic"/>
           <Head num="07" label="Academic work" title="Learning," accent="documented." note="Coursework, applications, and co-authored research."/>
           {academic.map(a => <details className="v-disclosure" key={a.key} data-reveal>
             <summary><span className="v-label">{a.num}</span><span>{a.title}</span><i aria-hidden="true">+</i></summary>
@@ -261,9 +271,10 @@ function Index() {
         </div>
       </section>
 
-      <section className="v-end" id="contact">
+      <section className="v-end v-section" id="contact">
         <div className="v-end__bg" aria-hidden="true"/>
         <div className="v-wrap">
+          <Chapter num="08" name="Contact"/>
           <span className="v-label" data-reveal>08 / Next connection</span>
           <h2 data-split><Words text="Have something"/> <Words text="in mind?" className="is-accent"/></h2>
           <div className="v-end__grid">

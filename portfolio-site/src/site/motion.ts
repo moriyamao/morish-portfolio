@@ -137,6 +137,26 @@ export function initMotion(root: HTMLElement) {
         scrollTrigger: {trigger: ".v-stats", start: "top 85%"}});
     });
 
+    // ---------- Section-to-section transitions ----------
+    const sections = gsap.utils.toArray<HTMLElement>(".v-section");
+    const small = window.innerWidth < 760;
+    const fromClip = small ? "inset(48px 12px 0px 12px round 28px)" : "inset(110px 3.5vw 0px 3.5vw round 56px)";
+    const toClip = small ? "inset(0px 0px 0px 0px round 0px)" : "inset(0px 0vw 0px 0vw round 0px)";
+    sections.forEach((section, i) => {
+      const range = {trigger: section, start: "top bottom", end: "top 12%", scrub: true};
+      gsap.fromTo(section, {clipPath: fromClip}, {clipPath: toClip, ease: "none", scrollTrigger: range});
+      const prev = sections[i - 1];
+      if (prev && !prev.classList.contains("v-featured")) {
+        gsap.fromTo(prev, {scale: 1, opacity: 1}, {scale: .93, opacity: .35, transformOrigin: "50% 100%", ease: "none", immediateRender: false, scrollTrigger: range});
+      }
+      const chapter = section.querySelector(".v-chapter");
+      if (chapter) {
+        gsap.timeline({scrollTrigger: {trigger: section, start: "top 70%"}})
+          .from(chapter.querySelector("i"), {scaleX: 0, duration: 1.4, ease: "expo.inOut"})
+          .from(chapter.querySelectorAll(".v-chapter__num > span, .v-chapter__name > span"), {yPercent: 110, duration: 1, ease: "expo.out", stagger: .1}, "<.25");
+      }
+    });
+
     // ---------- Section headings: word rise ----------
     gsap.utils.toArray<HTMLElement>("[data-split]").forEach(h => {
       gsap.from(h.querySelectorAll(".v-w > span"), {yPercent: 115, rotate: 3, duration: 1.1, ease: "expo.out", stagger: .06,
@@ -155,7 +175,7 @@ export function initMotion(root: HTMLElement) {
     mm.add("(min-width: 960px)", () => {
       const distance = () => ftrack.scrollWidth - window.innerWidth;
       const slide = gsap.to(ftrack, {x: () => -distance(), ease: "none",
-        scrollTrigger: {trigger: featured, start: "top top", end: () => "+=" + distance(), pin: true, scrub: 1, invalidateOnRefresh: true, anticipatePin: 1}});
+        scrollTrigger: {trigger: featured, start: "top top", end: () => "+=" + distance(), pin: true, scrub: 1, invalidateOnRefresh: true, anticipatePin: 1, refreshPriority: 1}});
       gsap.utils.toArray<HTMLElement>(".v-panel__media", featured).forEach(media => {
         gsap.fromTo(media, {clipPath: "inset(12% 8% 12% 8% round 18px)"}, {clipPath: "inset(0% 0% 0% 0% round 18px)", ease: "none",
           scrollTrigger: {trigger: media, containerAnimation: slide, start: "left 95%", end: "left 55%", scrub: true}});
@@ -265,6 +285,8 @@ export function initMotion(root: HTMLElement) {
     }
   }
 
+  ScrollTrigger.sort();
+  ScrollTrigger.refresh();
   const refresh = () => ScrollTrigger.refresh();
   window.addEventListener("load", refresh, {once: true});
   document.fonts?.ready.then(refresh);
