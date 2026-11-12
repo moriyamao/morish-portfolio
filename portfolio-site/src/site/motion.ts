@@ -125,15 +125,17 @@ export function initMotion(root: HTMLElement) {
       });
     }
 
-    // ---------- Marquee, reacting to scroll velocity ----------
-    const track = root.querySelector<HTMLElement>(".v-marquee__track")!;
-    const loop = gsap.to(track, {xPercent: -50, duration: 28, ease: "none", repeat: -1});
-    ScrollTrigger.create({trigger: track, start: "top bottom", end: "bottom top", onUpdate: self => {
-      const v = self.getVelocity() / 300;
-      const dir = self.direction;
-      gsap.to(loop, {timeScale: dir * Math.max(1, Math.min(6, Math.abs(v))), duration: .2, overwrite: true});
-      gsap.to(loop, {timeScale: dir, duration: 1.2, delay: .2, overwrite: false});
-    }});
+    // ---------- Discipline strip: stagger in, count up ----------
+    const stats = gsap.utils.toArray<HTMLElement>(".v-stat");
+    gsap.from(stats, {y: 50, opacity: 0, duration: 1, ease: "expo.out", stagger: .08, scrollTrigger: {trigger: ".v-stats", start: "top 85%"}});
+    stats.forEach(stat => {
+      const el = stat.querySelector<HTMLElement>("[data-count]")!;
+      const target = Number(el.dataset.count);
+      const state = {v: 0};
+      el.textContent = "0";
+      gsap.to(state, {v: target, duration: 1.4, ease: "power2.out", onUpdate: () => { el.textContent = String(Math.round(state.v)); },
+        scrollTrigger: {trigger: ".v-stats", start: "top 85%"}});
+    });
 
     // ---------- Section headings: word rise ----------
     gsap.utils.toArray<HTMLElement>("[data-split]").forEach(h => {
@@ -157,10 +159,6 @@ export function initMotion(root: HTMLElement) {
       gsap.utils.toArray<HTMLElement>(".v-panel__media", featured).forEach(media => {
         gsap.fromTo(media, {clipPath: "inset(12% 8% 12% 8% round 18px)"}, {clipPath: "inset(0% 0% 0% 0% round 18px)", ease: "none",
           scrollTrigger: {trigger: media, containerAnimation: slide, start: "left 95%", end: "left 55%", scrub: true}});
-      });
-      gsap.utils.toArray<HTMLElement>(".v-panel__num", featured).forEach(num => {
-        gsap.from(num, {yPercent: 100, opacity: 0, ease: "power2.out",
-          scrollTrigger: {trigger: num, containerAnimation: slide, start: "left 90%", end: "left 60%", scrub: true}});
       });
     });
     mm.add("(max-width: 959px)", () => {

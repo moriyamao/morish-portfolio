@@ -40,7 +40,13 @@ const otherCredentials = credentials.filter((_, i) => !featuredCredentialIdx.inc
 const delivered = clients.filter(c => c.status === "delivered");
 const concepts = clients.filter(c => c.status === "demo");
 const filters = ["All", ...mapGroups] as const;
-const marquee = ["Web products", "Applied ML", "Interactive systems", "Research", "Client sites"];
+const disciplines: Record<string, string> = {
+  "Web & apps": "Full-stack products, from PHP and MySQL back ends to polished front ends.",
+  "ML & AI": "Trained models with honest evaluation and documented limits.",
+  "Interactive": "Sandboxes, learning labs and games you can actually play.",
+  "Research": "Co-authored academic research, written up in full.",
+  "Clients": "Storefronts delivered end to end, and concepts pitched to clients.",
+};
 
 const isExternal = (href: string) => /^https?:/.test(href);
 const credentialAction = (href: string) => href === site.linkedin ? "LinkedIn" : href.endsWith(".pdf") ? "PDF" : "Verify";
@@ -126,7 +132,14 @@ function Index() {
         <a href="#work" className="v-hero__scroll" data-hero aria-label="Scroll to work"><span>Scroll</span><i/></a>
       </section>
 
-      <div className="v-marquee" aria-hidden="true"><div className="v-marquee__track">{[0, 1].map(k => <div className="v-marquee__set" key={k}>{marquee.map(m => <span key={m}>{m}<i>✦</i></span>)}</div>)}</div></div>
+      <nav className="v-stats" aria-label="Projects by discipline">
+        {mapGroups.map((g, i) => <a key={g} href="#index" className="v-stat" onClick={() => setFilter(g)}>
+          <span className="v-label">0{i + 1} / {g}</span>
+          <strong data-count={allProjects.filter(p => p.group === g).length}>{allProjects.filter(p => p.group === g).length}</strong>
+          <p>{disciplines[g]}</p>
+          <span className="v-stat__go">View in index <i aria-hidden="true">↓</i></span>
+        </a>)}
+      </nav>
 
       <section className="v-featured" id="work">
         <div className="v-featured__intro">
