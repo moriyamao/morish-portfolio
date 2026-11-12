@@ -60,7 +60,7 @@ function CasePage() {
             <div className="case-grid">
               <div>
                 <div className="case-kicker">{study.kicker}</div>
-                <h1 className="case-title">{study.title}</h1>
+                <h1 className="case-title" style={{ viewTransitionName: `case-${study.slug}` } as React.CSSProperties}>{study.title}</h1>
                 <p className="case-lede">{study.lede}</p>
                 <div className="chips" style={{ marginTop: 20 }}>
                   {study.tags.map((t) => (

@@ -8,19 +8,21 @@ const root=__dirname;
 const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
 const manifest=JSON.parse(fs.readFileSync(path.join(root,'portfolio-site/.build/manifest.json'),'utf8'));
 
-test('all 22 projects appear exactly once in the connected map and four curated projects resolve to case studies',async()=>{
+test('all 22 projects appear exactly once in the project index and four curated projects resolve to case studies',async()=>{
  const data=await import(pathToFileURL(path.join(root,'portfolio-site/.build/render.mjs')).href);
  assert.equal(data.allProjects.length,22);
  assert.equal(new Set(data.allProjects.map(p=>p.key)).size,22);
  assert.deepEqual(data.showcase.map(p=>p.key),['habitat','leakagelens','travelease','flyrank']);
  for(const p of data.showcase)assert.ok(p.href.startsWith('/morish-portfolio/case/'),p.title);
  for(const key of ['tutorialcheck','data-scout','mlp','ultrasound','resilience','alx','hotel','trace','marketwise','catalyst','last-tenant','solace','celeste','thriftnest','furever','forma','torque','common-ground'])assert.ok(data.allProjects.some(p=>p.key===key),key);
- assert.equal((html.match(/class="universe-node"/g)||[]).length,22);
- assert.equal((html.match(/class="showcase-card"/g)||[]).length,4);
+ assert.equal((html.match(/class="v-rows__title"/g)||[]).length,22);
+ assert.equal((html.match(/class="v-panel"/g)||[]).length,5);
 });
-test('23 certificates are visible as links, with no closed disclosure around them',()=>{
- assert.equal((html.match(/class="credential-card"/g)||[]).length,23);
- assert.match(html,/href="#certifications"/);
+test('six featured certificates are cards and all 23 render as links in the static page',async()=>{
+ const data=await import(pathToFileURL(path.join(root,'portfolio-site/.build/render.mjs')).href);
+ assert.equal((html.match(/class="v-cert"/g)||[]).length,6);
+ const esc=s=>s.replace(/&/g,'&amp;').replace(/'/g,'&#x27;').replace(/"/g,'&quot;');
+ for(const c of data.credentials)assert.ok(html.includes('href="'+esc(c.href)+'"')&&html.includes(esc(c.name)),c.name);
  assert.match(html,/<section[^>]*id="certifications"/);
  assert.ok(!/<details[^>]*id="certifications"/.test(html));
 });
@@ -43,8 +45,9 @@ test('every generated page loads its assets and internal links under the GitHub 
  }
 });
 test('static HTML retains content and a reduced-motion readable fallback before hydration',()=>{
- assert.match(html,/data-reduced="true"/);
- for(const id of ['work','sandbox','clients','about','academic','contact'])assert.ok(html.includes('id="'+id+'"'),id);
+ assert.ok(html.includes('matchMedia("(prefers-reduced-motion: reduce)").matches)return;d.classList.add("js-motion")'));
+ assert.ok(!/class="[^"]*\b(?:js-motion|intro|hero-ready)\b/.test(html.split('</head>')[1]));
+ for(const id of ['work','index','play','clients','about','certifications','academic','contact'])assert.ok(html.includes('id="'+id+'"'),id);
  assert.ok(fs.statSync(path.join(root,'.nojekyll')).isFile());
 });
 function contactSetup(response){
