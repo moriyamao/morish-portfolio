@@ -56,8 +56,8 @@ vendors Three.js locally; the others have no external runtime dependencies. Each
 published project documents its implemented features, tests, data handling, and
 limits in its README.
 
-`lab/` provides a filterable, keyboard-accessible index for the five sandbox
-projects. The homepage links to that Lab, states the portfolio's product direction,
+`showcase/` presents eight projects as components on an interactive 3D circuit board.
+The homepage links to the showcase, states the portfolio's product direction,
 collects project type and timeline in the
 existing EmailJS contact form.
 

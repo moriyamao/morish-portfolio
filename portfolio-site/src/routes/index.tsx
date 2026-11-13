@@ -5,6 +5,9 @@ import { ContactForm } from "@/components/site/contact";
 import { selected, alsoBuilt, lab, academic, clients, timeline, toolkit, credentials, site, type Work } from "@/site/content";
 import { allProjects, mapGroups } from "@/site/project-map";
 import { initMotion, animateRows } from "@/site/motion";
+import { parts } from "@/routes/showcase";
+
+const SHOWCASE = "/morish-portfolio/showcase/";
 
 export const Route = createFileRoute("/")({component: Index});
 
@@ -89,7 +92,7 @@ function Index() {
     return () => window.removeEventListener("keydown", close);
   }, [menu]);
 
-  const nav = [["#work", "Work"], ["#index", "Index"], ["#play", "Play"], ["#clients", "Clients"], ["#about", "About"]];
+  const nav = [["#work", "Work"], ["#index", "Index"], ["#interactive", "Interactive"], ["#clients", "Clients"], ["#about", "About"]];
 
   return <div className="v-site" ref={root}>
     <div className="v-loader" aria-hidden="true">
@@ -103,12 +106,12 @@ function Index() {
 
     <header className="v-nav">
       <a href="#top" className="v-nav__brand" aria-label="Morish Macayan, back to top"><img src="/assets/brand/favicon.svg" alt=""/><span>Morish Macayan</span></a>
-      <nav aria-label="Main navigation" className="v-nav__links">{nav.map(([h, t]) => <a key={h} href={h}>{t}</a>)}</nav>
+      <nav aria-label="Main navigation" className="v-nav__links">{nav.map(([h, t]) => <a key={h} href={h}>{t}</a>)}<a href="/morish-portfolio/showcase/" className="v-nav__3d">3D Showcase</a></nav>
       <a className="v-nav__cta" href="#contact" data-magnetic><span>Let's talk</span><i aria-hidden="true">↗</i></a>
       <button className="v-nav__menu" aria-expanded={menu} aria-controls="v-menu" onClick={() => setMenu(!menu)}><span className="sr">{menu ? "Close menu" : "Open menu"}</span><i/><i/></button>
     </header>
     <div className="v-menu" id="v-menu" data-open={menu} inert={!menu}>
-      <nav aria-label="Mobile navigation">{[...nav, ["#contact", "Contact"]].map(([h, t], i) => <a key={h} href={h} onClick={() => setMenu(false)} style={{"--i": i} as React.CSSProperties}><small>0{i + 1}</small>{t}</a>)}</nav>
+      <nav aria-label="Mobile navigation">{[...nav, ["#contact", "Contact"], ["/morish-portfolio/showcase/", "3D Showcase"]].map(([h, t], i) => <a key={h} href={h} onClick={() => setMenu(false)} style={{"--i": i} as React.CSSProperties}><small>0{i + 1}</small>{t}</a>)}</nav>
       <div className="v-menu__foot"><a href={`mailto:${site.email}`}>{site.email}</a><span>{site.location}</span></div>
     </div>
 
@@ -192,24 +195,28 @@ function Index() {
         </div>
       </section>
 
-      <section className="v-play v-section" id="play">
+      <section className="v-play v-section" id="interactive">
         <div className="v-play__bg" aria-hidden="true"/>
         <div className="v-wrap">
-          <Chapter num="03" name="Playground"/>
-          <Head num="03" label="The playground" title="What" accent="if?" note="Small questions turned into things you can play with."/>
-        </div>
-        <div className="v-play__track" data-cursor="Drag">
-          {lab.map(l => <article className="v-card" key={l.key}>
-            <a href={l.href} target="_blank" rel="noreferrer" className="v-card__media" draggable={false}>
-              {l.img ? <img src={l.img} alt={l.alt} loading="lazy" width={1280} height={800} draggable={false}/> : <span className="v-card__plate">LAST<br/>TENANT</span>}
+          <Chapter num="03" name="Interactive"/>
+          <Head num="03" label="Interactive" title="Made to be" accent="explored." note="Eight systems mounted on one circuit board, in 3D. Pick a component and a robot arm hands it to you."/>
+          <div className="v-teaser">
+            <a className="v-teaser__media" href={SHOWCASE} data-cursor="Enter 3D">
+              <img src="/assets/shots/showcase-board.jpg" alt="The 3D showcase: a robot arm lifting a processor above a glowing circuit board of project components" loading="lazy" width={1800} height={900}/>
+              <span className="v-teaser__badge"><i aria-hidden="true"/>Live 3D · WebGL</span>
+              <span className="v-teaser__cta"><span>Enter the 3D showcase</span><i aria-hidden="true">↗</i></span>
+              <span className="v-teaser__codes" aria-hidden="true">{parts.map(p => <span key={p.key}>{p.code}</span>)}</span>
             </a>
-            <div className="v-card__meta"><span className="v-label">{l.num} / {l.kind}</span><span className="v-tag">{l.status}</span></div>
-            <h3>{l.title}</h3>
-            <p>{l.line}</p>
-            {l.extra && <Links links={[l.extra]}/>}
-          </article>)}
+            <div className="v-teaser__list">
+              <span className="v-label">Playable now · {lab.length}</span>
+              <ol>{lab.map(l => <li key={l.key} data-reveal><a href={l.href} target="_blank" rel="noreferrer">
+                <span className="v-teaser__num">{l.num}</span>
+                <span className="v-teaser__name"><b>{l.title}</b><small>{l.kind}</small></span>
+                <i aria-hidden="true">↗</i>
+              </a></li>)}</ol>
+            </div>
+          </div>
         </div>
-        <div className="v-wrap v-play__foot"><a className="v-btn is-lime" href="/lab" data-magnetic><span>Enter the full Lab</span><i aria-hidden="true">↗</i></a></div>
       </section>
 
       <section className="v-clients v-section" id="clients">

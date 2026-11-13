@@ -29,8 +29,8 @@ export function Nav() {
           <a className="nav-link" href="#work">
             Selected Work
           </a>
-          <a className="nav-link" href="/lab">
-            Lab
+          <a className="nav-link" href="/morish-portfolio/showcase/">
+            3D Showcase
           </a>
           <a className="nav-link" href="#academic">
             Academic
@@ -67,8 +67,8 @@ export function Nav() {
         <a href="#work" onClick={() => setOpen(false)}>
           Selected Work
         </a>
-        <a href="/lab" onClick={() => setOpen(false)}>
-          Lab
+        <a href="/morish-portfolio/showcase/" onClick={() => setOpen(false)}>
+          3D Showcase
         </a>
         <a href="#academic" onClick={() => setOpen(false)}>
           Academic Projects

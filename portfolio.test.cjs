@@ -47,7 +47,7 @@ test('every generated page loads its assets and internal links under the GitHub 
 test('static HTML retains content and a reduced-motion readable fallback before hydration',()=>{
  assert.ok(html.includes('matchMedia("(prefers-reduced-motion: reduce)").matches)return;d.classList.add("js-motion")'));
  assert.ok(!/class="[^"]*\b(?:js-motion|intro|hero-ready)\b/.test(html.split('</head>')[1]));
- for(const id of ['work','index','play','clients','about','certifications','academic','contact'])assert.ok(html.includes('id="'+id+'"'),id);
+ for(const id of ['work','index','interactive','clients','about','certifications','academic','contact'])assert.ok(html.includes('id="'+id+'"'),id);
  assert.ok(fs.statSync(path.join(root,'.nojekyll')).isFile());
 });
 function contactSetup(response){

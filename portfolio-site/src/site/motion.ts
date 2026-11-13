@@ -195,11 +195,11 @@ export function initMotion(root: HTMLElement) {
       if (img) tl.fromTo(img, {scale: 1.35}, {scale: 1, duration: 1.6, ease: "expo.out"}, "<.1");
     }
 
-    // ---------- Playground ----------
+    // ---------- Interactive teaser ----------
     gsap.fromTo(".v-play__bg", {yPercent: -12, scale: 1.15}, {yPercent: 12, scale: 1, ease: "none",
       scrollTrigger: {trigger: ".v-play", start: "top bottom", end: "bottom top", scrub: true}});
-    gsap.from(".v-card", {x: 160, opacity: 0, rotate: 4, duration: 1.2, ease: "expo.out", stagger: .09,
-      scrollTrigger: {trigger: ".v-play__track", start: "top 80%"}});
+    gsap.fromTo(".v-teaser__media img", {scale: 1.22}, {scale: 1, ease: "none",
+      scrollTrigger: {trigger: ".v-teaser", start: "top bottom", end: "bottom 40%", scrub: true}});
 
     // ---------- About: words light up as you read ----------
     const scrubWords = root.querySelectorAll(".v-scrub .v-w > span");
@@ -270,19 +270,6 @@ export function initMotion(root: HTMLElement) {
       cleanups.push(() => { el.removeEventListener("pointermove", move); el.removeEventListener("pointerleave", leave); });
     });
 
-    const strip = root.querySelector<HTMLElement>(".v-play__track");
-    if (strip) {
-      let down = false, startX = 0, startScroll = 0, moved = 0;
-      const press = (e: PointerEvent) => { down = true; moved = 0; startX = e.clientX; startScroll = strip.scrollLeft; strip.classList.add("is-dragging"); };
-      const drag = (e: PointerEvent) => { if (!down) return; moved = Math.abs(e.clientX - startX); strip.scrollLeft = startScroll - (e.clientX - startX) * 1.4; };
-      const release = () => { down = false; strip.classList.remove("is-dragging"); };
-      const click = (e: MouseEvent) => { if (moved > 6) { e.preventDefault(); e.stopPropagation(); } };
-      strip.addEventListener("pointerdown", press);
-      on("pointermove", drag);
-      on("pointerup", release);
-      strip.addEventListener("click", click, true);
-      cleanups.push(() => { strip.removeEventListener("pointerdown", press); strip.removeEventListener("click", click, true); });
-    }
   }
 
   ScrollTrigger.sort();
