@@ -289,6 +289,7 @@ function Index() {
               <a className="v-end__email" href={`mailto:${site.email}`} data-magnetic><span>{site.email}</span><i aria-hidden="true">↗</i></a>
               <p>{site.location}</p>
               <Links links={[{label: "GitHub", href: site.github}, {label: "LinkedIn", href: site.linkedin}, {label: "Résumé", href: site.resume}]}/>
+              <Phone/>
             </div>
             <div data-reveal><ContactForm/></div>
           </div>
@@ -300,5 +301,30 @@ function Index() {
       <div className="v-footer__word" aria-hidden="true">Applied curiosity</div>
       <div className="v-wrap v-footer__row"><span>© {new Date().getFullYear()} {site.name}</span><span>Ideas into working systems.</span><a href="#top">Back to top ↑</a></div>
     </footer>
+  </div>;
+}
+
+const GMAIL_COMPOSE = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(site.email)}`;
+
+/**
+ * Contact phone. Server-rendered as a row of real links; phone.js (loaded when the section
+ * nears the viewport) upgrades it to a tappable 3D phone and adds the `is-3d` class.
+ */
+function Phone() {
+  const apps = [
+    {label: "GitHub", href: site.github},
+    {label: "LinkedIn", href: site.linkedin},
+    {label: "Gmail", href: GMAIL_COMPOSE},
+    {label: "Résumé", href: site.resume},
+  ];
+  return <div className="v-phone" data-phone data-script="/assets/portfolio/phone.js" data-model="/assets/models/phone.glb"
+    data-avatar="/assets/phone/avatar.webp" data-banner="/assets/phone/banner.webp"
+    data-email={site.email} data-github={site.github} data-linkedin={site.linkedin} data-resume={site.resume}>
+    <canvas className="v-phone__canvas" aria-hidden="true"/>
+    <span className="v-phone__hint" aria-hidden="true">Tap an app · drag to turn</span>
+    <ul className="v-phone__apps" aria-label="Find me on">
+      {apps.map(a => <li key={a.label}><a href={a.href} target="_blank" rel="noreferrer">{a.label}<i aria-hidden="true">↗</i></a></li>)}
+    </ul>
+    <p className="v-phone__credit">3D model: <a href="https://sketchfab.com/3d-models/free-iphone-13-pro-2021-a35156d91cf44e70a2fdfeade54ae0b2" target="_blank" rel="noreferrer">(FREE) iPhone 13 Pro 2021</a> by SDC PERFORMANCE, <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">CC BY 4.0</a>, modified.</p>
   </div>;
 }

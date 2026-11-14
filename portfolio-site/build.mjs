@@ -34,11 +34,14 @@ const browser = await build({...options,entryPoints:['client.tsx'],write:false,f
 const js = browser.outputFiles[0].text;
 const showcaseBuild = await build({absWorkingDir:here,bundle:true,entryPoints:['src/showcase/scene.ts'],write:false,format:'esm',platform:'browser',minify:true,target:['es2022'],define:{'process.env.NODE_ENV':'"production"'},logLevel:'warning'});
 const showcaseJs = showcaseBuild.outputFiles[0].text;
+const phoneBuild = await build({absWorkingDir:here,bundle:true,entryPoints:['src/phone/scene.ts'],write:false,format:'esm',platform:'browser',minify:true,target:['es2022'],define:{'process.env.NODE_ENV':'"production"'},logLevel:'warning'});
+const phoneJs = phoneBuild.outputFiles[0].text;
 const css = await readFile(resolve(here,'src/site/site.css'),'utf8')+'\n'+await readFile(resolve(here,'src/site/system.css'),'utf8')+'\n'+await readFile(resolve(here,'src/site/v2.css'),'utf8')+'\n'+await readFile(resolve(here,'src/site/showcase.css'),'utf8');
 const introScript='<script>(function(){var d=document.documentElement;try{if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;d.classList.add("js-motion");if(!sessionStorage.getItem("mm-intro-seen"))d.classList.add("intro")}catch(e){}})()</script>';
-const revision = createHash('sha256').update(js).update(showcaseJs).update(css).digest('hex').slice(0,12);
+const revision = createHash('sha256').update(js).update(showcaseJs).update(phoneJs).update(css).digest('hex').slice(0,12);
 await writeFile(resolve(assets,'app.js'),js);
 await writeFile(resolve(assets,'showcase.js'),showcaseJs);
+await writeFile(resolve(assets,'phone.js'),phoneJs);
 await writeFile(resolve(assets,'site.css'),css);
 await cp(resolve(here,'public/assets'),resolve(root,'assets'),{recursive:true});
 const api = await import(pathToFileURL(resolve(here,'.build/render.mjs')).href+'?v='+revision);

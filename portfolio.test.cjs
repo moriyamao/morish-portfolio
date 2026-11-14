@@ -50,6 +50,16 @@ test('static HTML retains content and a reduced-motion readable fallback before 
  for(const id of ['work','index','interactive','clients','about','certifications','academic','contact'])assert.ok(html.includes('id="'+id+'"'),id);
  assert.ok(fs.statSync(path.join(root,'.nojekyll')).isFile());
 });
+test('contact phone ships real links as a fallback and points at assets that exist',()=>{
+ const phone=html.match(/<div class="v-phone"[\s\S]*?<\/p><\/div>/);
+ assert.ok(phone,'phone markup missing');
+ for(const href of ['https://github.com/moriyamao','https://www.linkedin.com/in/morish-macayan/','https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=morishalfonsomacayan%40gmail.com'])assert.ok(phone[0].includes('href="'+href+'"'),href);
+ assert.ok(phone[0].includes('CC BY 4.0'),'model credit (CC BY 4.0) is required');
+ for(const attr of ['data-model','data-avatar','data-banner','data-script']){
+  const m=phone[0].match(new RegExp(attr+'="/morish-portfolio/([^"]+)"'));
+  assert.ok(m,attr);assert.ok(fs.existsSync(path.join(root,m[1])),attr+' -> '+m[1]);
+ }
+});
 function contactSetup(response){
  const {transformSync}=require('./portfolio-site/node_modules/esbuild');
  const code=transformSync(fs.readFileSync(path.join(root,'portfolio-site/src/components/site/contact.tsx'),'utf8'),{loader:'tsx',format:'cjs',jsx:'automatic'}).code;
