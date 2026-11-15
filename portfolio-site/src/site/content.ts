@@ -28,6 +28,8 @@ export type CaseSection = {
   list?: string[];
   table?: { head: string[]; rows: string[][] };
   fig?: { src: string; alt: string; caption: string };
+  /** Extra figures shown in order after `fig`, for screenshot galleries. */
+  figs?: { src: string; alt: string; caption: string }[];
 };
 
 export type CaseStudy = {
@@ -49,7 +51,7 @@ export const cases: CaseStudy[] = [
     num: "01",
     title: "HABITAT",
     kicker: "Independent project / interactive design",
-    lede: "Draw a room. Arrange a home. See the same design from another angle.",
+    lede: "Draw a floor plan, then walk around the same design in 3D.",
     tags: ["JavaScript", "SVG", "Three.js", "Browser storage"],
     facts: [
       { k: "Type", v: "Concept-design sandbox" },
@@ -58,41 +60,34 @@ export const cases: CaseStudy[] = [
     ],
     sections: [
       {
-        h: "The problem",
+        h: "The idea",
         p: [
-          "A floor plan is useful for editing, while a spatial view makes the same design easier to understand. HABITAT brings both into one workspace so a design does not have to be rebuilt separately for each view.",
+          "A floor plan is easy to edit but hard to picture. A 3D view is easy to picture but awkward to edit. HABITAT puts both on screen at once, driven by the same design.",
         ],
       },
       {
-        h: "What was built",
+        h: "What I built",
         fig: {
           src: "/assets/shots/habitat.jpg",
           alt: "HABITAT browser screenshot showing a two-bedroom floor plan beside its synchronized 3D home model",
-          caption: "Browser capture during local verification. The plan and 3D view show the same editable document.",
+          caption: "The plan and the 3D view are two renderings of one document.",
         },
         p: [
-          "I built the versioned design document, the SVG plan editor, and the synchronized Three.js view. Start with a blank plan or a furnished starter, draw walls, attach doors and windows, and arrange furniture. Dimensions, materials, and object properties remain visible while the design changes. The floor plan is the editing surface; the 3D view provides orbit and zoom controls.",
-          "Designs autosave locally and can be shared by link or downloaded as JSON. They can also be reopened, exported as a floor-plan image, and changed with undo and redo.",
+          "An SVG plan editor and a synchronized Three.js view. Start blank or from a furnished template, draw walls, add doors and windows, and arrange furniture while dimensions and materials stay visible. Designs autosave, export as JSON or an image, share by link, and support undo and redo.",
         ],
       },
       {
-        h: "The hardest technical choice",
+        h: "The key decision",
         p: [
-          "A versioned document stores wall vertices, wall dimensions, hosted openings, and catalog objects with stable IDs. The SVG plan and Three.js scene both derive their geometry from that document. A door or window belongs to a wall rather than floating independently over a picture.",
-          "The editor uses orthogonal walls and metric dimensions, while history operates on document edits instead of renderer state. That keeps the editable plan and the spatial view synchronized.",
+          "Both views read from one versioned document of walls, openings and objects with stable IDs, so they can never drift apart. Doors and windows belong to a wall instead of floating on top of it, and undo works on document edits rather than on either renderer.",
         ],
       },
       {
-        h: "Verification and proof",
-        p: [
-          "The project README documents the tools, document format, checks, and limitations. Geometry and document tests cover structural edits, openings, persistence, and history independently from the renderers.",
-        ],
-      },
-      {
-        h: "Honest limitations",
-        p: [
-          "This is a concept-design sandbox, not construction documentation. It supports up to five floors, six editable templates, and eighteen catalog objects. Stairs are decorative.",
-          "The static app uses a pinned local copy of Three.js and needs no account, paid API, or application server. If 3D initialization fails, the floor-plan editor remains available.",
+        h: "Limits",
+        list: [
+          "A concept tool, not construction documentation.",
+          "Up to five floors, six templates and eighteen catalog objects; stairs are decorative.",
+          "No account or server needed. If 3D fails to start, the plan editor still works.",
         ],
       },
     ],
@@ -106,11 +101,10 @@ export const cases: CaseStudy[] = [
     num: "02",
     title: "LeakageLens",
     kicker: "Independent machine learning prototype / 2026",
-    lede:
-      "A good score is not always a good model. LeakageLens turns that concern into an inspectable dataset audit, with observed split evidence and a separate learned column reviewer.",
+    lede: "A high score can come from a leaky dataset. LeakageLens checks your train and test files for it before you trust the number.",
     tags: ["Python", "scikit-learn", "JavaScript"],
     facts: [
-      { k: "Type", v: "Local-processing CSV auditor" },
+      { k: "Type", v: "Local CSV auditor" },
       { k: "Runs", v: "Browser and Python CLI" },
       { k: "Data", v: "Files never leave the machine" },
     ],
@@ -118,20 +112,19 @@ export const cases: CaseStudy[] = [
       {
         h: "What I built",
         p: [
-          "I built the browser audit and Python CLI, the trained column reviewer, and the evaluation that documents where the reviewer fails. Choose training and test CSV files, identify the binary target, and optionally declare entity IDs, timestamps and features unavailable at prediction time. The browser processes the files locally and exports JSON containing row indices and statistics rather than raw observations.",
-          "The audit detects selected-feature row matches, shared entities, timestamp interleaving and declared unavailable features. The Python CLI additionally searches a bounded sample for numeric near matches. Similar observations and shared entities require interpretation against the intended deployment; they are not automatic leakage verdicts.",
-          "The trained reviewer uses nine statistics of each feature against the training target. Model inputs contain neither column names nor raw values. Test targets do not influence column statistics or scores.",
+          "A browser app and Python CLI that compare training and test CSVs for leaks: duplicate rows, the same entity on both sides, timestamps that overlap, and features you mark as unavailable at prediction time. Everything runs locally, and the report contains row indices and statistics, never your raw data.",
+          "On top of the checks sits a trained column reviewer that flags features which look like disguised copies of the target. It sees nine statistics per column, never names or values.",
         ],
         fig: {
           src: "/assets/shots/leakagelens.jpg",
           alt: "LeakageLens browser interface showing the audit configuration and evidence panels",
-          caption: "Live browser interface. Files are processed locally; nothing is uploaded.",
+          caption: "The live demo. Files are processed in your browser; nothing is uploaded.",
         },
       },
       {
-        h: "How a split inflates a score",
+        h: "Why it matters",
         p: [
-          "The same one-nearest-neighbor model is trained on repeated signatures from 80 entities and 480 rows, with a random target per entity. Random splitting rewards memorizing familiar entities. The group-disjoint split evaluates previously unseen entities, which is the deployment assumed in this example.",
+          "Same model, same data, different split. When rows from one entity land on both sides, the model just memorizes them.",
         ],
         table: {
           head: ["Synthetic entity experiment", "Mean accuracy"],
@@ -142,7 +135,7 @@ export const cases: CaseStudy[] = [
         },
       },
       {
-        h: "The model's limits are part of the result",
+        h: "How the reviewer holds up",
         table: {
           head: ["Column-review benchmark", "Learned F1", "Simple rules F1"],
           rows: [
@@ -151,9 +144,15 @@ export const cases: CaseStudy[] = [
           ],
         },
         p: [
-          "The generated benchmark has 760 column cases across 40 source datasets, partitioned by source dataset. It includes legitimate strong predictors and independent controls alongside eight injected target-proxy mechanisms. The threshold is selected only on validation data.",
-          "Public-data transfer is weak: the model flags seven legitimate Wine features and misses one injection. Its precision is 0.36 and recall is 0.80. The challenge is one public source dataset with five artificial leaks, not a benchmark of naturally occurring leakage. When the missingness mechanism is excluded from training, its holdout F1 falls to zero.",
-          "High synthetic performance therefore does not establish broad leakage-detection ability. A statistical score cannot reveal feature availability or distinguish every legitimate predictor from an encoded outcome.",
+          "It's perfect on the generated data and weak on real data: on Wine it flagged seven legitimate features and missed one of the five planted leaks (precision 0.36, recall 0.80). Treat it as a second opinion next to the hard checks, not a verdict.",
+        ],
+      },
+      {
+        h: "Limits",
+        list: [
+          "The real-data test is one public dataset with artificial leaks, not naturally occurring ones.",
+          "A leak type left out of training scores zero, so it doesn't generalize to new mechanisms.",
+          "Statistics can't tell whether a feature is actually available at prediction time. That still needs you.",
         ],
       },
     ],
@@ -169,8 +168,7 @@ export const cases: CaseStudy[] = [
     num: "03",
     title: "TravelEase",
     kicker: "Academic project / full-stack development",
-    lede:
-      "An academic full-stack project for trips, daily plans, budgets, and AI-to-human support. The application is currently under renovation.",
+    lede: "A travel planner that keeps trips, daily plans, budgets and support in one place. Currently being renovated.",
     tags: ["PHP", "MySQL", "JavaScript", "Groq API"],
     facts: [
       { k: "Role", v: "Front end and back end" },
@@ -180,66 +178,48 @@ export const cases: CaseStudy[] = [
     ],
     sections: [
       {
-        h: "The problem",
-        p: [
-          "Travel planning becomes fragmented when the itinerary, spending, and support conversation live in separate places. TravelEase brings those workflows into one PHP and MySQL application with customer, staff, and administrator roles.",
-        ],
-      },
-      {
         h: "What I built",
         fig: {
           src: "/assets/shots/travelease-dashboard.png",
           alt: "TravelEase dashboard showing a journey card, search and filter controls, and a support panel",
-          caption: "The customer dashboard brings trips, search, planning, and support together.",
+          caption: "The customer dashboard: trips, search, planning and support together.",
         },
         p: [
-          "Customers can create, view, edit, and delete trips, organize itinerary items by day and time, and track estimated versus actual costs. Budget summaries expose planned spending, actual spending, and the remaining or exceeded trip budget.",
-          "The support assistant calls the Groq API from the server. Rules escalate sensitive categories such as account security, billing, and complaints. For other TravelEase questions, the assistant can flag that a human is needed, while unrelated questions are declined. Escalations are supported by customer and staff messaging routes. Service failures also fall back to staff escalation rather than displaying a fabricated answer.",
+          "The whole stack, in PHP and MySQL. Customers plan trips day by day, log estimated and actual costs, and see at a glance whether they're over budget.",
+          "A support assistant answers questions through the Groq API and hands off to a human staff member for anything sensitive, like account security, billing or complaints. If the AI service fails, the conversation goes to staff instead of getting a made-up answer.",
         ],
       },
       {
-        h: "Sign in",
-        fig: {
-          src: "/assets/shots/travelease-login.png",
-          alt: "TravelEase sign-in page with email, password, and Google sign-in options",
-          caption: "The current sign-in screen. The travel workspace is available after authentication.",
-        },
-      },
-      {
-        h: "Plan a trip",
-        fig: {
-          src: "/assets/shots/travelease-plan.png",
-          alt: "TravelEase new-trip form with destination, dates, status, currency, budget, and notes",
-          caption: "The trip form captures dates, destination, currency, optional budget, and notes.",
-        },
-      },
-      {
-        h: "A sample journey",
-        fig: {
-          src: "/assets/shots/travelease-trip.png",
-          alt: "Sample TravelEase trip showing an itinerary item and estimated and actual costs",
-          caption: "Sample trip data showing the itinerary and estimated versus actual costs; the figures are illustrative.",
-        },
-      },
-      {
-        h: "Support chat",
-        fig: {
-          src: "/assets/shots/travelease-chat.png",
-          alt: "TravelEase support chat with a greeting and reply",
-          caption: "The customer-facing support chat. This screenshot shows the interface, not an escalation example.",
-        },
-      },
-      {
-        h: "The hardest technical choice",
-        p: [
-          "Ownership is enforced as part of the database query. A requested trip must match both its ID and the authenticated user's ID before itinerary items are read. Server-side authorization guards also separate customer, staff, and administrator routes.",
-          "Password-based authentication uses password hashing. Google sign-in verifies token signatures and relevant claims server-side. CSRF tokens protect state-changing forms, and session handling includes regeneration after sign-in. These are implemented controls visible in the source, not a claim that the application has passed a comprehensive security assessment.",
+        h: "A look around",
+        figs: [
+          {
+            src: "/assets/shots/travelease-plan.png",
+            alt: "TravelEase new-trip form with destination, dates, status, currency, budget, and notes",
+            caption: "Creating a trip: destination, dates, currency, budget and notes.",
+          },
+          {
+            src: "/assets/shots/travelease-trip.png",
+            alt: "Sample TravelEase trip showing an itinerary item and estimated and actual costs",
+            caption: "A sample trip with its itinerary and estimated versus actual costs (illustrative figures).",
+          },
+          {
+            src: "/assets/shots/travelease-chat.png",
+            alt: "TravelEase support chat with a greeting and reply",
+            caption: "The support chat.",
+          },
         ],
       },
       {
-        h: "Honest limitations",
+        h: "The key decision",
         p: [
-          "The model's self-assessment is not a calibrated confidence score, and keyword escalation rules are not exhaustive. Further validation should cover ownership and role checks including unauthorized trip and itinerary access, budget edge cases, invalid dates, concurrent edits, escalation behavior for ambiguous messages, and authentication abuse controls.",
+          "Access checks live in the database query itself: a trip only loads if its ID and the signed-in user's ID both match, so one customer can't open another's trip by changing a URL. Roles are separated server-side, passwords are hashed, Google sign-in is verified on the server, and forms carry CSRF tokens.",
+        ],
+      },
+      {
+        h: "Limits",
+        list: [
+          "The assistant's \"I need a human\" judgment isn't calibrated, and the escalation keywords aren't exhaustive.",
+          "Still needs testing for edge cases: unauthorized access attempts, odd budgets and dates, concurrent edits, and login abuse.",
         ],
       },
     ],
@@ -253,37 +233,36 @@ export const cases: CaseStudy[] = [
     num: "04",
     title: "Refresh & CTR-Fix Review Queue",
     kicker: "FlyRank · Machine Learning Intern · 2026",
-    lede:
-      "An end-to-end ML pipeline built on anonymized production search data, used to decide which content pages a strategist should look at first: a rule baseline, a client-grouped-validated model, and a deployed research paper with a human-reviewed action playbook.",
+    lede: "Which content pages should a strategist look at first this week? I built a pipeline to answer that on real (anonymized) search data, and tested whether a model beats a simple rule.",
     tags: ["Python", "scikit-learn", "Data analysis", "Internship"],
     facts: [
       { k: "Role", v: "Machine Learning Intern" },
-      { k: "Data", v: "30,000-row pseudonymized slice" },
-      { k: "Result", v: "Mixed, reported honestly" },
+      { k: "Data", v: "30,000 pseudonymized rows, 32 clients" },
+      { k: "Result", v: "Model roughly ties the rule" },
     ],
     sections: [
       {
         h: "The problem",
         p: [
-          "Clients have large content portfolios and no easy way to know which pages need attention this week. Someone has to decide: does this page need a refresh, a CTR fix, or is it fine? The goal was to make that weekly triage decision less of a guess for a content strategist reading a queue.",
+          "Clients have hundreds of pages and no quick way to tell which need a refresh, which need a better title to win clicks, and which are fine. The goal: a ranked weekly queue a strategist can trust.",
         ],
       },
       {
         h: "Data",
         p: [
-          "A pseudonymized 30,000-row starter slice of the internship data warehouse: 32 clients, a trailing-90-day performance window, and a 30-day-versus-previous-30-day trend label. Client names, URLs, and private query text never appear anywhere in the work. Columns describing how content was generated were excluded as off-topic, and the two trend columns that define the label were excluded from the feature set to avoid leakage.",
+          "A 30,000-row slice of the internship warehouse: 32 clients, 90 days of performance, and a label for whether a page declined in the last 30 days. No client names, URLs or queries appear anywhere, and the columns used to build the label were kept out of the features.",
         ],
         fig: {
           src: "/assets/shots/flyrank.jpg",
           alt: "The deployed FlyRank capstone research paper",
-          caption: "The deployed research paper, which carries every number and the action playbook.",
+          caption: "The deployed research paper, with every number and the action playbook.",
         },
       },
       {
         h: "Method",
         p: [
-          "I started with a hand-written rule, not a model: flag a page if it has real visibility and either it is stale, or it ranks fine but its click-through rate lags similar pages at that position. Before trusting either signal, I checked both against real bucket tables. Staleness came back mixed: real for well-populated tiers, reversed on a 174-row tier too small to trust. The CTR-position relationship came back confirmed, dropping cleanly as position worsened.",
-          "Only then did I try a Random Forest, trained on 13 numeric and 3 categorical features that are all knowable before the outcome. The split was grouped by client, not random: pages from the same client share hidden regularities a random split would let a model quietly memorize.",
+          "I started with a rule, not a model: flag a visible page if it's stale, or if its click-through rate trails similar pages at the same position. Checking both signals against the data, the CTR gap held up clearly; staleness held for most tiers but flipped on one tier too small to trust.",
+          "Then a Random Forest on 16 features known before the outcome, validated by client rather than at random, because pages from the same client share patterns a model can quietly memorize.",
         ],
         table: {
           head: ["Check", "Result"],
@@ -295,7 +274,7 @@ export const cases: CaseStudy[] = [
         },
       },
       {
-        h: "Results, model versus baseline",
+        h: "Results",
         table: {
           head: ["Queue size (K)", "Rule baseline", "Logistic regression", "Random forest"],
           rows: [
@@ -306,25 +285,25 @@ export const cases: CaseStudy[] = [
           ],
         },
         p: [
-          "On the same held-out client split, the model did not clearly beat the rule baseline. It edged ahead for small, tight review queues; the simple rule won for larger ones. When I first saw the drop from 0.745 to 0.600 under the grouped split, my reaction was just oh no, then a shrug. It is not the number I wanted; it is the real one.",
+          "The model didn't clearly beat the rule. It edged ahead on short queues; the rule won on longer ones. Seeing AUC drop from 0.745 to 0.600 under the grouped split wasn't the number I wanted, but it's the real one.",
         ],
       },
       {
-        h: "Limitations",
+        h: "Limits",
         list: [
-          "Cross-sectional, one snapshot: nothing here shows a refresh causes a page to stop declining, only that staleness and decline are observed together.",
-          "A 32-client teaching slice, not the full production warehouse.",
-          "The model's skill is real but modest (AUC 0.600), treated as worth a second look, never a confidence percentage.",
-          "CTR-based signals cannot tell a genuine content problem from a SERP feature stealing the click. That distinction still needs a human.",
+          "One snapshot: staleness and decline show up together, but this doesn't prove a refresh stops the decline.",
+          "A 32-client teaching slice, not the full warehouse.",
+          "AUC 0.600 is modest. A flag means \"worth a look\", never a confidence score.",
+          "A CTR gap can't tell a weak title from a search feature stealing the click. That still needs a person.",
         ],
       },
       {
         h: "The playbook",
         list: [
-          "Stale plus CTR-gap pages first. Both signals agree, highest confidence.",
-          "Stale only and CTR-gap only reviewed separately, one action each.",
-          "Model-flagged, rule-silent pages routed to a human second look, never an automatic action: the model has no transparent reason code the way the rule does.",
-          "No page is ever auto-published, auto-edited, or auto-deleted from this queue. Pages below a minimum visibility floor never receive an automated action.",
+          "Pages that are both stale and lagging on CTR go first.",
+          "Pages with only one signal are reviewed separately, one action each.",
+          "Pages only the model flags get a human second look, because the model can't explain why.",
+          "Nothing is ever published, edited or deleted automatically, and low-visibility pages get no automated action.",
         ],
       },
     ],
@@ -339,7 +318,7 @@ export const cases: CaseStudy[] = [
     num: "05",
     title: "TRACE",
     kicker: "Independent project / computer science education",
-    lede: "Predict the next step. Watch what changes. Go back and inspect why.",
+    lede: "Step through an algorithm, guess the next move, and rewind to see why it happened.",
     tags: ["JavaScript", "SVG", "Algorithms", "Data structures"],
     facts: [
       { k: "Type", v: "Interactive learning tool" },
@@ -348,32 +327,34 @@ export const cases: CaseStudy[] = [
     ],
     sections: [
       {
-        h: "The problem",
+        h: "The idea",
         p: [
-          "An algorithm animation can show that something changed without making the reason easy to inspect. TRACE connects each visible change to pseudocode, operation counts, and an explanation, while letting a learner return to any earlier state.",
+          "Most algorithm animations show what changed but not why. TRACE ties every step to the line of pseudocode, the running counts, and a plain-language explanation, and lets you go back to any earlier step.",
         ],
       },
       {
-        h: "What was built",
+        h: "What I built",
         fig: {
           src: "/assets/shots/trace.jpg",
           alt: "TRACE browser screenshot showing the graph lab and breadth-first search visualization",
-          caption: "Browser capture during local verification. Open the lab to edit the input and explore the complete workspace.",
+          caption: "The graph lab running breadth-first search.",
         },
         p: [
-          "TRACE provides editable examples in search, sorting, stacks and queues, binary search trees, and graph traversal. A shared timeline links diagrams to pseudocode, counters, and a plain-language explanation of each step. Visitors can play an execution, step forward, return to an earlier state, or change the input. Optional prediction questions pause the sequence so the learner can answer before seeing what happens next.",
+          "Labs for searching, sorting, stacks and queues, binary search trees and graph traversal, each with editable input. Play, step, rewind, or turn on prediction questions that pause and ask what happens next.",
         ],
       },
       {
-        h: "The hardest technical choice",
+        h: "The key decision",
         p: [
-          "Algorithms produce immutable execution snapshots. Each snapshot stores the state, highlighted elements, counters, explanation, and pseudocode position. Rendering a snapshot never executes another algorithm step, so moving backward and replaying preserve the same result.",
+          "Each algorithm records every step up front as a frozen snapshot of state, highlights, counters and explanation. The player only displays snapshots, never re-runs code, so rewinding and replaying always show exactly the same thing.",
         ],
       },
       {
-        h: "Honest limitations",
-        p: [
-          "Input limits keep examples readable, and validation explains inputs that cannot run. Operation counters describe the work performed by each implementation; playback speed controls presentation, not measured algorithm runtime. The app does not execute arbitrary source code and does not claim measured learning outcomes.",
+        h: "Limits",
+        list: [
+          "Inputs are capped so the visuals stay readable.",
+          "Counters show the work each algorithm does; playback speed is presentation, not real runtime.",
+          "It runs the built-in algorithms only, not your own code.",
         ],
       },
     ],
@@ -387,8 +368,7 @@ export const cases: CaseStudy[] = [
     num: "06",
     title: "TutorialCheck",
     kicker: "Independent machine learning prototype / 2026",
-    lede:
-      "An old tutorial can be correct for its original environment and fail in yours. TutorialCheck reviews pandas code for known migration issues and adds a trained risk score you can inspect.",
+    lede: "Old pandas tutorials break on new pandas. Paste a snippet and TutorialCheck flags what's outdated, without running it.",
     tags: ["Python", "pandas", "scikit-learn", "JavaScript"],
     facts: [
       { k: "Type", v: "Developer tooling" },
@@ -397,19 +377,19 @@ export const cases: CaseStudy[] = [
     ],
     sections: [
       {
-        h: "The implementation",
+        h: "What I built",
         p: [
-          "The project includes a Python CLI, static browser demo, TF-IDF/logistic regression model, AST diagnostics, migration references and a reproducible training pipeline. Python and browser inference share the exported JSON model. Pasted snippets are reviewed without executing them.",
-          "The training fixtures cover eleven API migration families and valid Python list controls. Running those fixtures supplies the labels, and repaired cases include assertions about their results. This connects the model to observed execution outcomes rather than guessed compatibility labels.",
+          "A Python CLI and a browser demo that share one exported model. Rule-based syntax checks catch known breaking changes, and a small trained classifier (TF-IDF with logistic regression) adds a risk score for anything the rules miss.",
+          "The training labels come from actually running the examples across eleven families of API changes, so the model learns from what breaks rather than from guesses.",
         ],
         fig: {
           src: "/assets/shots/tutorialcheck.jpg",
           alt: "TutorialCheck browser demo showing a flagged pandas snippet and its risk score",
-          caption: "The static demo, running the exported model in the browser.",
+          caption: "The browser demo, running the exported model locally.",
         },
       },
       {
-        h: "Evidence and limits",
+        h: "Results",
         table: {
           head: ["Evaluation", "Learned model F1", "AST rules F1"],
           rows: [
@@ -418,8 +398,15 @@ export const cases: CaseStudy[] = [
           ],
         },
         p: [
-          "The learned model has higher challenge recall (0.83 versus 0.67) but lower precision (0.67 versus 1.00). It catches additional patterns and also raises more false alarms. Its challenge F1 does not exceed the static baseline. The generated holdout shares API families with training, so its perfect score is not evidence of real-world accuracy. The independent challenge is also small and project-authored; no external tutorial benchmark has been measured.",
-          "Known errors include obsolete names in comments and strings, custom objects with valid append methods, and unfamiliar aliases. AST checks handle simple patterns rather than complete Python type inference. The release keeps these errors visible.",
+          "On unseen snippets the model catches more problems than the rules (recall 0.83 versus 0.67) but raises more false alarms (precision 0.67 versus 1.00), so overall it doesn't beat them. The perfect holdout score comes from overlap with training, not real-world accuracy.",
+        ],
+      },
+      {
+        h: "Limits",
+        list: [
+          "The challenge set is small and written by me; it hasn't been tested on real tutorials.",
+          "It gets fooled by old names in comments or strings, custom objects with a valid append, and unusual aliases.",
+          "The syntax checks cover simple patterns, not full type inference.",
         ],
       },
     ],
@@ -434,8 +421,7 @@ export const cases: CaseStudy[] = [
     num: "07",
     title: "Multilayer Perceptron, from scratch",
     kicker: "Academic project / Mapúa University",
-    lede:
-      "A two-layer neural network implemented in NumPy only: no scikit-learn, no PyTorch, no TensorFlow doing the actual learning. The point was not a good accuracy number; it was to prove I understood what a framework normally hides.",
+    lede: "A two-layer neural network written in plain NumPy, with no framework doing the learning, to understand what model.fit() hides.",
     tags: ["Python", "NumPy", "Jupyter Notebook"],
     facts: [
       { k: "Type", v: "Coursework, from scratch" },
@@ -444,24 +430,17 @@ export const cases: CaseStudy[] = [
     ],
     sections: [
       {
-        h: "The problem",
-        p: [
-          "It is easy to call model.fit() and never actually understand backpropagation. This project removed that option: build a working MLP where every matrix multiplication, activation, and gradient update is code I wrote and can explain line by line.",
-        ],
-      },
-      {
         h: "What I did",
         list: [
-          "Implemented a two-layer MLP from scratch in NumPy: weights, biases, and the training loop, with no high-level framework handling the learning.",
-          "Wrote forward propagation and backpropagation by hand, with configurable activation functions.",
-          "Trained with mini-batch gradient descent, and evaluated using separate training and validation metrics rather than trusting a single training-accuracy number.",
-          "Experimented with different hyperparameters and network configurations to see how each one changed training behavior, not just the final score.",
+          "Wrote the weights, biases, forward pass and backpropagation by hand, with configurable activation functions.",
+          "Trained with mini-batch gradient descent and tracked training and validation metrics separately.",
+          "Tried different hyperparameters and layer sizes to see how each changed training, not just the final score.",
         ],
       },
       {
         h: "What came of it",
         p: [
-          "A working, reproducible notebook that trains end to end and that I can walk someone through without hand-waving over the math. The honest test for a from-scratch project is not the accuracy number; it is whether I can explain every line when someone asks why that gradient.",
+          "A reproducible notebook that trains end to end, and the ability to explain every gradient in it. For a from-scratch project, that's the real result.",
         ],
       },
     ],
@@ -472,8 +451,7 @@ export const cases: CaseStudy[] = [
     num: "08",
     title: "Breast Ultrasound Research",
     kicker: "Academic research / computer vision / co-author",
-    lede:
-      "Deep learning-based segmentation and classification of breast lesions in ultrasound datasets. A team study of YOLO26 lesion detection comparing augmentation, dataset size, and model capacity.",
+    lede: "A team study of how well YOLO26 can find and outline breast lesions in ultrasound images, and what really helps it.",
     tags: ["YOLO26", "Roboflow", "Google Colab"],
     facts: [
       { k: "Role", v: "Co-author" },
@@ -482,30 +460,30 @@ export const cases: CaseStudy[] = [
     ],
     sections: [
       {
-        h: "From an image to a region",
+        h: "The study",
         p: [
-          "This team study investigates a pipeline that predicts lesion categories, bounding boxes, and segmentation masks from breast ultrasound images. The work compares small and nano YOLO26 segmentation models and examines how augmentation, dataset size, and training configuration affect the results.",
-          "The paper combines BUSI, BUS-UCLM, and BUS-BRA into a balanced set of 1,374 original images, with 458 images in each reported category. The principal augmented configuration contains approximately 3,200 images. Augmented copies do not represent additional independent patients.",
+          "The model predicts each lesion's category, a bounding box and an outline. We compared the small and nano YOLO26 models and tested how augmentation, dataset size and training settings change the results.",
+          "Three public datasets were combined into 1,374 images, 458 per category, expanded to about 3,200 with augmentation. Augmented copies aren't new patients.",
         ],
       },
       {
-        h: "More images did not mean better boundaries",
+        h: "What we found",
         p: [
-          "The reported experiments distinguish broad localization at an IoU threshold of 0.50 from stricter localization across thresholds of 0.50 to 0.95. Larger augmented datasets improved some mAP@50 results while reducing performance under the stricter metric. The nano model was competitive at mAP@50; the small model performed better at mAP@50:95.",
-          "For the paper's principal YOLO26s configuration: box mAP@50 0.842, box mAP@50:95 0.597, mask mAP@50 0.838, and mask mAP@50:95 0.557. Rounded values are reported from the manuscript, not independently reproduced here. These metrics are not diagnostic accuracy.",
+          "More augmented data improved rough localization but hurt precise outlines. The nano model kept up on loose overlap (mAP@50); the small model was better on strict overlap (mAP@50:95).",
+          "Best configuration, YOLO26s: box mAP@50 0.842 and mAP@50:95 0.597; mask mAP@50 0.838 and mAP@50:95 0.557. These are detection scores from the paper, not diagnostic accuracy.",
         ],
       },
       {
-        h: "What the results can support",
-        p: [
-          "This is a co-authored academic study, presented as an experimental research prototype. It does not establish clinical effectiveness or readiness for patient use. The manuscript reports that dedicated external-dataset evaluation and CPU-based ONNX deployment were unfinished at the time of writing; a hosted interface alone does not establish either milestone.",
+        h: "Limits",
+        list: [
+          "A research prototype, not a clinical tool.",
+          "Testing on a separate external dataset and CPU deployment were still in progress when the paper was written.",
         ],
       },
       {
-        h: "Shared work",
+        h: "Team",
         p: [
-          "Authors: Morish Alfonso R. Macayan, Jessica Christine Marie D. Seno, Erin Faye D. Fernandez, Aaron John D. Gonzales, and Rylon Kenley C. Realosa, Mapúa University.",
-          "My role is listed here as co-author. Individual implementation responsibilities are not specified in the supplied manuscript, so this page does not assign them.",
+          "Morish Alfonso R. Macayan, Jessica Christine Marie D. Seno, Erin Faye D. Fernandez, Aaron John D. Gonzales and Rylon Kenley C. Realosa, Mapúa University.",
         ],
       },
     ],
@@ -519,8 +497,7 @@ export const cases: CaseStudy[] = [
     num: "09",
     title: "Supply-Chain Resilience",
     kicker: "Academic research / simulation / co-author",
-    lede:
-      "Capital and storage constrained resilience: a scenario-based agent-based simulation of supplier diversification and inventory buffering strategies in the Philippine food manufacturing context.",
+    lede: "When money and storage are limited, should a Philippine food manufacturer stock up or line up backup suppliers? We simulated both.",
     tags: ["Agent-based modeling", "Monte Carlo", "Random Forest"],
     facts: [
       { k: "Role", v: "Co-author, with Aaron John D. Gonzales" },
@@ -529,30 +506,23 @@ export const cases: CaseStudy[] = [
     ],
     sections: [
       {
-        h: "Two strategies, limited resources",
+        h: "The question",
         p: [
-          "A business can prepare for a supply interruption by keeping additional inventory or by arranging alternative suppliers. Both choices use money, and stored inventory also uses space. This study models how those constraints interact with disruption duration and severity.",
-          "The simulation compares strategies under shared scenario parameters and uses repeated stochastic runs to estimate service levels. A Random Forest examines patterns in the simulation outputs.",
+          "Extra inventory costs money and space; extra suppliers cost money. The agent-based simulation tests both strategies across disruptions of different length and severity, repeats each run many times to estimate service levels, and uses a Random Forest to see which factors matter most.",
         ],
       },
       {
-        h: "A demonstration before the full study",
+        h: "Early results",
         p: [
-          "The manuscript's demonstration uses 100 scenarios and 20 Monte Carlo repetitions per strategy. It reports that buffering was preferred in 85 scenarios, diversification in 12, and three fell within the study's equivalence tolerance. Disruption duration was the strongest reported Random Forest predictor.",
-          "These are preliminary, manuscript-reported simulation outcomes, not independently reproduced results or measured outcomes from operating businesses. The planned full design is 1,000 scenarios with 100 repetitions.",
+          "Across 100 scenarios with 20 runs each, stocking up won in 85, backup suppliers in 12, and 3 were a tie. How long a disruption lasts mattered most. The full study is planned at 1,000 scenarios with 100 runs each.",
         ],
       },
       {
-        h: "What still needs resolving",
-        p: [
-          "The manuscript records unresolved parameter sourcing, partially paired random streams, an unused supplier-count parameter, and a model without revenue replenishment. Its methodology and limitations also differ on the calibration dataset and the use of STL and SHAP.",
-        ],
-      },
-      {
-        h: "Shared work",
-        p: [
-          "Co-authored by Aaron John D. Gonzales and Morish Alfonso Macayan, School of Information Technology, Mapúa University.",
-          "This entry identifies my role as co-author; the supplied paper does not assign individual implementation responsibilities. It is presented as an academic research paper, with no claim of peer-reviewed publication.",
+        h: "Limits",
+        list: [
+          "Preliminary simulation results, not data from real businesses.",
+          "Some parameters still need real-world sources, and the model doesn't yet include revenue replenishment.",
+          "An academic paper, not peer-reviewed.",
         ],
       },
     ],

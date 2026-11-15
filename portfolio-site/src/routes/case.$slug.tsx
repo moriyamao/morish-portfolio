@@ -100,12 +100,12 @@ function CasePage() {
                     <span className="ln" />
                   </div>
                   <h2>{s.h}</h2>
-                  {s.fig ? (
-                    <figure className="case-fig">
-                      <img src={s.fig.src} alt={s.fig.alt} loading="lazy" width={1280} height={800} />
-                      <figcaption>{s.fig.caption}</figcaption>
+                  {[...(s.fig ? [s.fig] : []), ...(s.figs ?? [])].map((f) => (
+                    <figure className="case-fig" key={f.src}>
+                      <img src={f.src} alt={f.alt} loading="lazy" width={1280} height={800} />
+                      <figcaption>{f.caption}</figcaption>
                     </figure>
-                  ) : null}
+                  ))}
                   {s.p?.map((p) => (
                     <p key={p.slice(0, 40)}>{p}</p>
                   ))}
