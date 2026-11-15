@@ -17,8 +17,8 @@ const flyrank: Work = {
   key: "flyrank",
   title: "FlyRank",
   kind: "Internship / applied ML",
-  line: "Machine learning internship: baseline, model evaluation, and the limits of the result.",
-  built: "Content-refresh research: rule baselines, client-grouped validation, and a reproducible report.",
+  line: "Content-refresh research: rule baselines, client-grouped validation, and a reproducible report.",
+  built: "",
   tags: ["Python", "scikit-learn", "Evaluation"],
   img: "/assets/shots/flyrank.jpg",
   alt: "FlyRank internship research report",
@@ -44,11 +44,11 @@ const delivered = clients.filter(c => c.status === "delivered");
 const concepts = clients.filter(c => c.status === "demo");
 const filters = ["All", ...mapGroups] as const;
 const disciplines: Record<string, string> = {
-  "Web & apps": "Full-stack products, from PHP and MySQL back ends to polished front ends.",
-  "ML & AI": "Trained models with honest evaluation and documented limits.",
-  "Interactive": "Sandboxes, learning labs and games you can actually play.",
-  "Research": "Co-authored academic research, written up in full.",
-  "Clients": "Storefronts delivered end to end, and concepts pitched to clients.",
+  "Web & apps": "Full-stack web apps.",
+  "ML & AI": "Trained and evaluated models.",
+  "Interactive": "Sandboxes, labs and games.",
+  "Research": "Co-authored research.",
+  "Clients": "Client storefronts and concepts.",
 };
 
 const isExternal = (href: string) => /^https?:/.test(href);
@@ -121,7 +121,7 @@ function Index() {
         <div className="v-hero__copy">
           <p className="v-label" data-hero>Morish Macayan — Developer · AI track · Mapúa University</p>
           <h1 data-hero-title aria-label="Ideas into working systems."><span className="v-line"><Words text="Ideas into"/></span><span className="v-line is-accent"><Words text="working"/></span><span className="v-line"><Words text="systems."/></span></h1>
-          <p className="v-hero__lede" data-hero>I build web products, applied machine-learning tools, and interactive systems — and I'm clear about where they stop working.</p>
+          <p className="v-hero__lede" data-hero>I build web products, ML tools, and interactive systems.</p>
           <div className="v-hero__actions" data-hero>
             <a href="#work" className="v-btn is-solid" data-magnetic><span>See the work</span><i aria-hidden="true">↓</i></a>
             <a href="#contact" className="v-btn" data-magnetic><span>Start a project</span><i aria-hidden="true">↗</i></a>
@@ -150,7 +150,7 @@ function Index() {
 
       <section className="v-featured v-section" id="work">
         <div className="v-featured__intro">
-          <Head num="01" label="Selected work" title="Built to be" accent="used." note="Five projects that carry the most weight: real interfaces, measured models, and honest limits."/>
+          <Head num="01" label="Selected work" title="Built to be" accent="used."/>
           <p className="v-featured__hint" data-reveal><span>Scroll</span><i aria-hidden="true">→</i></p>
         </div>
         <div className="v-featured__track">
@@ -164,7 +164,6 @@ function Index() {
                 <span className="v-label">{p.kind}</span>
                 <h3 style={p.caseSlug ? {viewTransitionName: `case-${p.caseSlug}`} as React.CSSProperties : undefined}>{p.title}</h3>
                 <p>{p.line}</p>
-                <p className="v-panel__built">{p.built}</p>
                 <Chips items={p.tags}/>
                 <Links links={p.links}/>
               </div>
@@ -177,7 +176,7 @@ function Index() {
       <section className="v-index v-section" id="index">
         <div className="v-wrap">
           <Chapter num="02" name="Index"/>
-          <Head num="02" label="Index" title="Every project," accent="sorted." note="Filter by discipline. Hover a row to preview it."/>
+          <Head num="02" label="Index" title="Every project," accent="sorted."/>
           <div className="v-filters" role="toolbar" aria-label="Filter projects" data-reveal>
             {filters.map(f => <button key={f} aria-pressed={filter === f} onClick={() => setFilter(f)}>{f}<sup>{f === "All" ? allProjects.length : allProjects.filter(p => p.group === f).length}</sup></button>)}
           </div>
@@ -199,11 +198,10 @@ function Index() {
         <div className="v-play__bg" aria-hidden="true"/>
         <div className="v-wrap">
           <Chapter num="03" name="Interactive"/>
-          <Head num="03" label="Interactive" title="Made to be" accent="explored." note="Eight systems mounted on one circuit board, in 3D. Pick a component and a robot arm hands it to you."/>
+          <Head num="03" label="Interactive" title="Made to be" accent="explored." note="Eight projects on one 3D circuit board."/>
           <div className="v-teaser">
             <a className="v-teaser__media" href={SHOWCASE} data-cursor="Enter 3D">
               <img src="/assets/shots/showcase-board.jpg" alt="The 3D showcase: a robot arm lifting a processor above a glowing circuit board of project components" loading="lazy" width={1800} height={900}/>
-              <span className="v-teaser__badge"><i aria-hidden="true"/>Live 3D · WebGL</span>
               <span className="v-teaser__cta"><span>Enter the 3D showcase</span><i aria-hidden="true">↗</i></span>
               <span className="v-teaser__codes" aria-hidden="true">{parts.map(p => <span key={p.key}>{p.code}</span>)}</span>
             </a>
@@ -222,13 +220,13 @@ function Index() {
       <section className="v-clients v-section" id="clients">
         <div className="v-wrap">
           <Chapter num="04" name="Clients"/>
-          <Head num="04" label="Clients & concepts" title="Made for" accent="people." note="Storefronts delivered end to end, and interactive concepts pitched to prospective clients."/>
+          <Head num="04" label="Clients & concepts" title="Made for" accent="people."/>
           {[["Delivered", delivered], ["Presented concepts", concepts]].map(([label, group]) => <div className="v-clients__group" key={label as string}>
             <h3 className="v-label" data-reveal>{label as string} · {(group as typeof clients).length}</h3>
             <div className="v-clients__grid">{(group as typeof clients).map(c => <article key={c.key} className="v-client">
               <a href={c.live} target="_blank" rel="noreferrer" className="v-client__media" data-cursor="Visit" data-curtain><img src={c.img} alt={c.alt} loading="lazy" width={1280} height={800}/></a>
               <div className="v-client__row"><h4>{c.title}</h4><span>{c.kind}</span></div>
-              <p>{c.line}</p>
+              {c.line && <p>{c.line}</p>}
               <Links links={[{label: c.status === "demo" ? "Open demo" : "Visit site", href: c.live}, {label: "Source", href: c.source}]}/>
             </article>)}</div>
           </div>)}
@@ -238,8 +236,8 @@ function Index() {
       <section className="v-about v-section" id="about">
         <div className="v-wrap">
           <Chapter num="05" name="About"/>
-          <span className="v-label" data-reveal>05 / The person behind the systems</span>
-          <p className="v-scrub"><Words text={`I'm ${site.fullName} — a Computer Science student on the AI track at Mapúa University and an independent developer in Malolos. I care about understanding how something works, and being clear about where it doesn't.`}/></p>
+          <span className="v-label" data-reveal>05 / About</span>
+          <p className="v-scrub"><Words text={`I'm ${site.fullName} — a Computer Science student on the AI track at Mapúa University and an independent developer in Malolos.`}/></p>
           <div className="v-about__grid">
             <ol className="v-timeline">{timeline.map(t => <li key={t.role} data-reveal><span className="v-label">{t.year}</span><h3>{t.role}</h3><p>{t.org} / {t.note}</p></li>)}</ol>
             <div className="v-about__side" data-reveal>
@@ -254,7 +252,7 @@ function Index() {
       <section className="v-certs v-section" id="certifications">
         <div className="v-wrap">
           <Chapter num="06" name="Credentials"/>
-          <Head num="06" label={`Credentials · ${credentials.length}`} title="Learning" accent="with proof." note="The six that carry the most weight. Every record links to its evidence."/>
+          <Head num="06" label={`Credentials · ${credentials.length}`} title="Learning" accent="with proof."/>
           <div className="v-certs__grid">{featuredCredentials.map((c, i) => <a className="v-cert" key={c.name} href={c.href} target="_blank" rel="noreferrer" data-reveal>
             <span className="v-cert__top"><span className="v-label">{c.org}</span><i aria-hidden="true">↗</i></span>
             <h3>{c.name}</h3>
@@ -270,7 +268,7 @@ function Index() {
       <section className="v-academic v-section" id="academic">
         <div className="v-wrap">
           <Chapter num="07" name="Academic"/>
-          <Head num="07" label="Academic work" title="Learning," accent="documented." note="Coursework, applications, and co-authored research."/>
+          <Head num="07" label="Academic work" title="Learning," accent="documented."/>
           {academic.map(a => <details className="v-disclosure" key={a.key} data-reveal>
             <summary><span className="v-label">{a.num}</span><span>{a.title}</span><i aria-hidden="true">+</i></summary>
             <div><span className="v-label">{a.kind} / {a.role}</span><p>{a.line}</p>{a.shared && <p>{a.shared}</p>}<Chips items={a.tags}/><Links links={a.links}/></div>
@@ -299,7 +297,7 @@ function Index() {
 
     <footer className="v-footer">
       <div className="v-footer__word" aria-hidden="true">Applied curiosity</div>
-      <div className="v-wrap v-footer__row"><span>© {new Date().getFullYear()} {site.name}</span><span>Ideas into working systems.</span><a href="#top">Back to top ↑</a></div>
+      <div className="v-wrap v-footer__row"><span>© {new Date().getFullYear()} {site.name}</span><a href="#top">Back to top ↑</a></div>
     </footer>
   </div>;
 }

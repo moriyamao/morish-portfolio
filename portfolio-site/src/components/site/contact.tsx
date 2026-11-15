@@ -33,6 +33,6 @@ export function ContactForm() {
     <div className="field"><label htmlFor="bf-msg">What should it accomplish?</label><textarea id="bf-msg" name="message" rows={4} maxLength={5000} required/></div>
     <button className="brief-btn" type="submit" disabled={pending}>{pending?'Sending…':'Send project brief ↗'}</button>
     <p id="formStatus" role="status" aria-live="polite">{status}</p>
-    <p className="hint">Delivered through EmailJS. Or email me directly.</p>
+    <p className="hint">Or email me directly.</p>
   </form>;
 }

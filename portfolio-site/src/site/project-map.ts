@@ -16,7 +16,7 @@ const entries: MapProject[] = [
   ...lab.map(p=>({key:p.key,title:p.title,line:p.line,tags:p.tags,href:p.extra?.href || p.href,group:"Interactive" as const})),
   ...academic.map(p=>({key:p.key,title:p.title,line:p.line,tags:p.tags,href:p.links[0].href,
     group:(["ultrasound","resilience"].includes(p.key) ? "Research" : p.key==="mlp" ? "ML & AI" : "Web & apps") as MapProject["group"],note:p.shared || p.role})),
-  ...clients.map(p=>({key:p.key,title:p.title,line:p.line,tags:[p.kind],href:p.live,group:"Clients" as const,note:p.status==="demo" ? "Concept presented to prospective clients" : "Delivered client website"})),
+  ...clients.map(p=>({key:p.key,title:p.title,line:p.line || p.kind,tags:[p.kind],href:p.live,group:"Clients" as const,note:p.status==="demo" ? "Concept presented to prospective clients" : "Delivered client website"})),
   {key:"flyrank",title:"FlyRank",line:"Content-refresh research from my machine learning internship: rule baselines, client-grouped validation, and a reproducible report.",tags:["Python","scikit-learn","Evaluation"],href:"/case/flyrank",group:"ML & AI",note:"Machine learning internship"},
 ];
 export const allProjects = Array.from(entries.reduce((map,p)=>map.has(p.key)?map:map.set(p.key,p),new Map<string,MapProject>()).values());
