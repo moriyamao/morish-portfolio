@@ -6,7 +6,7 @@ Static portfolio with machine learning case studies and reproducible project sou
 
 The portfolio uses the exported Higgsfield design: a sage-and-chartreuse system
 map, reversible scroll animation, project screenshots, case studies, and visible
-certifications. "Connect the pieces" includes all 22 distinct published projects.
+certifications. "Connect the pieces" includes all 23 distinct published projects.
 "Make something real" narrows to HABITAT, LeakageLens, TravelEase, and FlyRank.
 Co-authored research and client concepts retain their attribution and status.
 
@@ -50,6 +50,7 @@ The Sandbox / Just Because section collects interactive tools, learning games, a
 | MARKETWISE | [Market learning game](projects/marketwise/) | — | [Source and checks](projects/marketwise/README.md) |
 | CATALYST | [Pixel chemistry adventure](projects/catalyst/) | — | [Source and checks](projects/catalyst/README.md) |
 | LAST TENANT | [Playable Roblox experience](https://www.roblox.com/games/102651311116462/LAST-TENANT) | — | Roblox Studio / Luau |
+| CARKIT | [Build and race a race car](projects/carkit/) | — | [Notes and controls](projects/carkit/README.md) |
 
 The browser projects run on the existing static GitHub Pages deployment. HABITAT
 vendors Three.js locally; the others have no external runtime dependencies. Each

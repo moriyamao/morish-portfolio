@@ -8,14 +8,14 @@ const root=__dirname;
 const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
 const manifest=JSON.parse(fs.readFileSync(path.join(root,'portfolio-site/.build/manifest.json'),'utf8'));
 
-test('all 22 projects appear exactly once in the project index and four curated projects resolve to case studies',async()=>{
+test('all 23 projects appear exactly once in the project index and four curated projects resolve to case studies',async()=>{
  const data=await import(pathToFileURL(path.join(root,'portfolio-site/.build/render.mjs')).href);
- assert.equal(data.allProjects.length,22);
- assert.equal(new Set(data.allProjects.map(p=>p.key)).size,22);
+ assert.equal(data.allProjects.length,23);
+ assert.equal(new Set(data.allProjects.map(p=>p.key)).size,23);
  assert.deepEqual(data.showcase.map(p=>p.key),['habitat','leakagelens','travelease','flyrank']);
  for(const p of data.showcase)assert.ok(p.href.startsWith('/morish-portfolio/case/'),p.title);
- for(const key of ['tutorialcheck','data-scout','mlp','ultrasound','resilience','alx','hotel','trace','marketwise','catalyst','last-tenant','solace','celeste','thriftnest','furever','forma','torque','common-ground'])assert.ok(data.allProjects.some(p=>p.key===key),key);
- assert.equal((html.match(/class="v-rows__title"/g)||[]).length,22);
+ for(const key of ['tutorialcheck','data-scout','mlp','ultrasound','resilience','alx','hotel','trace','marketwise','catalyst','last-tenant','carkit','solace','celeste','thriftnest','furever','forma','torque','common-ground'])assert.ok(data.allProjects.some(p=>p.key===key),key);
+ assert.equal((html.match(/class="v-rows__title"/g)||[]).length,23);
  assert.equal((html.match(/class="v-panel"/g)||[]).length,5);
 });
 test('six featured certificates are cards and all 23 render as links in the static page',async()=>{

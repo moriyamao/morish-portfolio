@@ -713,6 +713,19 @@ export const lab: LabItem[] = [
     alt: "LAST TENANT horror game artwork showing a dark boarding-house corridor and the game's title",
     href: "https://www.roblox.com/games/102651311116462/LAST-TENANT",
   },
+  {
+    key: "carkit",
+    num: "06",
+    title: "CARKIT",
+    kind: "3D race car build and race",
+    group: "game",
+    status: "Playable",
+    line: "Build a touring-class race car part by part in 3D, then race five AI drivers over three laps of a 4.5 km circuit. Real gear ratios, grip, downforce and a synthesised engine.",
+    tags: ["TypeScript", "Three.js", "Web Audio"],
+    img: "/assets/shots/carkit.jpg",
+    alt: "CARKIT race: the player's navy #27 race car chasing red and green rivals down the start straight, with lap, position and rev-light read-outs",
+    href: `${BASE}/projects/carkit/`,
+  },
 ];
 
 export type Academic = {
